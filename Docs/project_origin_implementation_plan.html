@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Origin 구현 시스템 정리</title>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --paper: #ffffff;
+      --ink: #20242a;
+      --muted: #666f7a;
+      --line: #d8d4ca;
+      --gold: #b98b2f;
+      --green: #2f7d62;
+      --blue: #356b9a;
+      --red: #a64b43;
+      --panel: #f3f7f5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.65;
+    }
+
+    header {
+      padding: 48px 28px 32px;
+      color: #fff;
+      background:
+        linear-gradient(rgba(24, 30, 36, 0.74), rgba(24, 30, 36, 0.74)),
+        url("https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=1600&q=80") center/cover;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    h1 {
+      max-width: 860px;
+      font-size: 40px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-top: 42px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--line);
+      font-size: 26px;
+    }
+
+    h3 {
+      margin-top: 18px;
+      font-size: 19px;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    ul, ol {
+      padding-left: 22px;
+      margin: 10px 0 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .meta {
+      max-width: 860px;
+      margin-top: 18px;
+      color: #e8e5dc;
+      font-size: 15px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .summary div,
+    .card,
+    .system,
+    .note {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    .summary div {
+      padding: 16px;
+    }
+
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .value {
+      display: block;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .system {
+      padding: 18px;
+    }
+
+    .system h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 0;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-right: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--blue);
+    }
+
+    .tag.high {
+      background: var(--red);
+    }
+
+    .tag.core {
+      background: var(--green);
+    }
+
+    .tag.schedule {
+      background: var(--gold);
+    }
+
+    table {
+      width: 100%;
+      margin-top: 16px;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #fff;
+      background: #2d3741;
+      font-weight: 700;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 16px 18px;
+      background: var(--panel);
+    }
+
+    .source {
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Project Origin 앞으로 구현할 큰 시스템 정리</h1>
+    <p class="meta">
+      노션의 Project Origin 3주 프로젝트 문서와 태스크 트래커 내용을 바탕으로,
+      남은 구현 범위를 큰 시스템 단위로 재분류하고 Unity에서 어떤 구조로 구현하면 좋은지 정리한 문서입니다.
+    </p>
+  </header>
+
+  <main>
+    <section class="summary">
+      <div>
+        <span class="label">프로젝트</span>
+        <span class="value">ka_origin / 김경일의 모험: Origin</span>
+      </div>
+      <div>
+        <span class="label">기간</span>
+        <span class="value">2026.05.19 - 2026.06.08</span>
+      </div>
+      <div>
+        <span class="label">장르</span>
+        <span class="value">3D 오픈월드 액션 판타지 RPG</span>
+      </div>
+      <div>
+        <span class="label">핵심 방향</span>
+        <span class="value">3주 안에 완성 가능한 선형 진행형 액션 RPG</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>전체 구현 전략</h2>
+      <p>
+        모든 기능을 독립적으로 만들기보다, <strong>데이터 기반 시스템</strong>을 먼저 잡고 그 위에 콘텐츠를 얹는 방식이 좋습니다.
+        플레이어, 몬스터, 아이템, 퀘스트, 웨이포인트는 서로 연결되므로 ScriptableObject와 Manager 계층을 기준으로 의존성을 정리해야 합니다.
+      </p>
+      <div class="note">
+        <strong>추천 우선순위:</strong> 플레이어 조작과 전투 루프를 먼저 안정화하고, 그다음 몬스터/보상/퀘스트를 연결한 뒤,
+        인벤토리와 장비 비주얼 교체는 최소 기능부터 완성하는 것이 일정 리스크를 줄입니다.
+      </div>
+    </section>
+
+    <section>
+      <h2>큰 시스템별 구현 방향</h2>
+      <div class="grid">
+        <article class="system">
+          <h3><span class="tag core">Core</span>플레이어 입력 / 이동 / 카메라</h3>
+          <p>Input System을 중심에 두고 입력 해석과 실제 이동 처리를 분리합니다.</p>
+          <ul>
+            <li><strong>PlayerInputReader</strong>: Move, Attack, Dash, Sprint, Interact 같은 입력 이벤트만 담당합니다.</li>
+            <li><strong>PlayerMovement</strong>: CharacterController 또는 Rigidbody 기반 이동, 대시 쿨다운, 중력 처리를 담당합니다.</li>
+            <li><strong>PlayerCamera</strong>: 쿼터뷰 고정 카메라를 기본값으로 두고, 줌은 옵션으로 유지 여부를 결정합니다.</li>
+            <li>Animator 파라미터는 이동 속도, 대시 상태, 공격 상태 정도로 단순하게 유지합니다.</li>
+          </ul>
+        </article>
+
+        <article class="system">
+          <h3><span class="tag high">Combat</span>전투 / 공격 강화</h3>
+          <p>스킬 시스템 대신 기본 공격 강화 4단계를 쓰는 방향이므로, 공격 데이터 테이블을 먼저 설계하는 것이 중요합니다.</p>
+          <ul>
+            <li><strong>AttackData ScriptableObject</strong>: 데미지, 범위, 쿨타임, 이펙트 색상, 히트박스 크기, 애니메이션 트리거를 보관합니다.</li>
+            <li><strong>PlayerCombat</strong>: Space 입력, 3단 콤보, 콤보 리셋 시간, 공격 중 이동 제한을 처리합니다.</li>
+            <li><strong>Hitbox</strong>: 공격 애니메이션 이벤트 시점에만 Collider를 켜서 몬스터에게 데미지를 전달합니다.</li>
+            <li>레벨 10/20/30/40 달성 시 AttackData 단계만 교체하면 데미지, 범위, 이펙트가 함께 바뀌도록 만듭니다.</li>
+          </ul>
+        </article>
+
+        <article class="system">
+          <h3><span class="tag high">AI</span>몬스터 AI / 스폰 / 드랍</h3>
+          <p>모든 몬스터는 같은 AI 구조를 공유하고, 구역별 데이터만 다르게 넣는 구조가 적합합니다.</p>
+          <ul>
+            <li><strong>MonsterData ScriptableObject</strong>: HP, 공격력, 경험치, 골드, 감지 범위, 드랍 테이블, 레벨을 정의합니다.</li>
+            <li><strong>MonsterAI</strong>: Idle, Patrol, Chase, Attack, Dead 상태 머신으로 구성합니다.</li>
+            <li><strong>MonsterSpawner</strong>: 구역별 스폰 포인트와 몬스터 종류를 연결합니다.</li>
+            <li><strong>ItemDropper</strong>: 사망 이벤트를 받아 골드, 경험치, 퀘스트 아이템, 장비 드랍을 처리합니다.</li>
+          </ul>
+        </article>
+
+        <article class="system">
+          <h3><span class="tag core">Growth</span>레벨 / 경험치 / 스탯</h3>
+          <p>레벨 시스템은 다른 시스템의 해금 조건이므로 이벤트 기반으로 만들어두는 편이 좋습니다.</p>
+          <ul>
+            <li><strong>PlayerStats</strong>: 현재 HP, MP, EXP, Level, Gold, 공격 강화 단계를 보관합니다.</li>
+            <li><strong>LevelTable</strong>: 레벨별 필요 경험치와 구역 권장 레벨을 데이터로 분리합니다.</li>
+            <li><strong>OnLevelUp 이벤트</strong>: HUD 갱신, 공격 강화 해금, 퀘스트 조건 갱신을 연결합니다.</li>
+            <li>퀘스트 완료 시 5레벨 상승, 몬스터 사냥으로 나머지 5레벨을 채우는 규칙을 데이터로 고정합니다.</li>
+          </ul>
+        </article>
+
+        <article class="system">
+          <h3><span class="tag high">Items</span>인벤토리 / 장비 / 상점</h3>
+          <p>일정상 가장 큰 리스크입니다. 먼저 20칸 보관, 자동 습득, 사용, 장착만 안정화하고 고급 연출은 뒤로 미루는 것이 좋습니다.</p>
+          <ul>
+            <li><strong>ItemData ScriptableObject</strong>: 아이콘, 타입, 가격, 스탯 보너스, 사용 효과, 장비 프리팹 정보를 가집니다.</li>
+            <li><strong>InventoryManager</strong>: 20칸 배열, 골드, 아이템 추가/삭제/교환을 담당합니다.</li>
+            <li><strong>InventorySlot UI</strong>: IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler로 드래그 앤 드롭을 구현합니다.</li>
+            <li><strong>EquipmentManager</strong>: 착용 슬롯과 캐릭터 모델 소켓을 연결해 장비 비주얼을 교체합니다.</li>
+            <li><strong>ShopManager</strong>: 상점 타입별 판매 목록과 구매 가능 여부를 처리합니다.</li>
+          </ul>
+        </article>
+
+        <article class="system">
+          <h3><span class="tag core">Quest</span>퀘스트 / NPC 상호작용</h3>
+          <p>퀘스트는 선형 진행의 뼈대입니다. NPC와 HUD가 같은 QuestManager 상태를 바라보도록 구성해야 합니다.</p>
+          <ul>
+            <li><strong>QuestData ScriptableObject</strong>: 목표 타입, 목표 수량, 요구 아이템, 보상 골드, 다음 퀘스트를 정의합니다.</li>
+            <li><strong>QuestManager</strong>: 현재 활성 퀘스트 하나만 보관하고 수락, 진행, 완료 상태를 관리합니다.</li>
+            <li><strong>NPCQuestGiver</strong>: 느낌표/물음표 마커, F 상호작용, 대화 UI 열기를 담당합니다.</li>
+            <li><strong>QuestProgressHUD</strong>: 우측 상단에 현재 목표와 진행도를 실시간으로 표시합니다.</li>
+            <li>Kill, Collect, Bring 타입을 공통 인터페이스로 처리하면 이후 확장이 쉽습니다.</li>
+          </ul>
+        </article>
+
+        <article class="system">
+          <h3><span class="tag schedule">World</span>월드 / 구역 / 웨이포인트</h3>
+          <p>노션 문서상 맵은 에셋 Demo/Prefab을 이어붙이는 방향으로 축소되어 있습니다. 단일 씬에 5개 구역을 배치하는 구조가 현실적입니다.</p>
+          <ul>
+            <li><strong>ZoneTrigger</strong>: 시작 마을, 황무지, 어둠 숲, 오크 주둔지, 왕의 무덤 진입을 감지합니다.</li>
+            <li><strong>ZoneManager</strong>: BGM, 몬스터 스폰, 미니맵 표시, 권장 레벨 정보를 갱신합니다.</li>
+            <li><strong>WaypointManager</strong>: 해금된 웨이포인트 목록과 순간이동 위치를 관리합니다.</li>
+            <li>맵 배치 확정 후 NavMesh를 전체 베이크하고, Static/Occlusion 설정을 같이 정리합니다.</li>
+          </ul>
+        </article>
+
+        <article class="system">
+          <h3><span class="tag">UI</span>HUD / 게임오버 / 저장</h3>
+          <p>UI는 여러 시스템의 현재 상태를 보여주는 층으로 두고, 직접 게임 로직을 갖지 않게 구성합니다.</p>
+          <ul>
+            <li><strong>HUDController</strong>: HP, MP, 포션 수량, EXP, 레벨, 퀘스트 목표를 표시합니다.</li>
+            <li><strong>GameOverController</strong>: 사망 시 검은 화면, 카운트다운, 가장 가까운 웨이포인트 부활을 처리합니다.</li>
+            <li><strong>SaveLoadManager</strong>: JSON으로 레벨, 경험치, 골드, 인벤토리, 장비, 퀘스트, 웨이포인트 해금 상태를 저장합니다.</li>
+            <li>UI는 데이터 변경 이벤트를 구독하고, 매 프레임 직접 값을 폴링하지 않도록 합니다.</li>
+          </ul>
+        </article>
+
+        <article class="system">
+          <h3><span class="tag high">Boss</span>보스 / 최종 폴리싱</h3>
+          <p>보스는 패턴 수보다 명확한 예고, 회피 가능성, 피드백이 중요합니다.</p>
+          <ul>
+            <li><strong>BossAI</strong>: 패턴 선택, 페이즈 전환, 사망 이벤트를 담당합니다.</li>
+            <li><strong>PatternData</strong>: 광역 내려찍기, 직선 돌진, 소환 정도를 데이터화합니다.</li>
+            <li>인디케이터, 카메라 흔들림, 피격음, 이펙트를 최소 세트로 묶어 타격감을 보강합니다.</li>
+            <li>D19-D20 일정에는 타이틀, SFX, 크리티컬 버그 수정, 빌드 검증을 우선 배치합니다.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>추천 구현 순서</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>단계</th>
+            <th>목표</th>
+            <th>완료 기준</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>플레이어 이동, 대시, 카메라, 기본 공격</td>
+            <td>플레이어가 이동/대시/공격하고 애니메이션과 히트박스가 연결됩니다.</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>몬스터 AI와 데미지 루프</td>
+            <td>몬스터가 배회, 추적, 공격, 사망하며 경험치와 드랍을 줍니다.</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>레벨과 공격 강화</td>
+            <td>레벨업에 따라 공격 단계가 바뀌고 데미지/범위/이펙트가 달라집니다.</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>인벤토리와 아이템 습득</td>
+            <td>20칸 인벤토리, 자동 습득, 소모품 사용, 쓰레기통 삭제가 작동합니다.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>퀘스트와 NPC</td>
+            <td>NPC가 퀘스트를 주고, 목표 진행도가 HUD에 표시되며, 완료 보상이 지급됩니다.</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>월드 구역, 웨이포인트, 상점</td>
+            <td>5개 구역의 이동 흐름과 순간이동, 기본 구매 루프가 연결됩니다.</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>보스, 저장, 게임오버, 폴리싱</td>
+            <td>최종 보스 전투, 저장/로드, 부활, 타이틀, SFX, 빌드 테스트가 완료됩니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>리스크와 축소 기준</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>리스크</th>
+            <th>대응 방식</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>인벤토리 + 장비 비주얼 교체 공수 증가</td>
+            <td>먼저 아이콘 기반 장착과 스탯 반영만 완성하고, 실제 모델 교체는 핵심 장비 몇 개로 제한합니다.</td>
+          </tr>
+          <tr>
+            <td>퀘스트와 NPC 연동 복잡도</td>
+            <td>동시에 여러 퀘스트를 받는 구조를 피하고, 활성 퀘스트 하나만 처리합니다.</td>
+          </tr>
+          <tr>
+            <td>5개 구역 맵 배치와 NavMesh 문제</td>
+            <td>초반에 스케일 기준을 고정하고, 구역 경계 Trigger와 스폰 포인트부터 먼저 배치합니다.</td>
+          </tr>
+          <tr>
+            <td>보스 패턴 과다</td>
+            <td>패턴은 2-3개로 제한하고, 예고/피격/사운드 피드백을 우선합니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>권장 폴더 구조</h2>
+      <div class="note">
+        <p><strong>Assets/Scripts/Player</strong> - 입력, 이동, 전투, 스탯</p>
+        <p><strong>Assets/Scripts/Monsters</strong> - AI, 스폰, 드랍, 체력바</p>
+        <p><strong>Assets/Scripts/Items</strong> - ItemData, Inventory, Equipment, Shop</p>
+        <p><strong>Assets/Scripts/Quests</strong> - QuestData, QuestManager, NPCQuestGiver</p>
+        <p><strong>Assets/Scripts/World</strong> - ZoneManager, WaypointManager, ZoneTrigger</p>
+        <p><strong>Assets/Scripts/UI</strong> - HUD, Inventory UI, Quest UI, GameOver UI</p>
+        <p><strong>Assets/Scripts/Save</strong> - SaveData, SaveLoadManager</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>출처</h2>
+      <p class="source">
+        Notion: Project Origin | 미니 게임 프로젝트 3주 프로젝트, 태스크 트래커 검색 결과,
+        2026-05-19 기준 현재 문서 내용을 바탕으로 작성했습니다.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
