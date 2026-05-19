@@ -597,6 +597,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1098598071}
   - component: {fileID: 1098598070}
+  - component: {fileID: 1098598072}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -659,6 +660,22 @@ Transform:
   - {fileID: 673905835}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
+--- !u!114 &1098598072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098598069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d517bd42f9d1bba449cab93f894f3f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraZoom
+  _vcam: {fileID: 1098598070}
+  _idleFOV: 50
+  _sprintFOV: 60
+  _zoomSpeed: 5
 --- !u!1001 &1350820514
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1650,7 +1667,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2146802750}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 3.17
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1667,7 +1684,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &2146802754
 MonoBehaviour:
@@ -1681,7 +1698,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c48d172e5e4924d925b0374f357e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  _moveSpeed: 5
+  _moveSpeed: 1
+  _sprintSpeed: 2
+  _dashDistance: 1
+  _dashDuration: 0.2
+  _dashCooldown: 1
   _rotateSpeed: 10
 --- !u!114 &2146802755
 MonoBehaviour:
