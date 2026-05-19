@@ -83,7 +83,6 @@ public class EquipmentManager : MonoBehaviour
         _currentSword.transform.localPosition = _swordPosOffset;
         _currentSword.transform.localRotation = Quaternion.Euler(_swordRotOffset);
     }
-
     private void EquipShield(int index)
     {
         if (_currentShield != null) Destroy(_currentShield);
