@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개발 일지 — 2026.05.19 · D1</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Serif+KR:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --gold-dim: #7a6230;
+    --bg: #0a0a0f;
+    --bg-card: #10101a;
+    --bg-card2: #14141f;
+    --border: rgba(201,168,76,0.2);
+    --border-bright: rgba(201,168,76,0.5);
+    --text: #d4c9b0;
+    --text-dim: #7a7060;
+    --red: #ef4444;
+    --green: #22c55e;
+    --blue: #4a9eff;
+    --orange: #f97316;
+    --yellow: #eab308;
+    --purple: #a855f7;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    line-height: 1.8;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(201,168,76,0.07) 0%, transparent 60%);
+  }
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: 70px 40px 50px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(201,168,76,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 5px 16px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(26px, 5vw, 50px);
+    font-weight: 900;
+    color: var(--gold-light);
+    text-shadow: 0 0 40px rgba(201,168,76,0.4);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .hero-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gold-dim);
+    letter-spacing: 4px;
+    margin-bottom: 28px;
+  }
+  .hero-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .chip {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--border);
+    padding: 5px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+  }
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 28px; }
+  section { padding: 52px 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  .sec-header { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
+  .sec-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--gold-dim); min-width: 36px; }
+  .sec-title { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; color: var(--gold-light); letter-spacing: 1px; }
+  .sec-line { flex:1; height:1px; background: linear-gradient(to right, var(--gold-dim), transparent); }
+  .commit-card { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--blue); margin-bottom: 16px; overflow: hidden; }
+  .commit-header { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .commit-hash { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--blue); background: rgba(74,158,255,0.1); border: 1px solid rgba(74,158,255,0.25); padding: 3px 10px; white-space: nowrap; }
+  .commit-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+  .commit-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); white-space: nowrap; }
+  .commit-body { padding: 14px 20px; }
+  .commit-desc { font-size: 13px; color: var(--text); margin-bottom: 14px; line-height: 1.7; }
+  .commit-desc .issue { display: inline-block; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; margin-right: 6px; letter-spacing: 1px; }
+  .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+  .file-item { display: flex; align-items: center; gap: 8px; padding: 7px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.04); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .file-status { font-size: 9px; padding: 2px 7px; letter-spacing: 1px; border-radius: 2px; text-transform: uppercase; flex-shrink: 0; }
+  .s-added { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: #22c55e; }
+  .s-modified { background: rgba(74,158,255,0.12); border: 1px solid rgba(74,158,255,0.3); color: #4a9eff; }
+  .file-name { color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-changes { margin-left: auto; font-size: 10px; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; }
+  .file-changes .plus { color: var(--green); }
+  .file-changes .minus { color: var(--red); }
+  .impl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .impl-grid { grid-template-columns: 1fr; } }
+  .impl-card { background: var(--bg-card); border: 1px solid var(--border); padding: 20px 22px; }
+  .impl-card-title { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .impl-list { list-style: none; }
+  .impl-list li { padding: 5px 0 5px 14px; position: relative; font-size: 13px; color: var(--text); border-bottom: 1px solid rgba(201,168,76,0.04); line-height: 1.6; }
+  .impl-list li:last-child { border-bottom: none; }
+  .impl-list li::before { content: '▸'; position: absolute; left: 0; color: var(--gold-dim); font-size: 10px; top: 7px; }
+  .impl-list li strong { color: var(--gold-light); }
+  .status-bar { background: var(--bg-card); border: 1px solid var(--border); padding: 20px 24px; display: flex; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 24px; }
+  .stat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 80px; }
+  .stat-val { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 900; color: var(--gold-light); }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); text-transform: uppercase; }
+  .stat-divider { width: 1px; height: 40px; background: var(--border); }
+  .progress-wrap { flex: 1; min-width: 200px; }
+  .progress-label { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .progress-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(to right, var(--gold-dim), var(--gold-light)); border-radius: 3px; }
+  .issue-item { display: flex; gap: 12px; padding: 14px 18px; background: var(--bg-card); border-left: 3px solid var(--orange); margin-bottom: 10px; }
+  .issue-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--orange); letter-spacing: 1px; min-width: 60px; margin-top: 2px; }
+  .issue-text { font-size: 13px; line-height: 1.6; }
+  .day-progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media (max-width: 600px) { .day-progress { grid-template-columns: 1fr; } }
+  .day-card { background: var(--bg-card); border: 1px solid var(--border); padding: 16px 18px; position: relative; overflow: hidden; }
+  .day-card.done { border-color: rgba(34,197,94,0.3); }
+  .day-card.done::before { content: '✓'; position: absolute; top: 10px; right: 12px; color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+  .day-card.inprogress { border-color: rgba(74,158,255,0.4); }
+  .day-card.inprogress::before { content: '▶'; position: absolute; top: 10px; right: 12px; color: var(--blue); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .day-card.pending { opacity: 0.45; }
+  .day-card-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 6px; }
+  .day-card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .day-card-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
+  .code-block { background: #0a0a12; border: 1px solid rgba(74,158,255,0.15); border-left: 3px solid var(--blue); padding: 16px 20px; margin-top: 16px; overflow-x: auto; }
+  .code-block pre { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #a8c0e8; line-height: 1.7; white-space: pre-wrap; word-break: break-all; }
+  .code-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--blue); margin-bottom: 10px; text-transform: uppercase; }
+  footer { text-align: center; padding: 36px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 2px; border-top: 1px solid var(--border); }
+  footer span { color: var(--gold-dim); }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">Dev Log · Day 1 · 2026.05.19</div>
+  <h1>김경일의 모험 : ORIGIN</h1>
+  <div class="hero-sub">개발 일지 — D1 · Week 1</div>
+  <div class="hero-chips">
+    <span class="chip">📅 2026.05.19 (월)</span>
+    <span class="chip">🔀 커밋 2건</span>
+    <span class="chip">➕ +83,536 라인 추가</span>
+    <span class="chip">🎮 플레이어 이동 완료</span>
+    <span class="chip">⚙️ InputSystem 기반</span>
+  </div>
+</div>
+
+<div class="container">
+
+<section id="summary">
+  <div class="sec-header">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">오늘의 진행 요약</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="status-bar">
+    <div class="stat-item"><div class="stat-val">D1</div><div class="stat-label">진행일</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-val">2</div><div class="stat-label">커밋 수</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-val green">+83k</div><div class="stat-label">추가 라인</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-val red">-70</div><div class="stat-label">삭제 라인</div></div>
+    <div class="stat-divider"></div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Week 1 진행률</span><span>D1 / 7일</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 14%"></div></div>
+    </div>
+  </div>
+  <div class="day-progress">
+    <div class="day-card done"><div class="day-card-num">D1~2 TASK 1</div><div class="day-card-title">Unity 프로젝트 셋업</div><div class="day-card-date">05.19 완료</div></div>
+    <div class="day-card done"><div class="day-card-num">D1~2 TASK 2</div><div class="day-card-title">플레이어 에셋 연결</div><div class="day-card-date">05.19 완료</div></div>
+    <div class="day-card inprogress"><div class="day-card-num">D1~2 TASK 3</div><div class="day-card-title">이동 + 쿼터뷰 카메라</div><div class="day-card-date">진행 중 → D2 마무리 예정</div></div>
+    <div class="day-card inprogress"><div class="day-card-num">D1~2 TASK 4</div><div class="day-card-title">대시 구현</div><div class="day-card-date">구현됨 · 시스템 확정 필요</div></div>
+    <div class="day-card pending"><div class="day-card-num">D3~4</div><div class="day-card-title">MK Toon + 맵 에셋 배치</div><div class="day-card-date">05.21 ~ 05.22</div></div>
+    <div class="day-card pending"><div class="day-card-num">D5~6</div><div class="day-card-title">몬스터 AI 기본 구조</div><div class="day-card-date">05.23 ~ 05.24</div></div>
+  </div>
+</section>
+
+<section id="commits">
+  <div class="sec-header">
+    <span class="sec-num">02</span>
+    <h2 class="sec-title">커밋 내역</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-hash">766f5bcc</span>
+      <span class="commit-title">feat : playermovement</span>
+      <span class="commit-time">04:55 KST</span>
+    </div>
+    <div class="commit-body">
+      <div class="commit-desc">InputSystem 기반 플레이어 이동 구현 완료. 플레이어 에셋 (ATART Casual Warrior) 씬에 연결 완료. 애니메이션 컨트롤러 초기 구성 및 샘플 맵 프리팹 추가.</div>
+      <div class="files-grid">
+        <div class="file-item"><span class="file-status s-added">added</span><span class="file-name">Scripts/PlayerMovement.cs</span><span class="file-changes"><span class="plus">+54</span></span></div>
+        <div class="file-item"><span class="file-status s-added">added</span><span class="file-name">Scripts/PlayerInputReader.cs</span><span class="file-changes"><span class="plus">+12</span></span></div>
+        <div class="file-item"><span class="file-status s-added">added</span><span class="file-name">Animation/PlayerController.controller</span><span class="file-changes"><span class="plus">+101</span></span></div>
+        <div class="file-item"><span class="file-status s-added">added</span><span class="file-name">Prefabs/SampleMap.prefab</span><span class="file-changes"><span class="plus">+82,541</span></span></div>
+        <div class="file-item"><span class="file-status s-modified">modified</span><span class="file-name">Scenes/SampleScene.unity</span><span class="file-changes"><span class="plus">+471</span> <span class="minus">-49</span></span></div>
+        <div class="file-item"><span class="file-status s-modified">modified</span><span class="file-name">Packages/manifest.json</span><span class="file-changes"><span class="plus">+1</span></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="commit-card" style="border-left-color: var(--purple);">
+    <div class="commit-header">
+      <span class="commit-hash" style="color:var(--purple); background:rgba(168,85,247,0.1); border-color:rgba(168,85,247,0.3);">fbe4039d</span>
+      <span class="commit-title">feat: player movement - dash and sprint</span>
+      <span class="commit-time">06:20 KST</span>
+    </div>
+    <div class="commit-body">
+      <div class="commit-desc">대시(D키)와 스프린트 구현 및 애니메이션 연결. PlayerCameraZoom 스크립트 추가.<br><span class="issue">⚠ ISSUE</span>대쉬·스프린트 시스템이 아직 확실하지 않음 — 추가 논의 및 확정 필요.</div>
+      <div class="files-grid">
+        <div class="file-item"><span class="file-status s-added">added</span><span class="file-name">Scripts/PlayerCameraZoom.cs</span><span class="file-changes"><span class="plus">+39</span></span></div>
+        <div class="file-item"><span class="file-status s-modified">modified</span><span class="file-name">Scripts/PlayerMovement.cs</span><span class="file-changes"><span class="plus">+101</span> <span class="minus">-4</span></span></div>
+        <div class="file-item"><span class="file-status s-modified">modified</span><span class="file-name">Scripts/PlayerInputReader.cs</span><span class="file-changes"><span class="plus">+24</span></span></div>
+        <div class="file-item"><span class="file-status s-modified">modified</span><span class="file-name">Animation/PlayerController.controller</span><span class="file-changes"><span class="plus">+127</span> <span class="minus">-9</span></span></div>
+        <div class="file-item"><span class="file-status s-modified">modified</span><span class="file-name">InputSystem_Actions.inputactions</span><span class="file-changes"><span class="plus">+1</span> <span class="minus">-1</span></span></div>
+        <div class="file-item"><span class="file-status s-modified">modified</span><span class="file-name">Scenes/SampleScene.unity</span><span class="file-changes"><span class="plus">+24</span> <span class="minus">-3</span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="implementation">
+  <div class="sec-header">
+    <span class="sec-num">03</span>
+    <h2 class="sec-title">구현 상세</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="impl-grid">
+    <div class="impl-card">
+      <div class="impl-card-title">🎮 PlayerMovement.cs</div>
+      <ul class="impl-list">
+        <li><strong>방향키 8방향 이동</strong> — Input System 기반, InputAction으로 벡터 읽어 CharacterController 이동</li>
+        <li><strong>이동 방향 회전</strong> — Quaternion.LookRotation으로 캐릭터가 이동 방향을 바라봄</li>
+        <li><strong>대시(D키)</strong> — 방향키 입력 방향으로 순간 이동 처리, 쿨다운 관리</li>
+        <li><strong>스프린트</strong> — Shift 계열 입력으로 이동 속도 배속 적용</li>
+        <li><strong>중력 처리</strong> — isGrounded 확인 후 중력 벡터 누적</li>
+        <li><strong>애니메이션 연동</strong> — Animator 파라미터(Speed, IsDashing) 실시간 전달</li>
+      </ul>
+    </div>
+    <div class="impl-card">
+      <div class="impl-card-title">📥 PlayerInputReader.cs</div>
+      <ul class="impl-list">
+        <li><strong>Input System 래퍼</strong> — InputSystem_Actions 인스턴스 관리, 이벤트 구독</li>
+        <li><strong>MoveInput (Vector2)</strong> — 방향키/WASD 입력값 노출</li>
+        <li><strong>DashInput (bool)</strong> — D키 Dash 액션 이벤트 처리</li>
+        <li><strong>SprintInput (bool)</strong> — 스프린트 상태 bool 노출</li>
+        <li>PlayerMovement에서 this 컴포넌트 참조로 입력 분리</li>
+      </ul>
+    </div>
+    <div class="impl-card">
+      <div class="impl-card-title">🎥 PlayerCameraZoom.cs</div>
+      <ul class="impl-list">
+        <li><strong>쿼터뷰 카메라 기본 셋업</strong></li>
+        <li>스크롤 입력으로 카메라 줌인/줌아웃 처리</li>
+        <li>최소/최대 줌 거리 클램프</li>
+        <li>Cinemachine 미사용, 직접 Transform 조작 방식</li>
+      </ul>
+    </div>
+    <div class="impl-card">
+      <div class="impl-card-title">🎞 PlayerController.controller</div>
+      <ul class="impl-list">
+        <li><strong>Idle → Walk → Sprint</strong> 상태 전이 구성</li>
+        <li><strong>Dash 상태</strong> 별도 트리거 전이 추가</li>
+        <li>파라미터 : Speed (float), IsDashing (bool)</li>
+        <li>Human Melee Animations 에셋 클립 연결</li>
+      </ul>
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-title">구현 구조 요약 — 스크립트 아키텍처</div>
+    <pre>
+[PlayerInputReader.cs]          [PlayerCameraZoom.cs]
+  InputSystem_Actions             Cinemachine 미사용
+  MoveInput: Vector2              Mouse Scroll → Zoom
+  DashInput: bool                 Clamp Min/Max Dist
+         ↓
+[PlayerMovement.cs]
+  CharacterController
+  Move(direction * speed)
+  Dash() → 순간이동 + 쿨다운
+  Sprint → speed 배속
+  Animator.SetFloat("Speed", ...)
+  Animator.SetBool("IsDashing", ...)
+         ↓
+[PlayerController.controller]
+  Idle ←→ Walk ←→ Sprint
+  Dash (Trigger)
+    </pre>
+  </div>
+</section>
+
+<section id="issues">
+  <div class="sec-header">
+    <span class="sec-num">04</span>
+    <h2 class="sec-title">이슈 &amp; 미결 사항</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="issue-item">
+    <div class="issue-label">OPEN</div>
+    <div class="issue-text"><strong>대시 vs 스프린트 시스템 미확정</strong> — 현재 둘 다 구현되어 있으나, GDD 기준 대시는 D키 단발 회피이고 스프린트는 별도 정의가 없음. D2에 방향성 확정 후 불필요한 코드 정리 권장.</div>
+  </div>
+  <div class="issue-item" style="border-left-color: var(--yellow);">
+    <div class="issue-label" style="color:var(--yellow);">TODO</div>
+    <div class="issue-text"><strong>쿼터뷰 카메라 고정 앵글 확정</strong> — PlayerCameraZoom에 줌 기능이 구현되어 있으나, GDD는 "쿼터뷰 고정 카메라" 명세. 줌 허용 여부 결정 필요.</div>
+  </div>
+  <div class="issue-item" style="border-left-color: var(--text-dim);">
+    <div class="issue-label" style="color:var(--text-dim);">D2</div>
+    <div class="issue-text"><strong>Space 기본 공격 구현 남음</strong> — D1~2 계획 중 Space 공격이 미구현 상태. D2에 PlayerAttack.cs 추가 예정.</div>
+  </div>
+</section>
+
+<section id="tomorrow">
+  <div class="sec-header">
+    <span class="sec-num">05</span>
+    <h2 class="sec-title">D2 계획 (2026.05.20)</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="impl-grid">
+    <div class="impl-card" style="border-color: rgba(74,158,255,0.3);">
+      <div class="impl-card-title" style="color:var(--blue);">⚔ Space 기본 공격 구현</div>
+      <ul class="impl-list">
+        <li>PlayerAttack.cs 생성</li>
+        <li>Space 키 InputAction 연결</li>
+        <li>Hitbox (Sphere/Box Cast) 피격 판정</li>
+        <li>공격 애니메이션 컨트롤러 연결</li>
+      </ul>
+    </div>
+    <div class="impl-card" style="border-color: rgba(74,158,255,0.3);">
+      <div class="impl-card-title" style="color:var(--blue);">🔧 대시 / 스프린트 확정 &amp; 정리</div>
+      <ul class="impl-list">
+        <li>GDD 기준 D키 대시만 유지 or 스프린트 병행 결정</li>
+        <li>결정 후 PlayerMovement.cs 코드 정리</li>
+        <li>대시 쿨다운 UI 반영 여부 확인</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Dev Log D1 &nbsp;·&nbsp; <span>김경일의 모험 : Origin</span> &nbsp;·&nbsp; 2026.05.19 &nbsp;·&nbsp;
+  <a href="https://github.com/Devel-Rocket-ClassRoom/minigame-project-garidana-collab" style="color:var(--gold-dim); text-decoration:none;">GitHub ↗</a>
+</footer>
+
+</body>
+</html>
