@@ -3,10 +3,39 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputReader : MonoBehaviour
 {
+    private const string PlayerActionMapName = "Player";
+
+    private PlayerInput _playerInput;
+
     public Vector2 MoveInput { get; private set; }
     public bool AttackRequested { get; private set; }
     public bool DashRequested { get; private set; }
     public bool IsSprinting { get; private set; }
+
+    private void Awake()
+    {
+        _playerInput = GetComponent<PlayerInput>();
+    }
+
+    private void OnEnable()
+    {
+        EnablePlayerActionMap();
+    }
+
+    private void EnablePlayerActionMap()
+    {
+        if (_playerInput == null || _playerInput.actions == null)
+        {
+            return;
+        }
+
+        if (_playerInput.currentActionMap != null && _playerInput.currentActionMap.name == PlayerActionMapName)
+        {
+            return;
+        }
+
+        _playerInput.SwitchCurrentActionMap(PlayerActionMapName);
+    }
 
     public void OnMove(InputValue value)
     {

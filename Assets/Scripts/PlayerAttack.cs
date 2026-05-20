@@ -1,9 +1,10 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerAttack : MonoBehaviour
 {
     [SerializeField]
-    private int[] _comboDamages = { 10, 12, 18 };
+    private float[] _comboDamageMultipliers = { 1.0f, 1.2f, 1.8f };
 
     [SerializeField]
     private float[] _attackDurations = { 0.55f, 0.6f, 0.75f };
@@ -38,6 +39,7 @@ public class PlayerAttack : MonoBehaviour
 
     private PlayerInputReader _playerInput;
     private PlayerMovement _playerMovement;
+    private PlayerStats _playerStats;
     private Animator _animator;
 
     private float _pendingHitTime;
@@ -56,7 +58,14 @@ public class PlayerAttack : MonoBehaviour
     {
         _playerInput = GetComponent<PlayerInputReader>();
         _playerMovement = GetComponent<PlayerMovement>();
+        _playerStats = GetComponent<PlayerStats>();
         _animator = GetComponent<Animator>();
+
+        if (_playerStats == null)
+        {
+            _playerStats = gameObject.AddComponent<PlayerStats>();
+            Debug.LogWarning("PlayerStats was missing on PlayerAttack object, so it was added at runtime.");
+        }
     }
 
     private void Update()
@@ -127,6 +136,10 @@ public class PlayerAttack : MonoBehaviour
         _pendingHitComboStep = _comboStep;
         _hasPendingHit = true;
 
+        Debug.Log(
+            $"Player attack started. ComboStep: {_comboStep}, AttackPower: {GetAttackPower()}, ExpectedDamage: {CalculateDamage(_comboStep)}"
+        );
+
         if (_animator != null)
         {
             _animator.CrossFadeInFixedTime(AttackStateHashes[_comboStep - 1], 0.05f);
@@ -157,6 +170,7 @@ public class PlayerAttack : MonoBehaviour
             QueryTriggerInteraction.Ignore
         );
 
+        int validTargetCount = 0;
         for (int i = 0; i < hitCount; i++)
         {
             Collider target = _hitResults[i];
@@ -165,9 +179,41 @@ public class PlayerAttack : MonoBehaviour
                 continue;
             }
 
-            int damage = GetComboValue(_comboDamages, comboStep, 10);
-            target.SendMessageUpwards("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
+            validTargetCount++;
+            int damage = CalculateDamage(comboStep);
+            IDamageable damageable = target.GetComponentInParent<IDamageable>();
+            if (damageable == null)
+            {
+                Debug.Log(
+                    $"Player hit collider, but target is not damageable. Target: {target.name}, ComboStep: {comboStep}, Damage: {damage}"
+                );
+                continue;
+            }
+
+            Debug.Log(
+                $"Player hit damageable target. Target: {target.name}, ComboStep: {comboStep}, AttackPower: {GetAttackPower()}, Damage: {damage}"
+            );
+            damageable.TakeDamage(damage);
         }
+
+        if (validTargetCount == 0)
+        {
+            Debug.Log(
+                $"Player attack found no valid targets. ComboStep: {comboStep}, HitCenter: {hitCenter}, HitRadius: {_hitRadius}, RawHitCount: {hitCount}"
+            );
+        }
+    }
+
+    private int CalculateDamage(int comboStep)
+    {
+        int attackPower = GetAttackPower();
+        float multiplier = GetComboValue(_comboDamageMultipliers, comboStep, 1.0f);
+        return Mathf.RoundToInt(attackPower * multiplier);
+    }
+
+    private int GetAttackPower()
+    {
+        return _playerStats != null ? _playerStats.AttackPower : 10;
     }
 
     private static T GetComboValue<T>(T[] values, int comboStep, T fallback)
