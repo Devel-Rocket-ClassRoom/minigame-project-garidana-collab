@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputReader : MonoBehaviour
 {
-    private const string PlayerActionMapName = "Player";
+    private const string PlayerActionMapName = "kaMap";
 
     private PlayerInput _playerInput;
 
