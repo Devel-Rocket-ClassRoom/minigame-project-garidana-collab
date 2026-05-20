@@ -3,12 +3,12 @@ using UnityEngine;
 public class MonsterStats : MonoBehaviour, IDamageable
 {
     [SerializeField]
-    private int _maxHealth = 50;
+    private float _maxHealth = 50;
 
-    private int _currentHealth;
+    private float _currentHealth;
 
-    public int MaxHealth => _maxHealth;
-    public int CurrentHealth => _currentHealth;
+    public float MaxHealth => _maxHealth;
+    public float CurrentHealth => _currentHealth;
     private Animator _animator;
 
     private void Awake()
@@ -17,7 +17,7 @@ public class MonsterStats : MonoBehaviour, IDamageable
         _animator = GetComponentInChildren<Animator>();
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         _currentHealth = Mathf.Max(0, _currentHealth - damage);
 

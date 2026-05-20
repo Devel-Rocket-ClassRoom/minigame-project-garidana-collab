@@ -206,14 +206,14 @@ public class PlayerAttack : MonoBehaviour
 
     private int CalculateDamage(int comboStep)
     {
-        int attackPower = GetAttackPower();
+        float attackPower = GetAttackPower();
         float multiplier = GetComboValue(_comboDamageMultipliers, comboStep, 1.0f);
         return Mathf.RoundToInt(attackPower * multiplier);
     }
 
-    private int GetAttackPower()
+    private float GetAttackPower()
     {
-        return _playerStats != null ? _playerStats.AttackPower : 10;
+        return _playerStats != null ? _playerStats.AttackPower : 10f;
     }
 
     private static T GetComboValue<T>(T[] values, int comboStep, T fallback)
