@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;   
 
@@ -5,7 +6,6 @@ public class MonsterHpBar : MonoBehaviour
 {
     [SerializeField]
     private Slider hpSlider;
-
     private Transform _cam;
     private BaseMonster _monster;
 
@@ -22,6 +22,14 @@ public class MonsterHpBar : MonoBehaviour
             UpdateBar(1f);
         }
 
+    }
+
+    private void Update()
+    {
+        if (_monster.IsDead)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private void LateUpdate()
@@ -41,4 +49,6 @@ public class MonsterHpBar : MonoBehaviour
             _monster.OnHpChanged -= UpdateBar;
         }
     }
+
+
 }

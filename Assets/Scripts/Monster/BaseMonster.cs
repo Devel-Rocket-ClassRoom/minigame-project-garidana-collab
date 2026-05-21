@@ -1,26 +1,43 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 
 public class BaseMonster : MonoBehaviour, IDamageable
 {
+    // 몬스터 데이터 Scriptable Object 가져옴
     public MonsterData data;
 
+    // 몬스터 머리위 체력 바 연결 해줄 이벤트 
     public event System.Action<float> OnHpChanged;
 
+    // 몬스터 애니메이션 연결 파라미터
     static readonly int ParamMove = Animator.StringToHash("isMoving"); 
     static readonly int ParamAttack = Animator.StringToHash("Attack");
     static readonly int ParamTakeDamage = Animator.StringToHash("TakeDamage");
     static readonly int ParamDeath = Animator.StringToHash("Death");   
     static readonly int ParamIsDead = Animator.StringToHash("isDead"); 
 
+    // 참조 요소 (NavMeshAgent, 애니메이터, 플레이어 위치정보)
     protected NavMeshAgent agent;
     protected Animator animator;
     protected Transform player;
 
-    float currentHp;
-    bool isDead;
-    float lastAttackTime;
+    private float currentHp;
+    private bool isDead;
+    private float lastAttackTime;
+
+    // 배회 시작 및 타겟 지점
+    private Vector3 patrolStartPos;
+    private Vector3 patrolTargetPos;
+    private bool patrolInitialized;
+    private bool patrolGoingForward = true;
+    private float nextPatrolTime;
+
+    [SerializeField]
+    private float patrolDistance = 3f;
+
+    public bool IsDead => isDead;
 
     private void Awake()
     {
@@ -30,6 +47,8 @@ public class BaseMonster : MonoBehaviour, IDamageable
 
         currentHp = data.maxHp;
         agent.speed = data.moveSpeed;
+
+        patrolStartPos = transform.position;
     }
 
     private void Update()
@@ -38,14 +57,17 @@ public class BaseMonster : MonoBehaviour, IDamageable
 
         float dist = Vector3.Distance(transform.position, player.position);
 
+        // 공격 범위 내 들어올 시 공격 (TryAttack)
         if (dist <= data.attackRange)
         {
             TryAttack();
         }
+        // 감지 범위 내 들어올 시 추격 (ChasePlayer)
         else if (dist <= data.detectionRange)
         {
             ChasePlayer();
         }
+        // 평상시엔 정해진 구역 배회
         else
         {
             Patrol();
@@ -59,10 +81,37 @@ public class BaseMonster : MonoBehaviour, IDamageable
         animator.SetBool(ParamMove, true);
     }
 
+    // 배회 
     private void Patrol()
     {
-        agent.ResetPath();
-        animator.SetBool(ParamMove, false);
+        if (!patrolInitialized)
+        {
+            patrolInitialized = true;
+            patrolStartPos = transform.position;
+            patrolTargetPos = patrolStartPos + transform.forward * patrolDistance;
+            nextPatrolTime = Time.time + Random.Range(1f, 10f);
+        }
+
+        if (Time.time < nextPatrolTime)
+        {
+            animator.SetBool(ParamMove, false);
+            return;
+        }
+
+        Vector3 target = patrolGoingForward ? patrolTargetPos : patrolStartPos;
+
+        agent.SetDestination(target);
+
+        animator.SetBool(ParamMove, true);
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            patrolGoingForward = !patrolGoingForward;
+            nextPatrolTime = Time.time + Random.Range(1f, 10f);
+
+            agent.ResetPath();
+            animator.SetBool(ParamMove, false);
+        }
     }
 
     // 몬스터 공격
@@ -78,6 +127,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
         animator.SetTrigger(ParamAttack);
     }
 
+    // 실제 몬스터 공격. 애니메이션 이벤트에 연결해서 모션과 타격 시점 연동
     public void OnAttackHit()
     {
         float dist = Vector3.Distance(transform.position, player.position);
@@ -88,7 +138,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
         }
     }
 
-
+    // IDamageable에서 상속받은 피격 함수
     public void TakeDamage(float damage)
     {
         if (isDead) return;
@@ -107,12 +157,16 @@ public class BaseMonster : MonoBehaviour, IDamageable
     {
         isDead = true;
         agent.enabled = false;
-        animator.SetBool("isDead", true);
+        //animator.SetBool("isDead", true);
+        animator.SetTrigger(ParamIsDead);
         animator.SetTrigger(ParamDeath);
 
         ProcessDrop();
 
-        Destroy(gameObject, 3f);
+        StartCoroutine(SinkAndDestroy());
+        // 지금은 몬스터 사망 자연스럽게 땅속으로 사라지게 하기 위함
+        // 나중엔 Destroy 다시 살려서 이펙트추가 할 예정
+        //Destroy(gameObject, 3f);
     }
 
     // 몬스터 골드 및 경험치 드롭
@@ -140,4 +194,24 @@ public class BaseMonster : MonoBehaviour, IDamageable
         // item.worldPrefab은 ItemData에 등록된 아이템 프리팹
         //Instantiate(item.worldPrefab, transform.position, Vector3.up * 0.5f, Quaternion.identity);
     }
+
+    private IEnumerator SinkAndDestroy()
+    {
+        yield return new WaitForSeconds(1f);
+
+        float sinkDuration = 2f;
+        float elapsed = 0f;
+
+        Vector3 startPosition = transform.position;
+        Vector3 endPosition = startPosition + Vector3.down * 1.5f;
+
+        while (elapsed < sinkDuration)
+        {
+            elapsed += Time.deltaTime;
+            transform.position = Vector3.Lerp(startPosition, endPosition, elapsed / sinkDuration);
+            yield return null;
+        }
+
+            Destroy(gameObject);
+        }
 }
