@@ -10,6 +10,15 @@ public class PlayerStats : MonoBehaviour, IDamageable
     private float _attackPower = 10;
 
     [SerializeField]
+    private float _maxStamina = 100f;
+
+    [SerializeField]
+    private float _staminaRegenDelay = 2f;
+
+    [SerializeField]
+    private float _staminaRegenRate = 40f;
+
+    [SerializeField]
     private float _damageInvincibleDuration = 0.5f;
 
     [SerializeField]
@@ -18,6 +27,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
     private int _level = 1;
     private int _currentExp = 0;
     private int _gold = 0;
+    private float _currentStamina = 30f;
+    private float _lastStaminaUsedTime = -999f;
     
     private float _lastDamagedTime = -999f;
     private float _currentHealth;
@@ -27,6 +38,11 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public float MaxHealth => _maxHealth;
     public float CurrentHealth => _currentHealth;
     public float AttackPower => _attackPower;
+
+    public bool IsDead => _isDead;
+    public float MaxStamina => _maxStamina;
+    public float CurrentStamina => _currentStamina;
+    public bool HasStamina => _currentStamina > 0f;
     public int Level => _level;
     public int CurrentExp => _currentExp;
     public int ExpToLevelUp => _expToLevelUp;
@@ -36,8 +52,50 @@ public class PlayerStats : MonoBehaviour, IDamageable
     private void Awake()
     {
         _currentHealth = _maxHealth;
+        _currentStamina = _maxStamina;
         _animator = GetComponent<Animator>();
     }
+
+    private void Update()
+    {
+        StaminaRegen();
+    }
+
+    // 스태미나 회복 함수
+    private void StaminaRegen()
+    {
+        if (Time.time < _lastStaminaUsedTime + _staminaRegenDelay)
+        {
+            return;
+        }
+
+        if (_currentStamina < _maxStamina)
+        {
+            _currentStamina = Mathf.Min(
+                _maxStamina,
+                _currentStamina + _staminaRegenRate * Time.deltaTime
+            );
+        }
+    }
+
+    // 스태미나 사용 
+    public bool TryUseStamina(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return true;
+        }
+
+        if (_currentStamina < amount)
+        {
+            return false;
+        }
+
+        _currentStamina = Mathf.Max(0f, _currentStamina - amount);
+        _lastStaminaUsedTime = Time.time;
+        return true;
+    }
+
 
     public void IncreaseAttackPower(float amount)
     {
@@ -52,21 +110,27 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
     public void TakeDamage(float damage)
     {
+        if (_isDead) return;
+
         if (Time.time < _lastDamagedTime + _damageInvincibleDuration)
         {
             return;
         }
         _lastDamagedTime = Time.time;
         _currentHealth = Mathf.Max(0, _currentHealth - damage);
+
+        if (_currentHealth <= 0)
+        {
+            Die();
+            return;
+        }
+
         _animator.SetTrigger("isHit");
         Debug.Log(
             $"{name} took damage. Damage: {damage}, CurrentHealth: {_currentHealth}/{_maxHealth}"
         );
 
-        if (_currentHealth <= 0)
-        {
-            Die();
-        }
+        
     }
 
     public void AddGold(int amount)
@@ -122,8 +186,12 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
     private void Die()
     {
-        Debug.Log($"{name} died.");
+        if (_isDead) return;
+
         _isDead = true;
+        _currentHealth = 0f;
+
+        Debug.Log($"{name} died.");
         _animator.SetTrigger("Dead");
     }
 }
