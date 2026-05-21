@@ -1,5 +1,6 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+using System;
+
 
 public class PlayerStats : MonoBehaviour, IDamageable
 {
@@ -47,6 +48,9 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public int CurrentExp => _currentExp;
     public int ExpToLevelUp => _expToLevelUp;
     public int Gold => _gold;
+
+
+    public event Action Died;
 
 
     private void Awake()
@@ -193,5 +197,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
         Debug.Log($"{name} died.");
         _animator.SetTrigger("Dead");
+
+        // 플레이어 사망 이벤트 발생
+        Died?.Invoke();
     }
 }

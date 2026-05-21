@@ -70,6 +70,12 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        if (_playerStats != null && _playerStats.IsDead)
+        {
+            _playerInput.UseAttackInput();
+            return;
+        }
+
         if (_playerInput.AttackRequested)
         {
             TryAttack();
