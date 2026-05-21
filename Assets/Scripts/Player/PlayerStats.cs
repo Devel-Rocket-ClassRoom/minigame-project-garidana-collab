@@ -29,6 +29,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public float AttackPower => _attackPower;
     public int Level => _level;
     public int CurrentExp => _currentExp;
+    public int ExpToLevelUp => _expToLevelUp;
     public int Gold => _gold;
 
 
