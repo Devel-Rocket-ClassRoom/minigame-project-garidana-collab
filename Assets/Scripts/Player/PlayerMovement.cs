@@ -43,6 +43,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (_playerStats != null && _playerStats.IsDead)
+        {
+            _playerDirection = Vector3.zero;
+            return;
+        }
+
+
         _playerDirection = new Vector3(_playerInput.MoveInput.x, 0f, _playerInput.MoveInput.y).normalized;
 
         // Dash Logic - Always consume input to prevent "buffering" multiple dashes
@@ -61,6 +68,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_playerStats != null && _playerStats.IsDead)
+        {
+            return;
+        }
+
         Move();
     }
 
