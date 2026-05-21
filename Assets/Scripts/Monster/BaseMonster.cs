@@ -11,7 +11,8 @@ public class BaseMonster : MonoBehaviour, IDamageable
     static readonly int ParamMove = Animator.StringToHash("isMoving"); 
     static readonly int ParamAttack = Animator.StringToHash("Attack");
     static readonly int ParamTakeDamage = Animator.StringToHash("TakeDamage");
-    static readonly int ParamDeath = Animator.StringToHash("Death");    
+    static readonly int ParamDeath = Animator.StringToHash("Death");   
+    static readonly int ParamIsDead = Animator.StringToHash("isDead"); 
 
     protected NavMeshAgent agent;
     protected Animator animator;
@@ -106,6 +107,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
     {
         isDead = true;
         agent.enabled = false;
+        animator.SetBool("isDead", true);
         animator.SetTrigger(ParamDeath);
 
         ProcessDrop();

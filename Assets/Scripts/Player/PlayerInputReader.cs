@@ -3,14 +3,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputReader : MonoBehaviour
 {
-    private const string PlayerActionMapName = "kaMap";
+    private const string PlayerActionMapName = "Player";
 
     private PlayerInput _playerInput;
 
     public Vector2 MoveInput { get; private set; }
     public bool AttackRequested { get; private set; }
     public bool DashRequested { get; private set; }
-    public bool IsSprinting { get; private set; }
 
     private void Awake()
     {
@@ -42,11 +41,8 @@ public class PlayerInputReader : MonoBehaviour
         MoveInput = value.Get<Vector2>();
     }
 
-    public void OnSprint(InputValue value)
+    public void OnDash(InputValue value)
     {
-        IsSprinting = value.isPressed;
-        
-        // Dash is requested only on the initial press
         if (value.isPressed)
         {
             DashRequested = true;
