@@ -6,9 +6,6 @@ public class PlayerMovement : MonoBehaviour
     private float _moveSpeed = 5f;
 
     [SerializeField]
-    private float _sprintSpeed = 10f;
-
-    [SerializeField]
     private float _dashDistance = 7f;
 
     [SerializeField]
@@ -18,12 +15,16 @@ public class PlayerMovement : MonoBehaviour
     private float _dashCooldown = 0.5f;
 
     [SerializeField]
+    private float _dashStaminaCost = 20f;
+
+    [SerializeField]
     private float _rotateSpeed = 10f;
 
     private Vector3 _playerDirection;
     private PlayerInputReader _playerInput;
     private Rigidbody _playerRigidbody;
     private Animator _animator;
+    private PlayerStats _playerStats;
 
     private bool _isDashing;
     private float _dashTimeRemaining;
@@ -37,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
         _playerInput = GetComponent<PlayerInputReader>();
         _playerRigidbody = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
+        _playerStats = GetComponent<PlayerStats>();
     }
 
     private void Update()
@@ -64,6 +66,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartDash()
     {
+        if (_playerStats != null && !_playerStats.TryUseStamina(_dashStaminaCost))
+        {
+            return;
+        }
+
         _isDashing = true;
         _dashTimeRemaining = _dashDuration;
         _lastDashTime = Time.time;
@@ -95,15 +102,8 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            // Transition to Sprint only if moving and Shift is still held
-            float currentSpeed = _moveSpeed;
-            if (_playerInput.IsSprinting && _playerDirection.magnitude > 0.1f)
-            {
-                currentSpeed = _sprintSpeed;
-            }
-
             Vector3 nextPosition =
-                _playerRigidbody.position + _playerDirection * currentSpeed * Time.fixedDeltaTime;
+                _playerRigidbody.position + _playerDirection * _moveSpeed * Time.fixedDeltaTime;
 
             _playerRigidbody.MovePosition(nextPosition);
         }
@@ -131,8 +131,8 @@ public class PlayerMovement : MonoBehaviour
 
         float targetSpeed = 0f;
         
-        // Use full Sprint animation speed (1.0) for both Dash and Sprint
-        if (_isDashing || (_playerInput.IsSprinting && _playerDirection.magnitude > 0.1f))
+        // Use full movement animation speed during dash.
+        if (_isDashing)
         {
             targetSpeed = 1.0f;
         }
