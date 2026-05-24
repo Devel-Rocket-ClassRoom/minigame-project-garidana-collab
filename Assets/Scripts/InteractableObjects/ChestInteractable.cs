@@ -1,16 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Chest : MonoBehaviour
+public class ChestInteractable : MonoBehaviour, IInteractable
 {
     public GameObject lid;
     public GameObject body;
-    public GameObject chestInventory;
-    public List<ItemData> itemDataList = new();
 
-    private GameObject player;
-    public float interactableRange = 1f;
+
+    private string _interactionPtompt = "Open Chest";
+
 
     [Header("Lid Open Settings")]
     public Vector3 openAngle = new Vector3(-90f, 0f, 0f); // 인스펙터에서 조절
@@ -19,11 +17,13 @@ public class Chest : MonoBehaviour
     private bool isOpen = false;
     private bool isAnimating = false;
 
+    public string InteractionPrompt => _interactionPtompt;
+
+    public Transform Transform => transform;
+
     private void Awake()
     {
-        player = GameObject.FindWithTag("Player");
-        chestInventory.SetActive(false);
-        //GenerateRandomItemInChest();
+
     }
 
     private void Update()
@@ -75,15 +75,25 @@ public class Chest : MonoBehaviour
         isAnimating = false;
     }
 
-    public void OpenChestInv()
+    // public void OpenChestInv()
+    // {
+    //     chestInventory.SetActive(true);
+    //     Debug.Log("OpenChestInv called / chestInventory: " + chestInventory);
+    // }
+
+    // public void CloseChestInv()
+    // {
+    //     chestInventory.SetActive(false);
+    // }
+
+    public bool CanInteract(GameObject interactor)
     {
-        chestInventory.SetActive(true);
-        Debug.Log("OpenChestInv called / chestInventory: " + chestInventory);
+        return !isOpen && !isAnimating;
     }
 
-    public void CloseChestInv()
+    public void Interact(GameObject interactor)
     {
-        chestInventory.SetActive(false);
+        OpenLid();
     }
 
     // private void GenerateRandomItemInChest()

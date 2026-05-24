@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d79af6fa1e5bd6a4e848dd5b9a848f9a, type: 3}
   m_Name: Egglet_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
-  maxHp: 25
+  maxHp: 20
   attackDamage: 10
   moveSpeed: 5
   detectionRange: 3
   attackRange: 1.5
   attackCooldown: 2
-  goldMin: 3
+  goldMin: 5
   goldMax: 10
   expReward: 10
   questDrops: []
