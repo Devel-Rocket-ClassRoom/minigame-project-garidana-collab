@@ -104,6 +104,7 @@ public class PlayerInputReader : MonoBehaviour
         if (value.isPressed)
         {
             InteractPressed?.Invoke();
+            // Debug.Log ("OnInteract working");
         }
     }
 }

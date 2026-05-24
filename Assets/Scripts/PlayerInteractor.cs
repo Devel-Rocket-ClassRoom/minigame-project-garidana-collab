@@ -9,7 +9,11 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField]
     private InteractionUi _interactionUi;
 
-    private readonly List<IInteractable> _candidates = new();
+    [SerializeField]
+    private float _interactRadius = 2f;
+
+    [SerializeField]
+    private LayerMask _interactableLayer;
 
     private IInteractable _currentTarget;
 
@@ -43,25 +47,6 @@ public class PlayerInteractor : MonoBehaviour
         RefreshInteractionUi();
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent<IInteractable>(out var interactable))
-        {
-            if (!_candidates.Contains(interactable))
-            {
-                _candidates.Add(interactable);
-            }
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.TryGetComponent<IInteractable>(out var interactable))
-        {
-            _candidates.Remove(interactable);
-        }
-    }
-
     private void TryInteract()
     {
         if (_currentTarget == null) return;
@@ -69,6 +54,7 @@ public class PlayerInteractor : MonoBehaviour
         if (!_currentTarget.CanInteract(gameObject)) return;
 
         _currentTarget.Interact(gameObject);
+        Debug.Log("TryInteract working");
     }
 
     private void RefreshCurrentTarget()
@@ -76,22 +62,38 @@ public class PlayerInteractor : MonoBehaviour
         _currentTarget = null;
         float closestDistance = float.MaxValue;
 
-        foreach (var candidate in _candidates)
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            _interactRadius,
+            _interactableLayer
+        );
+
+        foreach (var hit in hits)
         {
-            if (candidate == null) continue;
+            if (!hit.TryGetComponent<IInteractable>(out var interactable))
+            {
+                interactable = hit.GetComponent<IInteractable>();
+            }
 
-            if (!candidate.CanInteract(gameObject)) continue;
+            if (interactable == null)
+            {
+                continue;
+            }
 
-            float distance = Vector3.Distance(transform.position, candidate.Transform.position);
+            if (!interactable.CanInteract(gameObject))
+            {
+                continue;
+            }
+
+            float distance = Vector3.Distance(transform.position, interactable.Transform.position);
 
             if (distance < closestDistance)
             {
                 closestDistance = distance;
-                _currentTarget = candidate;
-            }  
+                _currentTarget = interactable;
+            }
         }
-    }
-    
+    }    
     private void RefreshInteractionUi()
     {
         if (_interactionUi == null) return; 
@@ -104,4 +106,12 @@ public class PlayerInteractor : MonoBehaviour
         
         _interactionUi.Show(_currentTarget.InteractionPrompt);
     }
+    
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, _interactRadius);
+    }
 }
+
+

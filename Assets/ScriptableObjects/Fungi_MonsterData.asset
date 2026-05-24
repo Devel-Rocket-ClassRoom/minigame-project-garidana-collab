@@ -18,7 +18,7 @@ MonoBehaviour:
   detectionRange: 7
   attackRange: 1.5
   attackCooldown: 3
-  goldMin: 10
+  goldMin: 20
   goldMax: 30
   expReward: 25
   questDrops: []
