@@ -184,7 +184,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public void LevelUp()
     {
         _level++;
-        Debug.Log($"레벨업! 현재 레벨: {_level}");
+        IncreaseAttackPower(2f);
+        Debug.Log($"레벨업! 현재 레벨: {_level}, 현재 공격력: {_attackPower}");
         // 나중에 레벨업 이펙트 UI 추가
     }
 
