@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class PlayerInputReader : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class PlayerInputReader : MonoBehaviour
     public Vector2 MoveInput { get; private set; }
     public bool AttackRequested { get; private set; }
     public bool DashRequested { get; private set; }
+
+    public event Action InteractPressed;
 
     private void Awake()
     {
@@ -93,6 +96,15 @@ public class PlayerInputReader : MonoBehaviour
         if (value.isPressed)
         {
             AttackRequested = true;
+        }
+    }
+
+    public void OnInteract (InputValue value)
+    {
+        if (value.isPressed)
+        {
+            InteractPressed?.Invoke();
+            // Debug.Log ("OnInteract working");
         }
     }
 }
