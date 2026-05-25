@@ -86,6 +86,13 @@ public class PlayerMovement : MonoBehaviour
         }
 
         Move();
+
+        Vector3 velocity = _playerRigidbody.linearVelocity;
+        if (velocity.y > 0f)
+        {
+            velocity.y = 0f;
+            _playerRigidbody.linearVelocity = velocity;
+        }
     }
 
     private void StartDash()
