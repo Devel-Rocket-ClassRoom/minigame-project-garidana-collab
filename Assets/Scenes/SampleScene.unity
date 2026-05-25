@@ -1110,7 +1110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d6f2327bd2a3c54bbb8859ed7f95ef4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashUi
-  coolDownImage: {fileID: 0}
   playerMovement: {fileID: 7266921804891619153}
 --- !u!4 &375724366 stripped
 Transform:
@@ -2891,7 +2890,7 @@ GameObject:
   - component: {fileID: 736629762}
   - component: {fileID: 736629761}
   m_Layer: 5
-  m_Name: Count
+  m_Name: CountText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5085,6 +5084,7 @@ GameObject:
   - component: {fileID: 1267142762}
   - component: {fileID: 1267142764}
   - component: {fileID: 1267142763}
+  - component: {fileID: 1267142765}
   m_Layer: 5
   m_Name: HpOnImage
   m_TagString: Untagged
@@ -5149,6 +5149,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267142761}
   m_CullTransparentMesh: 1
+--- !u!114 &1267142765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267142761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 044ad1773e7508246bece4d68af94e35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HpRegenUi
+  playerHealing: {fileID: 7266921804891619154}
+  _countText: {fileID: 736629761}
 --- !u!1 &1278356504
 GameObject:
   m_ObjectHideFlags: 0
@@ -8673,7 +8687,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1361530536063904997, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _maxHealth
-      value: 1000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1421804474096518049, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_Enabled
@@ -8747,6 +8761,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 66929614204128028, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7266921804891619151}
+    - targetCorrespondingSourceObject: {fileID: 66929614204128028, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7266921804891619154}
   m_SourcePrefab: {fileID: 100100000, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
 --- !u!114 &7266921804891619150 stripped
 MonoBehaviour:
@@ -8788,6 +8805,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c48d172e5e4924d925b0374f357e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+--- !u!114 &7266921804891619154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264266845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1de42ca880e5a042888ac225df967a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealing
+  playerStats: {fileID: 1350820517}
+  playerInput: {fileID: 7266921804891619150}
+  _maxHealItemCount: 5
+  _healItemCount: 2
+  _healAmount: 20
+  _healCooldown: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

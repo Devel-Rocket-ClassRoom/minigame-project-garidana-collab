@@ -34,18 +34,18 @@ public class OptionMenuUi : MonoBehaviour
         optionPanel.SetActive(nextActive);
 
         // 메뉴 열리면 게임 멈춤 기능
-        Time.timeScale = nextActive ? 0f : 1f;
+        HitStopManager.SetGlobalTimeScale(nextActive ? 0f : 1f);
     }
 
     private void CloseMenu()
     {
         optionPanel.SetActive(false);
-        Time.timeScale = 1f;
+        HitStopManager.SetGlobalTimeScale(1f);
     }
 
     private void QuitGame()
     {
-        Time.timeScale = 1f;
+        HitStopManager.SetGlobalTimeScale(1f);
         Application.Quit();
 
 #if UNITY_EDITOR
