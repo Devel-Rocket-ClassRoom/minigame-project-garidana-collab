@@ -3903,7 +3903,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 200, y: -418.99997}
+  m_AnchoredPosition: {x: 219, y: -442}
   m_SizeDelta: {x: 300, y: 150}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &928260119
@@ -6071,7 +6071,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitStopManager
   _defaultStopScale: 0.0001
-  _logRequests: 0
+  _enableDebugLogs: 1
 --- !u!4 &1555199049
 Transform:
   m_ObjectHideFlags: 0
@@ -8714,6 +8714,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7562994724903984698, guid: 493c5159fec47da48ae3f998b26939c3, type: 3}
+      propertyPath: knockbackDistance
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562994724903984698, guid: 493c5159fec47da48ae3f998b26939c3, type: 3}
+      propertyPath: knockbackDuration
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8871,6 +8879,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   _inputReader: {fileID: 7266921804891619150}
+  _playerStats: {fileID: 0}
   _interactionUi: {fileID: 336640924}
   _interactRadius: 2
   _interactableLayer:

@@ -337,6 +337,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BaseMonster
   data: {fileID: 11400000, guid: b6b3f0935c2cd6f40b85fe6a53ec8fdb, type: 2}
   patrolDistance: 3
+  knockbackDistance: 0.35
+  knockbackDuration: 0.15
 --- !u!54 &8371559551592203718
 Rigidbody:
   m_ObjectHideFlags: 0
