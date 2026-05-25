@@ -52,12 +52,12 @@ public class GameOverUi : MonoBehaviour
         yield return new WaitForSeconds(showDelay);
 
         gameOverPanel.SetActive(true);
-        HitStopManager.SetGlobalTimeScale(0f);
+        PauseManager.Pause();
     }
 
     private void GoTitle()
     {
-        HitStopManager.SetGlobalTimeScale(1f);
+        PauseManager.Resume();
         SceneLoader.Instance.LoadScene(SceneLoader.GameScene.MainTitle);
     }
 }

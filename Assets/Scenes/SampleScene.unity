@@ -8825,11 +8825,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7993034922135069261, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: '_hitStopDurations.Array.data[1]'
-      value: 0.06
+      value: 0.07
       objectReference: {fileID: 0}
     - target: {fileID: 7993034922135069261, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: '_hitStopDurations.Array.data[2]'
-      value: 0.08
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6700376236296183283, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
