@@ -11,6 +11,7 @@ public class PlayerInputReader : MonoBehaviour
     public Vector2 MoveInput { get; private set; }
     public bool AttackRequested { get; private set; }
     public bool DashRequested { get; private set; }
+    public bool HealRequested {get; private set; }
 
     public event Action InteractPressed;
 
@@ -105,6 +106,14 @@ public class PlayerInputReader : MonoBehaviour
         {
             InteractPressed?.Invoke();
             // Debug.Log ("OnInteract working");
+        }
+    }
+
+    public void OnHeal(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            
         }
     }
 }
