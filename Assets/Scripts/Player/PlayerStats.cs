@@ -48,6 +48,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public int CurrentExp => _currentExp;
     public int ExpToLevelUp => _expToLevelUp;
     public int Gold => _gold;
+    public bool CanHeal => !_isDead && _currentHealth < _maxHealth;
 
 
     public event Action Died;
@@ -133,8 +134,17 @@ public class PlayerStats : MonoBehaviour, IDamageable
         Debug.Log(
             $"{name} took damage. Damage: {damage}, CurrentHealth: {_currentHealth}/{_maxHealth}"
         );
+    }
 
-        
+    public bool Heal (float amount)
+    {
+        if (!CanHeal || amount <= 0f)
+        {
+            return false;
+        }
+
+        _currentHealth = Mathf.Min(_maxHealth, _currentHealth + amount);
+        return true;
     }
 
     public void AddGold(int amount)

@@ -58,6 +58,11 @@ public class PlayerInputReader : MonoBehaviour
         DashRequested = false;
     }
 
+    public void UseHealInput()
+    {
+        HealRequested = false;
+    }
+
     public bool PreviousRequested { get; private set; }
     public bool NextRequested { get; private set; }
 
@@ -113,7 +118,7 @@ public class PlayerInputReader : MonoBehaviour
     {
         if (value.isPressed)
         {
-            
+            HealRequested = true;
         }
     }
 }
