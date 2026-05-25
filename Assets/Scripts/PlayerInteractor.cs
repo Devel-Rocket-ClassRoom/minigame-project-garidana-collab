@@ -7,6 +7,9 @@ public class PlayerInteractor : MonoBehaviour
     private PlayerInputReader _inputReader;
 
     [SerializeField]
+    private PlayerStats _playerStats;
+
+    [SerializeField]
     private InteractionUi _interactionUi;
 
     [SerializeField]
@@ -23,6 +26,11 @@ public class PlayerInteractor : MonoBehaviour
         {
             _inputReader = GetComponent<PlayerInputReader>();
         }
+
+        if (_playerStats == null)
+        {
+            _playerStats = GetComponent<PlayerStats>();
+        }
     }
 
     private void OnEnable()
@@ -30,6 +38,11 @@ public class PlayerInteractor : MonoBehaviour
         if (_inputReader != null)
         {
             _inputReader.InteractPressed += TryInteract;
+        }
+
+        if (_playerStats != null)
+        {
+            _playerStats.Died += HandlePlayerDied;
         }
     }
 
@@ -39,6 +52,13 @@ public class PlayerInteractor : MonoBehaviour
         {
             _inputReader.InteractPressed -= TryInteract; 
         }
+
+        if (_playerStats != null)
+        {
+            _playerStats.Died -= HandlePlayerDied;
+        }
+
+        ClearInteraction();
     }
 
     private void Update()
@@ -49,12 +69,20 @@ public class PlayerInteractor : MonoBehaviour
 
     private void TryInteract()
     {
+        if (_playerStats != null && _playerStats.IsDead) return;
+
         if (_currentTarget == null) return;
 
         if (!_currentTarget.CanInteract(gameObject)) return;
 
         _currentTarget.Interact(gameObject);
         Debug.Log("TryInteract working");
+    }
+
+    private void HandlePlayerDied()
+    {
+        ClearInteraction();
+        enabled = false;
     }
 
     private void RefreshCurrentTarget()
@@ -106,6 +134,16 @@ public class PlayerInteractor : MonoBehaviour
         
         _interactionUi.Show(_currentTarget.InteractionPrompt);
     }
+
+    private void ClearInteraction()
+    {
+        _currentTarget = null;
+
+        if (_interactionUi != null)
+        {
+            _interactionUi.Hide();
+        }
+    }
     
     private void OnDrawGizmosSelected()
     {
@@ -113,5 +151,4 @@ public class PlayerInteractor : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, _interactRadius);
     }
 }
-
 

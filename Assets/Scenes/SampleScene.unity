@@ -1110,7 +1110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d6f2327bd2a3c54bbb8859ed7f95ef4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashUi
-  coolDownImage: {fileID: 0}
   playerMovement: {fileID: 7266921804891619153}
 --- !u!4 &375724366 stripped
 Transform:
@@ -2891,7 +2890,7 @@ GameObject:
   - component: {fileID: 736629762}
   - component: {fileID: 736629761}
   m_Layer: 5
-  m_Name: Count
+  m_Name: CountText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3904,7 +3903,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 200, y: -418.99997}
+  m_AnchoredPosition: {x: 219, y: -442}
   m_SizeDelta: {x: 300, y: 150}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &928260119
@@ -5085,6 +5084,7 @@ GameObject:
   - component: {fileID: 1267142762}
   - component: {fileID: 1267142764}
   - component: {fileID: 1267142763}
+  - component: {fileID: 1267142765}
   m_Layer: 5
   m_Name: HpOnImage
   m_TagString: Untagged
@@ -5149,6 +5149,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267142761}
   m_CullTransparentMesh: 1
+--- !u!114 &1267142765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267142761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 044ad1773e7508246bece4d68af94e35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HpRegenUi
+  playerHealing: {fileID: 7266921804891619154}
+  _countText: {fileID: 736629761}
 --- !u!1 &1278356504
 GameObject:
   m_ObjectHideFlags: 0
@@ -6027,6 +6041,52 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1030101342387640033, guid: 6172aa2a6868be747b4250c79d46391b, type: 3}
   m_PrefabInstance: {fileID: 691871775}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1555199047
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1555199049}
+  - component: {fileID: 1555199048}
+  m_Layer: 0
+  m_Name: HitStopManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1555199048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555199047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9638ed32c71ff4399451e215ae7e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitStopManager
+  _defaultStopScale: 0.0001
+  _enableDebugLogs: 1
+--- !u!4 &1555199049
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555199047}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 623.65906, y: 165.80722, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1594159768
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8453,6 +8513,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5830971076378560665, guid: b4636341857d75c4a8c647ebab531879, type: 3}
+      propertyPath: m_LocalScale.z
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6299478525629252268, guid: b4636341857d75c4a8c647ebab531879, type: 3}
+      propertyPath: m_LocalScale.z
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 7142991994227422894, guid: b4636341857d75c4a8c647ebab531879, type: 3}
       propertyPath: m_Name
       value: SampleMap
@@ -8673,10 +8741,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1361530536063904997, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _maxHealth
-      value: 1000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1421804474096518049, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1421804474096518049, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: ffac6312963d040fda07e308edf6c781, type: 2}
+    - target: {fileID: 1776275864287733222, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5072401534506280260, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
@@ -8719,6 +8795,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5755084203130597353, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5755084203130597353, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6433372032673217835, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -8735,6 +8819,18 @@ PrefabInstance:
       propertyPath: m_DefaultControlScheme
       value: Keyboard&Mouse
       objectReference: {fileID: 0}
+    - target: {fileID: 7993034922135069261, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: '_hitStopDurations.Array.data[0]'
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7993034922135069261, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: '_hitStopDurations.Array.data[1]'
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 7993034922135069261, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: '_hitStopDurations.Array.data[2]'
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6700376236296183283, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
     - {fileID: 945021993431353214, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
@@ -8747,6 +8843,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 66929614204128028, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7266921804891619151}
+    - targetCorrespondingSourceObject: {fileID: 66929614204128028, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7266921804891619154}
   m_SourcePrefab: {fileID: 100100000, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
 --- !u!114 &7266921804891619150 stripped
 MonoBehaviour:
@@ -8772,6 +8871,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   _inputReader: {fileID: 7266921804891619150}
+  _playerStats: {fileID: 0}
   _interactionUi: {fileID: 336640924}
   _interactRadius: 2
   _interactableLayer:
@@ -8788,6 +8888,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c48d172e5e4924d925b0374f357e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+--- !u!114 &7266921804891619154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264266845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1de42ca880e5a042888ac225df967a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealing
+  playerStats: {fileID: 1350820517}
+  playerInput: {fileID: 7266921804891619150}
+  _maxHealItemCount: 5
+  _healItemCount: 2
+  _healAmount: 20
+  _healCooldown: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -8805,3 +8923,4 @@ SceneRoots:
   - {fileID: 603830870}
   - {fileID: 452518475}
   - {fileID: 1818454608}
+  - {fileID: 1555199049}

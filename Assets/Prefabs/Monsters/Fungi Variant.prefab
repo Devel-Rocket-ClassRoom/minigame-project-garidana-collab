@@ -216,15 +216,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4558253575626002309, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.55
+      value: -7.5953
       objectReference: {fileID: 0}
     - target: {fileID: 4558253575626002309, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.66583
+      value: -0.9209399
       objectReference: {fileID: 0}
     - target: {fileID: 4558253575626002309, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.5
+      value: 4.24901
       objectReference: {fileID: 0}
     - target: {fileID: 4558253575626002309, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
       propertyPath: m_LocalRotation.w
@@ -270,6 +270,9 @@ PrefabInstance:
       addedObject: {fileID: 8364248589342354186}
     - targetCorrespondingSourceObject: {fileID: 4558253575625511845, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 4842255639828853221}
+    - targetCorrespondingSourceObject: {fileID: 4558253575625511845, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 6722331849355591221}
     - targetCorrespondingSourceObject: {fileID: 4558253575625511845, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
       insertIndex: -1
@@ -307,6 +310,33 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!54 &4842255639828853221
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030101342387735233}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 3
 --- !u!135 &6722331849355591221
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -314,7 +344,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1030101342387735233}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ffac6312963d040fda07e308edf6c781, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

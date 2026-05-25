@@ -27,6 +27,10 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField]
     private LayerMask _hitLayers = ~0;
 
+    // 콘보 히트스탑 시간
+    [SerializeField]
+    private float[] _hitStopDurations = { 0.03f, 0.04f, 0.06f };
+
     private int _comboStep;
     private bool _isAttacking;
     private bool _comboQueued;
@@ -177,6 +181,7 @@ public class PlayerAttack : MonoBehaviour
         );
 
         int validTargetCount = 0;
+        bool dealtDamage = false;
         for (int i = 0; i < hitCount; i++)
         {
             Collider target = _hitResults[i];
@@ -200,6 +205,12 @@ public class PlayerAttack : MonoBehaviour
                 $"Player hit damageable target. Target: {target.name}, ComboStep: {comboStep}, AttackPower: {GetAttackPower()}, Damage: {damage}"
             );
             damageable.TakeDamage(damage);
+            dealtDamage = true;
+        }
+
+        if (dealtDamage)
+        {
+            HitStopManager.Request(GetComboValue(_hitStopDurations, comboStep, 0.03f));
         }
 
         if (validTargetCount == 0)

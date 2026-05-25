@@ -37,6 +37,16 @@ public class BaseMonster : MonoBehaviour, IDamageable
     [SerializeField]
     private float patrolDistance = 3f;
 
+    [Header("Hit Reaction")]
+    [SerializeField]
+    private float knockbackDistance = 0.35f;
+
+    [SerializeField]
+    private float knockbackDuration = 0.8f;
+
+    private bool isKnockbacking;
+    private Coroutine knockbackCoroutine;
+
     public bool IsDead => isDead;
 
     private void Awake()
@@ -53,7 +63,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        if (isDead) return;
+        if (isDead || isKnockbacking) return;
 
         float dist = Vector3.Distance(transform.position, player.position);
 
@@ -130,6 +140,8 @@ public class BaseMonster : MonoBehaviour, IDamageable
     // 실제 몬스터 공격. 애니메이션 이벤트에 연결해서 모션과 타격 시점 연동
     public void OnAttackHit()
     {
+        if (isDead || isKnockbacking) return;
+
         float dist = Vector3.Distance(transform.position, player.position);
 
         if (dist <= data.attackRange)
@@ -150,12 +162,78 @@ public class BaseMonster : MonoBehaviour, IDamageable
         if (currentHp <= 0)
         {
             Die();
+            return;
         }
+
+        StartKnockback();
+    }
+
+    private void StartKnockback()
+    {
+        if (knockbackCoroutine != null)
+        {
+            StopCoroutine(knockbackCoroutine);
+        }
+
+        Vector3 direction = transform.position - player.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude < 0.001f)
+        {
+            direction = -transform.forward;
+        }
+
+        knockbackCoroutine = StartCoroutine(KnockbackRoutine(direction.normalized));
+    }
+
+    private IEnumerator KnockbackRoutine(Vector3 direction)
+    {
+        isKnockbacking = true;
+
+        bool shouldRestoreAgent = agent != null && agent.enabled;
+
+        if (shouldRestoreAgent)
+        {
+            agent.ResetPath();
+            agent.isStopped = true;
+            animator.SetBool(ParamMove, false);
+        }
+
+        float elapsed = 0f;
+        float safeDuration = Mathf.Max(0.01f, knockbackDuration);
+        float speed = knockbackDistance / safeDuration;
+
+        while (!isDead && elapsed < safeDuration)
+        {
+            float delta = Time.unscaledDeltaTime;
+            elapsed += delta;
+
+            Vector3 movement = direction * (speed * delta);
+            if (agent != null && agent.enabled)
+            {
+                agent.Move(movement);
+            }
+            else
+            {
+                transform.position += movement;
+            }
+
+            yield return null;
+        }
+
+        if (!isDead && shouldRestoreAgent && agent != null && agent.enabled)
+        {
+            agent.isStopped = false;
+        }
+
+        isKnockbacking = false;
+        knockbackCoroutine = null;
     }
 
     private void Die()
     {
         isDead = true;
+        isKnockbacking = false;
         agent.enabled = false;
         //animator.SetBool("isDead", true);
         animator.SetTrigger(ParamIsDead);

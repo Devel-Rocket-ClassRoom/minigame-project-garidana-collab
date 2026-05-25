@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>플레이어-몬스터 충돌 튀어오름 현상 분석 보고서</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --paper: #ffffff;
+      --text: #1f2933;
+      --muted: #5f6b7a;
+      --line: #d9dee7;
+      --accent: #2463eb;
+      --accent-soft: #e8f0ff;
+      --warning: #8a4b00;
+      --warning-soft: #fff4df;
+      --danger: #9b1c1c;
+      --danger-soft: #ffe8e8;
+      --success: #17633a;
+      --success-soft: #e5f6ec;
+      --code: #eef1f5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(980px, calc(100% - 32px));
+      margin: 32px auto;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 36px;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.25;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-top: 34px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      font-size: 22px;
+    }
+
+    h3 {
+      margin-top: 24px;
+      font-size: 17px;
+    }
+
+    p {
+      margin: 12px 0;
+    }
+
+    ul, ol {
+      margin: 10px 0 0;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: var(--code);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: 14px 16px;
+      border-radius: 6px;
+      background: #111827;
+      color: #f9fafb;
+      line-height: 1.45;
+    }
+
+    pre code {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+    }
+
+    .meta {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .summary {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--accent);
+      border-radius: 6px;
+      background: var(--accent-soft);
+    }
+
+    .callout {
+      margin: 16px 0;
+      padding: 14px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+    }
+
+    .callout.warning {
+      background: var(--warning-soft);
+      border-color: #f0c36d;
+      color: var(--warning);
+    }
+
+    .callout.danger {
+      background: var(--danger-soft);
+      border-color: #f1a4a4;
+      color: var(--danger);
+    }
+
+    .callout.success {
+      background: var(--success-soft);
+      border-color: #92d4aa;
+      color: var(--success);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0f3f8;
+      font-weight: 700;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .status.done {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .status.pending {
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    @media (max-width: 720px) {
+      main {
+        width: 100%;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        padding: 24px 18px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>플레이어-몬스터 충돌 튀어오름 현상 분석 보고서</h1>
+    <p class="meta">작성일: 2026-05-25 16:14 KST<br>대상 프로젝트: <code>/Users/sang/Documents/GitHub/minigame-project-garidana-collab</code><br>대상 씬: <code>Assets/Scenes/SampleScene.unity</code></p>
+
+    <section class="summary">
+      <h2 style="border-top: 0; margin-top: 0; padding-top: 0;">요약</h2>
+      <p>전투 중 플레이어가 하늘로 솟는 현상은 넉백 코드나 데미지 처리 코드보다는, <strong>동적 Rigidbody 플레이어</strong>와 <strong>NavMeshAgent로 이동하는 non-trigger 몬스터 Collider</strong>가 겹칠 때 Unity 물리 엔진이 겹침을 위쪽으로 보정하면서 발생하는 문제로 판단됩니다.</p>
+      <p>방패 Collider를 <code>isTrigger</code>로 바꿔도 문제가 남는 이유는 플레이어의 본체 <code>CapsuleCollider</code>와 몬스터의 <code>SphereCollider</code>가 여전히 실제 물리 충돌을 하기 때문입니다.</p>
+    </section>
+
+    <h2>확인한 현재 상태</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>확인 내용</th>
+          <th>위험도</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Unity MCP 연결</td>
+          <td>Unity Editor와 MCP 연결 정상. Play Mode에서 상태 조회 가능.</td>
+          <td>낮음</td>
+        </tr>
+        <tr>
+          <td>플레이어</td>
+          <td><code>Player/KyungIl</code>에 동적 <code>Rigidbody</code>, non-trigger <code>CapsuleCollider</code>가 있음. <code>Collision Detection</code>은 <code>Discrete</code>.</td>
+          <td>중간</td>
+        </tr>
+        <tr>
+          <td>플레이어 이동</td>
+          <td><code>PlayerMovement</code>가 <code>Rigidbody.MovePosition</code>으로 이동 및 대쉬를 처리함.</td>
+          <td>중간</td>
+        </tr>
+        <tr>
+          <td>방패</td>
+          <td>방패에 non-trigger <code>BoxCollider</code>가 있었고, 같은 플레이어 Rigidbody의 compound collider처럼 동작할 수 있음.</td>
+          <td>중간</td>
+        </tr>
+        <tr>
+          <td>몬스터</td>
+          <td><code>BaseMonster</code>, <code>NavMeshAgent</code>, non-trigger <code>SphereCollider</code> 조합. Rigidbody는 없음.</td>
+          <td>높음</td>
+        </tr>
+        <tr>
+          <td>레이어 충돌</td>
+          <td><code>Default</code>와 <code>Damageable</code> 레이어가 서로 충돌하도록 설정되어 있음.</td>
+          <td>의도된 상태</td>
+        </tr>
+        <tr>
+          <td>콘솔 경고</td>
+          <td><code>SM_Env_Road_Corner_01</code>에 negative scale이 포함된 <code>BoxCollider</code> 경고가 있음.</td>
+          <td>중간</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>문제가 생기는 흐름</h2>
+    <ol>
+      <li>몬스터는 <code>BaseMonster.ChasePlayer()</code>에서 <code>agent.SetDestination(player.position)</code>으로 플레이어를 추격합니다.</li>
+      <li>플레이어는 <code>PlayerMovement.Move()</code>에서 <code>Rigidbody.MovePosition</code>으로 움직입니다.</li>
+      <li>몬스터의 <code>SphereCollider</code>와 플레이어의 <code>CapsuleCollider</code>가 전투 중 겹칩니다.</li>
+      <li>몬스터는 Rigidbody 없이 NavMeshAgent가 직접 Transform을 움직이는 구조라 물리 엔진 입장에서는 충돌 해석이 불안정해질 수 있습니다.</li>
+      <li>겹침을 해소하는 방향이 지형 경사나 Collider 접촉면 때문에 위쪽으로 잡히면, 플레이어 Rigidbody가 위로 튀어오릅니다.</li>
+    </ol>
+
+    <div class="callout danger">
+      <strong>핵심 원인:</strong> 충돌 자체가 문제가 아니라, NavMeshAgent가 움직이는 non-trigger 몬스터 Collider와 동적 Rigidbody 플레이어가 겹친 상태를 물리 엔진이 강제로 풀면서 위쪽 보정이 발생하는 것이 문제입니다.
+    </div>
+
+    <h2>이미 확인하거나 시도한 내용</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th>결과</th>
+          <th>판단</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>방패 Collider를 Trigger로 변경</td>
+          <td>문제가 계속 발생함.</td>
+          <td>방패만 원인은 아님. 본체 CapsuleCollider와 몬스터 SphereCollider의 충돌이 남아 있음.</td>
+        </tr>
+        <tr>
+          <td><code>Damageable</code>과 플레이어 레이어 충돌 비활성화</td>
+          <td>튀어오름은 줄일 수 있지만 플레이어와 몬스터가 서로 통과함.</td>
+          <td>사용자 의도와 맞지 않음.</td>
+        </tr>
+        <tr>
+          <td>공격/데미지 코드 확인</td>
+          <td><code>AddForce</code>, 위쪽 넉백, 강제 점프 코드 없음.</td>
+          <td>코드로 위로 힘을 주는 문제는 아님.</td>
+        </tr>
+        <tr>
+          <td>Physics Material 안내</td>
+          <td><code>Bounciness=0</code>, 마찰 최소 재질을 만들도록 안내함.</td>
+          <td>보조 해결책. 근본 해결은 Rigidbody/NavMeshAgent 충돌 구조 보정.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>권장 해결 방향</h2>
+    <h3>1. 몬스터에 Kinematic Rigidbody 추가</h3>
+    <p>플레이어와 몬스터의 충돌은 유지하되, 몬스터 Collider가 물리 시스템에 더 일관되게 참여하도록 몬스터 프리팹에 Rigidbody를 추가합니다.</p>
+    <ul>
+      <li><code>Rigidbody</code> 추가</li>
+      <li><code>Is Kinematic = true</code></li>
+      <li><code>Use Gravity = false</code></li>
+      <li><code>Collision Detection = Continuous Speculative</code></li>
+      <li>몬스터 <code>SphereCollider</code>는 non-trigger 유지</li>
+    </ul>
+
+    <h3>2. 플레이어의 위쪽 속도 제한</h3>
+    <p>현재 게임 구조상 점프가 없다면, 충돌 보정으로 생기는 양수 Y 속도를 제거하는 방어 코드를 넣는 것이 효과적입니다.</p>
+    <pre><code>private void FixedUpdate()
+{
+    if (_playerStats != null &amp;&amp; _playerStats.IsDead)
+    {
+        return;
+    }
+
+    Move();
+
+    Vector3 velocity = _playerRigidbody.linearVelocity;
+    if (velocity.y &gt; 0f)
+    {
+        velocity.y = 0f;
+        _playerRigidbody.linearVelocity = velocity;
+    }
+}</code></pre>
+    <p>주의: 추후 점프, 넉업, 점프 패드 같은 기능이 추가되면 이 방식은 조건부로 바꿔야 합니다.</p>
+
+    <h3>3. 플레이어 Rigidbody 설정 보강</h3>
+    <ul>
+      <li><code>Collision Detection</code>: <code>Discrete</code>에서 <code>Continuous Dynamic</code>으로 변경</li>
+      <li><code>Interpolation</code>: <code>Interpolate</code>로 변경</li>
+      <li><code>Constraints</code>: 현재처럼 <code>Freeze Rotation</code> 유지</li>
+    </ul>
+
+    <h3>4. Physics Material 적용</h3>
+    <p>플레이어와 몬스터 Collider에 튕김 없는 Physics Material을 적용합니다.</p>
+    <pre><code>Dynamic Friction: 0
+Static Friction: 0
+Bounciness: 0
+Friction Combine: Minimum
+Bounce Combine: Minimum</code></pre>
+    <p>적용 대상은 플레이어 <code>CapsuleCollider</code>와 몬스터 <code>SphereCollider</code>입니다. 방패 Collider가 물리 충돌 목적이 아니라면 Trigger로 두는 것이 안전합니다.</p>
+
+    <h3>5. 지형 Collider 경고 수정</h3>
+    <p><code>SM_Env_Road_Corner_01</code>의 negative scale <code>BoxCollider</code> 경고는 별도로 수정해야 합니다. 지형 충돌 형상이 예상과 달라질 수 있어, 전투 중 튀어오름 현상을 더 쉽게 유발할 수 있습니다.</p>
+
+    <h2>권장 우선순위</h2>
+    <ol>
+      <li><span class="status pending">우선</span> 몬스터 프리팹에 Kinematic Rigidbody 추가</li>
+      <li><span class="status pending">우선</span> 플레이어 Rigidbody의 위쪽 속도 제한 코드 추가</li>
+      <li><span class="status pending">다음</span> 플레이어 Rigidbody를 <code>Continuous Dynamic</code>, <code>Interpolate</code>로 변경</li>
+      <li><span class="status pending">다음</span> No Bounce Physics Material 적용</li>
+      <li><span class="status pending">정리</span> negative scale이 있는 지형 Collider 수정</li>
+    </ol>
+
+    <div class="callout success">
+      <strong>최종 방향:</strong> 플레이어와 몬스터의 물리 충돌은 유지하되, 몬스터를 Kinematic Rigidbody 기반 충돌체로 만들고 플레이어의 비정상 Y 속도를 제한하면, 서로 막히는 감각을 유지하면서 하늘로 솟는 현상을 줄일 수 있습니다.
+    </div>
+  </main>
+</body>
+</html>
