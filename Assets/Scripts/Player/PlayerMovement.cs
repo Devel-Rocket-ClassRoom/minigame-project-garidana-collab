@@ -20,6 +20,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float _rotateSpeed = 10f;
 
+    // 대쉬 아이콘 쿨타임 표시용
+    public bool IsDashOnCooldown => Time.time < _lastDashTime + _dashCooldown;
+    public float DashCooldownProgress
+    {
+        get
+        {
+            float elapsed = Time.time - _lastDashTime;
+            return Mathf.Clamp01(elapsed / _dashCooldown);
+        }
+    }
+
+
     private Vector3 _playerDirection;
     private PlayerInputReader _playerInput;
     private Rigidbody _playerRigidbody;
