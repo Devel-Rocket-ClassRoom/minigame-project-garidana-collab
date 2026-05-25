@@ -10,7 +10,7 @@ public class HitStopManager : MonoBehaviour
     private float _defaultStopScale = 0.0001f;
 
     [SerializeField]
-    private bool _logRequests = false;
+    private bool _enableDebugLogs = true;
 
     private Coroutine _activeCoroutine;
     private float _resumeAtUnscaledTime;
@@ -32,11 +32,6 @@ public class HitStopManager : MonoBehaviour
         GetOrCreateInstance().ApplyHitStop(duration, stopScale);   
     }
 
-    public static void SetGlobalTimeScale (float value)
-    {
-        GetOrCreateInstance().SetTimeScale(Mathf.Max(0f, value));
-    }
-
     private static HitStopManager GetOrCreateInstance ()
     {
         if (_instance != null) 
@@ -51,6 +46,7 @@ public class HitStopManager : MonoBehaviour
         GameObject managerObject = new GameObject(nameof(HitStopManager));
         _instance = managerObject.AddComponent<HitStopManager>();
         DontDestroyOnLoad(managerObject);
+        _instance.Log("Created runtime HitStopManager instance.");
         return _instance;
     }
 
@@ -64,6 +60,7 @@ public class HitStopManager : MonoBehaviour
 
         _instance = this;
         _baseFixedDeltaTime = Time.fixedDeltaTime;
+        Log($"Initialized. BaseFixedDeltaTime: {_baseFixedDeltaTime}, TimeScale: {Time.timeScale}");
         DontDestroyOnLoad(gameObject);  
     }
 
@@ -72,39 +69,41 @@ public class HitStopManager : MonoBehaviour
         float clampedScale = Mathf.Clamp(stopScale, 0f, 1f);
         float resumeAt = Time.unscaledTime + duration;
 
-        if (_logRequests)
-        {
-            Debug.Log($"HitStop requested. Duration: {duration}, StopScale: {clampedScale}");
-        }
+        Log($"Request received. Duration: {duration}, StopScale: {clampedScale}, CurrentTimeScale: {Time.timeScale}");
 
         if (_activeCoroutine == null)
         {
             _restoreTimeScale = Time.timeScale;
             SetTimeScale(clampedScale);
             _resumeAtUnscaledTime = resumeAt;
+            Log($"Started. RestoreTimeScale: {_restoreTimeScale}, ResumeAtUnscaledTime: {_resumeAtUnscaledTime}");
             _activeCoroutine = StartCoroutine(RestoreAfterDelay(clampedScale));
             return;
         }
 
+        float previousResumeAt = _resumeAtUnscaledTime;
         _resumeAtUnscaledTime = Mathf.Max(_resumeAtUnscaledTime, resumeAt);
         SetTimeScale(Mathf.Min(Time.timeScale, clampedScale));
+        Log($"Extended. PreviousResumeAt: {previousResumeAt}, NewResumeAt: {_resumeAtUnscaledTime}, CurrentTimeScale: {Time.timeScale}");
     }
 
-    private IEnumerator RestoreAfterDelay(float applieScale)
+    private IEnumerator RestoreAfterDelay(float appliedScale)
     {
         while (Time.unscaledTime < _resumeAtUnscaledTime)
         {
             yield return null;
         }
         
-        if (Mathf.Approximately(Time.timeScale, applieScale))
+        if (Mathf.Approximately(Time.timeScale, appliedScale))
         {
             SetTimeScale(_restoreTimeScale);
+            Log($"Restored. TimeScale: {Time.timeScale}, FixedDeltaTime: {Time.fixedDeltaTime}");
         }
 
         else
         {
             SetTimeScale(Time.timeScale);
+            Log($"Restore skipped because TimeScale changed externally. CurrentTimeScale: {Time.timeScale}");
         }
 
         _activeCoroutine = null;
@@ -114,6 +113,13 @@ public class HitStopManager : MonoBehaviour
     {
         Time.timeScale = value;
         Time.fixedDeltaTime = _baseFixedDeltaTime * value;
+    }
+
+    private void Log(string message)
+    {
+        if (!_enableDebugLogs) return;
+
+        Debug.Log($"[HitStopManager] {message}");
     }
 
 }
