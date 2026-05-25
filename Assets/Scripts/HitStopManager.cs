@@ -3,8 +3,14 @@ using System.Collections;
 
 public class HitStopManager : MonoBehaviour
 {
-    private const float DefaultStopScale = 0.0001f;
     private static HitStopManager _instance;
+
+    [Header("Hit Stop Settings")]
+    [SerializeField, Range(0f, 1f)]
+    private float _defaultStopScale = 0.0001f;
+
+    [SerializeField]
+    private bool _logRequests = false;
 
     private Coroutine _activeCoroutine;
     private float _resumeAtUnscaledTime;
@@ -13,7 +19,10 @@ public class HitStopManager : MonoBehaviour
 
     public static void Request (float duration)
     {
-        Request(duration, DefaultStopScale);
+        if (duration <= 0f) return;
+
+        HitStopManager instance = GetOrCreateInstance();
+        instance.ApplyHitStop(duration, instance._defaultStopScale);
     }
 
     public static void Request (float duration, float stopScale)
@@ -62,6 +71,11 @@ public class HitStopManager : MonoBehaviour
     {
         float clampedScale = Mathf.Clamp(stopScale, 0f, 1f);
         float resumeAt = Time.unscaledTime + duration;
+
+        if (_logRequests)
+        {
+            Debug.Log($"HitStop requested. Duration: {duration}, StopScale: {clampedScale}");
+        }
 
         if (_activeCoroutine == null)
         {
