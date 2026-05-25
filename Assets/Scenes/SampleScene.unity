@@ -8714,14 +8714,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7562994724903984698, guid: 493c5159fec47da48ae3f998b26939c3, type: 3}
-      propertyPath: knockbackDistance
-      value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 7562994724903984698, guid: 493c5159fec47da48ae3f998b26939c3, type: 3}
-      propertyPath: knockbackDuration
-      value: 0.1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
