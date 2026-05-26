@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>플레이어 공격 강화 구조 구현 기록</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --paper: #ffffff;
+      --text: #1f2933;
+      --muted: #637083;
+      --line: #d8dee8;
+      --accent: #1d4ed8;
+      --accent-soft: #e8f0ff;
+      --green: #17633a;
+      --green-soft: #e7f6ed;
+      --gold: #8a5a00;
+      --gold-soft: #fff4d6;
+      --red: #9f1239;
+      --red-soft: #ffe8ef;
+      --code: #edf2f7;
+      --dark: #111827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(1080px, calc(100% - 32px));
+      margin: 32px auto;
+      padding: 36px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: 30px;
+    }
+
+    h2 {
+      margin-top: 34px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      font-size: 22px;
+    }
+
+    h3 {
+      margin-top: 22px;
+      font-size: 17px;
+    }
+
+    p {
+      margin: 12px 0;
+    }
+
+    ul, ol {
+      margin: 10px 0 0;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: var(--code);
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 0.95em;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: 16px;
+      border-radius: 8px;
+      background: var(--dark);
+      color: #f8fafc;
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 14px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      font-weight: 700;
+    }
+
+    .lead {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .meta div,
+    .note,
+    .warning,
+    .success {
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fbfdff;
+    }
+
+    .note {
+      background: var(--accent-soft);
+      border-color: #bfd2ff;
+    }
+
+    .warning {
+      background: var(--gold-soft);
+      border-color: #f2d58a;
+    }
+
+    .success {
+      background: var(--green-soft);
+      border-color: #b7dfc7;
+    }
+
+    .label {
+      display: inline-block;
+      margin-right: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+      align-items: stretch;
+    }
+
+    .step {
+      position: relative;
+      min-height: 112px;
+      padding: 14px;
+      border: 1px solid #c9d5e6;
+      border-radius: 8px;
+      background: #f8fbff;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+
+    .step:not(:last-child)::after {
+      content: ">";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 18px;
+      height: 18px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 18px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.18);
+      border-radius: 50%;
+      vertical-align: -2px;
+    }
+
+    .white { background: #ffffff; }
+    .blue { background: #2563eb; }
+    .purple { background: #8c33ff; }
+    .gold { background: #ffc726; }
+    .red { background: #ff4026; }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      main {
+        padding: 24px;
+      }
+
+      .meta,
+      .grid,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .step:not(:last-child)::after {
+        top: auto;
+        right: 50%;
+        bottom: -10px;
+        transform: translateX(50%) rotate(90deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>플레이어 공격 강화 구조 구현 기록</h1>
+    <p class="lead">
+      Project Origin 2주차 핵심 루프인 <strong>퀘스트 진행 -> 레벨 업 -> 공격 강화 -> 다음 구역 진입</strong>을 위해,
+      플레이어 기본 공격이 레벨 구간에 따라 데미지, 판정 범위, 이펙트 색상을 바꾸도록 구조를 분리했습니다.
+    </p>
+
+    <section class="meta">
+      <div><span class="label">작성일</span>2026-05-26</div>
+      <div><span class="label">검증</span><code>dotnet build Assembly-CSharp.csproj</code> 통과</div>
+      <div><span class="label">주요 파일</span><code>PlayerAttackUpgrade.cs</code>, <code>PlayerAttack.cs</code>, <code>PlayerStats.cs</code></div>
+      <div><span class="label">목표</span>레벨 10 단위 기본 공격 강화와 VFX 연결 기반 마련</div>
+    </section>
+
+    <h2>구현 요약</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>PlayerStats</h3>
+        <p>레벨, 경험치, 기본 공격력 같은 플레이어 기본 수치를 관리합니다.</p>
+        <p><code>LevelChanged</code> 이벤트를 추가해 레벨업 시 현재 레벨을 외부 컴포넌트에 알려줍니다.</p>
+      </article>
+      <article class="card">
+        <h3>PlayerAttackUpgrade</h3>
+        <p>공격 강화 단계 전용 관리자입니다.</p>
+        <p>현재 레벨에 맞는 <code>AttackStageData</code>를 선택하고, 데미지 배율, 공격 범위, 이펙트 색상을 제공합니다.</p>
+      </article>
+      <article class="card">
+        <h3>PlayerAttack</h3>
+        <p>공격 입력, 3단 콤보, 실제 타격 판정을 담당합니다.</p>
+        <p>공격 순간에 <code>PlayerAttackUpgrade</code>의 현재 강화 데이터를 읽어 데미지와 범위를 적용합니다.</p>
+      </article>
+    </div>
+
+    <h2>실행 흐름</h2>
+    <div class="flow" aria-label="공격 강화 실행 흐름">
+      <div class="step">
+        <strong>1. 레벨 상승</strong>
+        <span><code>PlayerStats.LevelUp()</code>에서 레벨과 기본 공격력이 증가합니다.</span>
+      </div>
+      <div class="step">
+        <strong>2. 이벤트 발행</strong>
+        <span><code>LevelChanged</code> 이벤트가 현재 레벨을 전달합니다.</span>
+      </div>
+      <div class="step">
+        <strong>3. 단계 갱신</strong>
+        <span><code>PlayerAttackUpgrade.RefreshStage()</code>가 레벨에 맞는 강화 단계를 고릅니다.</span>
+      </div>
+      <div class="step">
+        <strong>4. 공격 입력</strong>
+        <span><code>PlayerAttack</code>이 콤보 단계와 강화 데이터를 함께 사용합니다.</span>
+      </div>
+      <div class="step">
+        <strong>5. 결과 적용</strong>
+        <span>데미지, 판정 범위, 파티클 색상이 현재 강화 단계에 맞게 적용됩니다.</span>
+      </div>
+    </div>
+
+    <h2>강화 단계별 변화</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>단계</th>
+          <th>해금 레벨</th>
+          <th>데미지 배율</th>
+          <th>공격 거리</th>
+          <th>공격 반경</th>
+          <th>이펙트 색상</th>
+          <th>의도</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Normal</td>
+          <td>Lv.1</td>
+          <td>x1.00</td>
+          <td>1.10</td>
+          <td>0.90</td>
+          <td><span class="swatch white"></span>White</td>
+          <td>시작 구역용 기본 공격입니다.</td>
+        </tr>
+        <tr>
+          <td>Enhanced 1</td>
+          <td>Lv.10</td>
+          <td>x1.20</td>
+          <td>1.25</td>
+          <td>1.00</td>
+          <td><span class="swatch blue"></span>Blue</td>
+          <td>황무지 진입 시점의 첫 강화 체감용 단계입니다.</td>
+        </tr>
+        <tr>
+          <td>Enhanced 2</td>
+          <td>Lv.20</td>
+          <td>x1.45</td>
+          <td>1.40</td>
+          <td>1.10</td>
+          <td><span class="swatch purple"></span>Purple</td>
+          <td>어둠 구역 진입 후 전투 템포를 올리는 단계입니다.</td>
+        </tr>
+        <tr>
+          <td>Enhanced 3</td>
+          <td>Lv.30</td>
+          <td>x1.75</td>
+          <td>1.60</td>
+          <td>1.20</td>
+          <td><span class="swatch gold"></span>Gold</td>
+          <td>오크 구역 이상에서 강해진 기본 공격을 시각적으로 보여줍니다.</td>
+        </tr>
+        <tr>
+          <td>Enhanced 4</td>
+          <td>Lv.40</td>
+          <td>x2.10</td>
+          <td>1.80</td>
+          <td>1.35</td>
+          <td><span class="swatch red"></span>Red</td>
+          <td>최종장 구간용 강화 단계입니다.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="small">
+      위 수치는 <code>Assets/Scripts/Player/PlayerAttackUpgrade.cs</code>의 기본 <code>AttackStageData[]</code> 값입니다.
+      Unity 인스펙터에서 플레이어 오브젝트의 <code>PlayerAttackUpgrade</code> 컴포넌트를 통해 조정할 수 있습니다.
+    </p>
+
+    <h2>코드 변경 상세</h2>
+    <h3>1. PlayerStats는 레벨 변경만 알림</h3>
+    <p>
+      <code>PlayerStats</code>는 공격 강화 수치나 VFX를 직접 알지 않습니다. 대신 레벨업이 발생하면
+      <code>LevelChanged</code> 이벤트로 현재 레벨만 전달합니다.
+    </p>
+    <pre><code>public event Action&lt;int&gt; LevelChanged;
+
+public void LevelUp()
+{
+    _level++;
+    IncreaseAttackPower(1f);
+    LevelChanged?.Invoke(_level);
+}</code></pre>
+
+    <h3>2. PlayerAttackUpgrade가 현재 강화 단계를 선택</h3>
+    <p>
+      레벨이 오르거나 컴포넌트가 켜질 때 <code>RefreshStage()</code>가 실행됩니다.
+      현재 레벨보다 해금 레벨이 낮거나 같은 단계 중 가장 마지막 단계를 현재 단계로 사용합니다.
+    </p>
+    <pre><code>public void RefreshStage(int level)
+{
+    AttackStageData selectedStage = null;
+
+    for (int i = 0; i &lt; _attackStages.Length; i++)
+    {
+        AttackStageData stage = _attackStages[i];
+        if (stage != null &amp;&amp; level &gt;= stage.UnlockLevel)
+        {
+            selectedStage = stage;
+        }
+    }
+
+    _currentStage = selectedStage;
+}</code></pre>
+
+    <h3>3. PlayerAttack이 실제 공격에 단계 데이터를 적용</h3>
+    <p>
+      기존 3단 콤보 구조는 유지했습니다. 데미지 계산식에 현재 강화 단계 배율을 추가했고,
+      공격 판정의 거리와 반경도 현재 단계 데이터에서 읽도록 변경했습니다.
+    </p>
+    <pre><code>damage = AttackPower * ComboMultiplier * StageDamageMultiplier
+
+hitCenter = playerPosition + forward * CurrentHitRange
+hitRadius = CurrentHitRadius</code></pre>
+
+    <h2>현재 구조가 좋은 이유</h2>
+    <ul>
+      <li><code>PlayerStats</code>가 공격 범위, 파티클, 콤보 같은 전투 세부 구현을 몰라도 됩니다.</li>
+      <li><code>PlayerAttack</code>은 공격 판정과 데미지 적용에 집중할 수 있습니다.</li>
+      <li><code>PlayerAttackUpgrade</code>만 보면 레벨별 강화 수치와 이펙트 정책을 한눈에 확인할 수 있습니다.</li>
+      <li>퀘스트 보상으로 레벨이 한 번에 여러 개 오르거나 세이브로드로 특정 레벨에서 시작해도 현재 레벨 기준으로 단계가 다시 계산됩니다.</li>
+      <li>나중에 스탯창 UI에서 현재 공격 강화 단계 이름을 읽어 표시하기 쉽습니다.</li>
+    </ul>
+
+    <h2>Unity 인스펙터 연결 방법</h2>
+    <ol>
+      <li>플레이어 오브젝트에 <code>PlayerAttack</code>, <code>PlayerStats</code>, <code>PlayerAttackUpgrade</code>가 붙어 있는지 확인합니다.</li>
+      <li><code>PlayerAttackUpgrade</code>의 <code>Attack Stages</code> 배열에서 단계별 수치를 조정합니다.</li>
+      <li>무기 또는 손 위치에 빈 오브젝트를 만들고, 해당 Transform을 <code>Effect Spawn Point</code>에 연결합니다.</li>
+      <li>각 단계의 <code>Attack Effect Prefab</code>에 사용할 파티클 프리팹을 연결합니다.</li>
+      <li>플레이 모드에서 레벨을 10, 20, 30, 40 이상으로 올린 뒤 공격 로그와 실제 판정 범위를 확인합니다.</li>
+    </ol>
+
+    <div class="note">
+      <strong>이펙트 동작 방식</strong>
+      <p>
+        현재 구현은 공격 시작 시 현재 단계의 <code>AttackEffectPrefab</code>을 생성하고,
+        <code>ParticleSystem.main.startColor</code>를 현재 단계 색상으로 바꾼 뒤 재생합니다.
+        프리팹을 아직 연결하지 않았다면 데미지와 범위만 적용되고 이펙트는 재생되지 않습니다.
+      </p>
+    </div>
+
+    <h2>검증 결과</h2>
+    <div class="success">
+      <p><strong>컴파일 검증:</strong> <code>dotnet build Assembly-CSharp.csproj</code></p>
+      <p><strong>결과:</strong> 경고 0개, 오류 0개로 통과했습니다.</p>
+    </div>
+
+    <h2>남은 작업</h2>
+    <ul>
+      <li>플레이어 프리팹 또는 씬 오브젝트에 <code>PlayerAttackUpgrade</code> 컴포넌트가 실제로 붙었는지 Unity 에디터에서 확인해야 합니다.</li>
+      <li>각 단계별 파티클 프리팹을 연결해야 시각 효과가 보입니다.</li>
+      <li>스탯창 UI에 현재 공격 강화 단계 이름과 수치를 표시하는 작업이 남아 있습니다.</li>
+      <li>세이브로드 구현 시에는 레벨을 복원한 뒤 <code>RefreshStage(Level)</code>가 호출되는 흐름을 보장해야 합니다.</li>
+      <li>실제 플레이 밸런스에 따라 데미지 배율과 공격 범위는 조정이 필요할 수 있습니다.</li>
+    </ul>
+
+    <div class="warning">
+      <strong>주의</strong>
+      <p>
+        현재 공격 강화 단계는 레벨 기준으로 자동 계산됩니다. 따라서 별도의 공격 강화 단계 값을 세이브 데이터에 저장하기보다는
+        레벨을 저장하고 로드 후 단계가 다시 계산되도록 만드는 편이 더 안전합니다.
+      </p>
+    </div>
+
+    <h2>참고 파일</h2>
+    <ul>
+      <li><code>Assets/Scripts/Player/PlayerAttackUpgrade.cs</code> - 공격 강화 단계 데이터와 단계 선택 로직</li>
+      <li><code>Assets/Scripts/Player/PlayerAttack.cs</code> - 데미지, 판정 범위, 이펙트 적용</li>
+      <li><code>Assets/Scripts/Player/PlayerStats.cs</code> - 레벨업 및 <code>LevelChanged</code> 이벤트 발행</li>
+      <li><code>Docs/김경일의 모험 Origin 빌드 2 계획.md</code> - 2주차 공격 강화 목표</li>
+    </ul>
+  </main>
+</body>
+</html>

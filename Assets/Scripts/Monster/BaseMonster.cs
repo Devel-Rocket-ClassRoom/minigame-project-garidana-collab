@@ -239,6 +239,11 @@ public class BaseMonster : MonoBehaviour, IDamageable
         animator.SetTrigger(ParamIsDead);
         animator.SetTrigger(ParamDeath);
 
+        if (!string.IsNullOrEmpty(data.questTargetId))
+        {
+            QuestManager.Instance?.ReportKill(data.questTargetId);
+        }
+
         ProcessDrop();
 
         StartCoroutine(SinkAndDestroy());
