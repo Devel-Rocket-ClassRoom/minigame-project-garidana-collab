@@ -159,8 +159,6 @@ public class PlayerAttack : MonoBehaviour
             $"Player attack started. ComboStep: {_comboStep}, AttackStage: {GetAttackStageName()}, AttackPower: {GetAttackPower()}, ExpectedDamage: {CalculateDamage(_comboStep)}"
         );
 
-        _attackUpgrade.PlayAttackEffect();
-
         if (_animator != null)
         {
             _animator.CrossFadeInFixedTime(AttackStateHashes[_comboStep - 1], 0.05f);
@@ -271,6 +269,17 @@ public class PlayerAttack : MonoBehaviour
         }
 
         return values[index];
+    }
+
+    // Animation Event에서 호출하여 실제 검 궤적과 이펙트 타이밍을 맞춥니다.
+    public void OnAttackEffectEvent()
+    {
+        if (!_isAttacking || _attackUpgrade == null)
+        {
+            return;
+        }
+
+        _attackUpgrade.PlayAttackEffect(_comboStep, transform);
     }
 
     private void OnDrawGizmosSelected()
