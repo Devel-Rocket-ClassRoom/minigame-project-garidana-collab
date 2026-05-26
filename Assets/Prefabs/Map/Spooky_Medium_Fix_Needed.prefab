@@ -75157,7 +75157,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7092148411716744699}
   m_Layer: 0
-  m_Name: Spooky_Medium
+  m_Name: Spooky_Medium_Fix_Needed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -393,7 +393,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 810309115997963169, guid: 42cc6fae18c6bef45b1f18be656c131b, type: 3}
       propertyPath: m_Name
-      value: Orc_Stronghold_Recreation
+      value: Orc_Stronghold_Sample
       objectReference: {fileID: 0}
     - target: {fileID: 3144653065588498283, guid: 42cc6fae18c6bef45b1f18be656c131b, type: 3}
       propertyPath: m_LocalPosition.x
