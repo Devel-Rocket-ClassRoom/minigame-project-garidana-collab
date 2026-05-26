@@ -34,7 +34,7 @@ public class QuestDebugTester : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            QuestManager.Instance?.ReportKill("test_monster");
+            QuestManager.Instance?.ReportKill("chick");
         }
 
         Debug.Log("테스트 처치 10회 보고: test_monster");

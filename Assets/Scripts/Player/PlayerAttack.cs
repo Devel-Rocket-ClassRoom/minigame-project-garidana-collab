@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerStats))]
+[RequireComponent(typeof(PlayerAttackUpgrade))]
 public class PlayerAttack : MonoBehaviour
 {
     [SerializeField]
@@ -44,6 +45,7 @@ public class PlayerAttack : MonoBehaviour
     private PlayerInputReader _playerInput;
     private PlayerMovement _playerMovement;
     private PlayerStats _playerStats;
+    private PlayerAttackUpgrade _attackUpgrade;
     private Animator _animator;
 
     private float _pendingHitTime;
@@ -63,12 +65,19 @@ public class PlayerAttack : MonoBehaviour
         _playerInput = GetComponent<PlayerInputReader>();
         _playerMovement = GetComponent<PlayerMovement>();
         _playerStats = GetComponent<PlayerStats>();
+        _attackUpgrade = GetComponent<PlayerAttackUpgrade>();
         _animator = GetComponent<Animator>();
 
         if (_playerStats == null)
         {
             _playerStats = gameObject.AddComponent<PlayerStats>();
             Debug.LogWarning("PlayerStats was missing on PlayerAttack object, so it was added at runtime.");
+        }
+
+        if (_attackUpgrade == null)
+        {
+            _attackUpgrade = gameObject.AddComponent<PlayerAttackUpgrade>();
+            Debug.LogWarning("PlayerAttackUpgrade was missing on PlayerAttack object, so it was added at runtime.");
         }
     }
 
@@ -147,8 +156,10 @@ public class PlayerAttack : MonoBehaviour
         _hasPendingHit = true;
 
         Debug.Log(
-            $"Player attack started. ComboStep: {_comboStep}, AttackPower: {GetAttackPower()}, ExpectedDamage: {CalculateDamage(_comboStep)}"
+            $"Player attack started. ComboStep: {_comboStep}, AttackStage: {GetAttackStageName()}, AttackPower: {GetAttackPower()}, ExpectedDamage: {CalculateDamage(_comboStep)}"
         );
+
+        _attackUpgrade.PlayAttackEffect();
 
         if (_animator != null)
         {
@@ -171,10 +182,12 @@ public class PlayerAttack : MonoBehaviour
 
     private void ApplyHit(int comboStep)
     {
-        Vector3 hitCenter = transform.position + transform.forward * _hitRange;
+        float hitRange = GetHitRange();
+        float hitRadius = GetHitRadius();
+        Vector3 hitCenter = transform.position + transform.forward * hitRange;
         int hitCount = Physics.OverlapSphereNonAlloc(
             hitCenter,
-            _hitRadius,
+            hitRadius,
             _hitResults,
             _hitLayers,
             QueryTriggerInteraction.Ignore
@@ -202,7 +215,7 @@ public class PlayerAttack : MonoBehaviour
             }
 
             Debug.Log(
-                $"Player hit damageable target. Target: {target.name}, ComboStep: {comboStep}, AttackPower: {GetAttackPower()}, Damage: {damage}"
+                $"Player hit damageable target. Target: {target.name}, ComboStep: {comboStep}, AttackStage: {GetAttackStageName()}, AttackPower: {GetAttackPower()}, Damage: {damage}"
             );
             damageable.TakeDamage(damage);
             dealtDamage = true;
@@ -216,7 +229,7 @@ public class PlayerAttack : MonoBehaviour
         if (validTargetCount == 0)
         {
             Debug.Log(
-                $"Player attack found no valid targets. ComboStep: {comboStep}, HitCenter: {hitCenter}, HitRadius: {_hitRadius}, RawHitCount: {hitCount}"
+                $"Player attack found no valid targets. ComboStep: {comboStep}, HitCenter: {hitCenter}, HitRadius: {hitRadius}, RawHitCount: {hitCount}"
             );
         }
     }
@@ -224,13 +237,29 @@ public class PlayerAttack : MonoBehaviour
     private int CalculateDamage(int comboStep)
     {
         float attackPower = GetAttackPower();
-        float multiplier = GetComboValue(_comboDamageMultipliers, comboStep, 1.0f);
-        return Mathf.RoundToInt(attackPower * multiplier);
+        float comboMultiplier = GetComboValue(_comboDamageMultipliers, comboStep, 1.0f);
+        float stageMultiplier = _attackUpgrade != null ? _attackUpgrade.CurrentDamageMultiplier : 1f;
+        return Mathf.RoundToInt(attackPower * comboMultiplier * stageMultiplier);
     }
 
     private float GetAttackPower()
     {
         return _playerStats != null ? _playerStats.AttackPower : 10f;
+    }
+
+    private float GetHitRange()
+    {
+        return _attackUpgrade != null ? _attackUpgrade.CurrentHitRange : _hitRange;
+    }
+
+    private float GetHitRadius()
+    {
+        return _attackUpgrade != null ? _attackUpgrade.CurrentHitRadius : _hitRadius;
+    }
+
+    private string GetAttackStageName()
+    {
+        return _attackUpgrade != null ? _attackUpgrade.CurrentStageName : "Normal";
     }
 
     private static T GetComboValue<T>(T[] values, int comboStep, T fallback)
@@ -247,7 +276,9 @@ public class PlayerAttack : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Vector3 hitCenter = transform.position + transform.forward * _hitRange;
-        Gizmos.DrawWireSphere(hitCenter, _hitRadius);
+        float hitRange = Application.isPlaying ? GetHitRange() : _hitRange;
+        float hitRadius = Application.isPlaying ? GetHitRadius() : _hitRadius;
+        Vector3 hitCenter = transform.position + transform.forward * hitRange;
+        Gizmos.DrawWireSphere(hitCenter, hitRadius);
     }
 }
