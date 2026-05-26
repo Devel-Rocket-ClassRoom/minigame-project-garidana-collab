@@ -17,6 +17,10 @@ public class MonsterData : ScriptableObject
     public int goldMax;
     public int expReward;
 
+    // 몬스터 사냥 퀘스트용 몬스터 targetId;
+    [Header("Quest")]
+    public string questTargetId;
+
     [Header("퀘스트 아이템 드롭 (해당 구역 몬스터만 설정)")]
     public List<DropEntry> questDrops; // 비워둘 시 드롭 X
 }
