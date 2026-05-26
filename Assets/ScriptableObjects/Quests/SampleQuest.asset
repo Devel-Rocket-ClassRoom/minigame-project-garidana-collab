@@ -23,5 +23,5 @@ MonoBehaviour:
   nextQuest: {fileID: 0}
   reward:
     gold: 300
-    level: 30
+    level: 10
     exp: 0

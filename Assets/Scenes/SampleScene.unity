@@ -6479,6 +6479,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3204669096588522506, guid: 493c5159fec47da48ae3f998b26939c3, type: 3}
   m_PrefabInstance: {fileID: 347268375}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1330763419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1330763420}
+  m_Layer: 0
+  m_Name: SlashAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1330763420
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330763419}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 796897004}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1349884471
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10099,21 +10130,129 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _effectSpawnPoint
+      value: 
+      objectReference: {fileID: 1330763420}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[1]._effectColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[1]._effectColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[1]._effectColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _attackStages.Array.data[2]._effectColor.a
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[2]._effectColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[2]._effectColor.g
+      value: 0.17458725
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[2]._effectColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[3]._effectColor.b
+      value: 0.43294433
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[3]._effectColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[3]._effectColor.r
+      value: 0.54088044
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[4]._effectColor.b
+      value: 0.1276555
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[4]._effectColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[4]._effectColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[0]._localOffset.y
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[0]._localOffset.z
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[1]._localOffset.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[1]._localOffset.z
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[2]._localOffset.z
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _attackStages.Array.data[0]._attackEffectPrefab
       value: 
-      objectReference: {fileID: 198181474051136930, guid: 6c3372b1be39690469c1358cce9a28b6, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _attackStages.Array.data[1]._attackEffectPrefab
       value: 
-      objectReference: {fileID: 198347452463389414, guid: 71a2a62d15c9ca84486fefc600f82ec9, type: 3}
+      objectReference: {fileID: 198917133503265624, guid: 25f0520c9ecef6641af6ea648e95a88d, type: 3}
     - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _attackStages.Array.data[2]._attackEffectPrefab
       value: 
+      objectReference: {fileID: 198181474051136930, guid: 6c3372b1be39690469c1358cce9a28b6, type: 3}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[3]._attackEffectPrefab
+      value: 
+      objectReference: {fileID: 198347452463389414, guid: 71a2a62d15c9ca84486fefc600f82ec9, type: 3}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _attackStages.Array.data[4]._attackEffectPrefab
+      value: 
       objectReference: {fileID: 198817456782696504, guid: 2b2844f70cdc117499cbac5446906321, type: 3}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[0]._localEulerAngles.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[0]._localEulerAngles.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[0]._localEulerAngles.z
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[1]._localEulerAngles.x
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[1]._localEulerAngles.z
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[2]._localEulerAngles.x
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: _comboEffectPoses.Array.data[2]._localEulerAngles.z
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 1361530536063904997, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _maxHealth
       value: 100
@@ -10214,7 +10353,10 @@ PrefabInstance:
     - {fileID: 6700376236296183283, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
     - {fileID: 945021993431353214, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 66929614203705248, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1330763420}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 66929614204128028, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       insertIndex: 7
