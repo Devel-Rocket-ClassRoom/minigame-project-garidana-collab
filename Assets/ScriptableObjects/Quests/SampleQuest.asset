@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SampleQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questId: test_1
-  questTitle: Kill 10 Monsters
+  questTitle: Kill 10 Chicks
   description: You have to defeat 10 monsters and come back to me to receive your
     reward
   objectiveType: 0

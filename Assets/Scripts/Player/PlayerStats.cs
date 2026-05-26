@@ -52,6 +52,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
 
     public event Action Died;
+    public event Action<int> LevelChanged;
 
 
     private void Awake()
@@ -194,7 +195,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public void LevelUp()
     {
         _level++;
-        IncreaseAttackPower(2f);
+        IncreaseAttackPower(1f);
+        LevelChanged?.Invoke(_level);
         Debug.Log($"레벨업! 현재 레벨: {_level}, 현재 공격력: {_attackPower}");
         // 나중에 레벨업 이펙트 UI 추가
     }
