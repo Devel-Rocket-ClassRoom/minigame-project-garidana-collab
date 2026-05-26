@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d79af6fa1e5bd6a4e848dd5b9a848f9a, type: 3}
-  m_Name: Fungi_MonsterData
+  m_Name: Egglet_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
-  maxHp: 60
-  attackDamage: 20
-  moveSpeed: 1
-  detectionRange: 7
+  maxHp: 20
+  attackDamage: 10
+  moveSpeed: 5
+  detectionRange: 3
   attackRange: 1.5
-  attackCooldown: 3
-  goldMin: 20
-  goldMax: 30
-  expReward: 25
+  attackCooldown: 2
+  goldMin: 5
+  goldMax: 10
+  expReward: 10
+  questTargetId: egglet
   questDrops: []

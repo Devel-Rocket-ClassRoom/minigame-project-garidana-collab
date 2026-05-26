@@ -29,12 +29,12 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
 
             if (state == QuestState.ReadyToComplete)
             {
-                return "퀘스트 완료";
+                return "Quest Completed";
             }
 
             if (state == QuestState.Available)
             {
-                return "퀘스트 확인";
+                return "Quest Available";
             }
 
             return npcName;
