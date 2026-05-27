@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Chest1
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: body_first
-  displayName: Basic Chest
+  displayName: Basic Chestplate
   description: Very basic chest plate
   itemType: 1
   equipmentPart: 1

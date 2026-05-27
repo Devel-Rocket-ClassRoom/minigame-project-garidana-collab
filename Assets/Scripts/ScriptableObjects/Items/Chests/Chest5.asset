@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a37bfa008f4394b449ab827fac688706, type: 3}
-  m_Name: Chest3
+  m_Name: Chest5
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemId: chest_third
-  displayName: Artisan's Chestplate
-  description: Precisely made Chest part
+  itemId: chest_fifth
+  displayName: Arclight Chestplate
+  description: Shining Chestplate with arclight
   itemType: 1
   equipmentPart: 4
-  tier: 3
+  tier: 5
   attackBonus: 0
-  maxHealthBonus: 10
-  price: 200
-  icon: {fileID: 0}
+  maxHealthBonus: 20
+  price: 450
+  icon: {fileID: 21300000, guid: 5a75341151080ef4ea9bce2308aefd17, type: 3}
   worldPrefab: {fileID: 0}
-  equipObjectName: Body_3
+  equipObjectName: Body_5
   isDefaultEquipment: 0

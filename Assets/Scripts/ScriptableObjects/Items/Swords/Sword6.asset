@@ -23,5 +23,5 @@ MonoBehaviour:
   price: 0
   icon: {fileID: 21300000, guid: 3b2220bdcc5ae614989fe7e53ca9e620, type: 3}
   worldPrefab: {fileID: 5837111106984361419, guid: 816c906947cb041f195ec22367ae8931, type: 3}
-  equipObjectName: Sword_5
+  equipObjectName: Sword_6
   isDefaultEquipment: 0

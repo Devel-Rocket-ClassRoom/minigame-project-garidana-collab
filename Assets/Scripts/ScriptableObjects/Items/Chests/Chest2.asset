@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Chest2
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: body_second
-  displayName: Knight's Chest
+  displayName: Knight's Chestplate
   description: Chest plate that Knights wear
   itemType: 1
   equipmentPart: 4
