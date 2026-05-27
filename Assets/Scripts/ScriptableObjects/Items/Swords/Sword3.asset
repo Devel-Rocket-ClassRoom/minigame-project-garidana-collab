@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37bfa008f4394b449ab827fac688706, type: 3}
+  m_Name: Sword3
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemId: sword_third
+  displayName: Artisan's Sword
+  description: Precisely made sword
+  itemType: 1
+  equipmentPart: 1
+  tier: 3
+  attackBonus: 20
+  maxHealthBonus: 0
+  price: 0
+  icon: {fileID: 21300000, guid: 02a504cbb1170e9438f953f84e671690, type: 3}
+  worldPrefab: {fileID: 7145595410180640036, guid: 45d3b4083b36e4378ba04ca9c5cec952, type: 3}
+  equipObjectName: Sword_3
+  isDefaultEquipment: 0
