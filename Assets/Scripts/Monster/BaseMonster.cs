@@ -239,6 +239,12 @@ public class BaseMonster : MonoBehaviour, IDamageable
         animator.SetTrigger(ParamIsDead);
         animator.SetTrigger(ParamDeath);
 
+        // 몬스터 사망시 콜라이더 끄기
+        foreach (var collider in GetComponentsInChildren<Collider>())
+        {
+            collider.enabled = false;
+        }
+
         if (!string.IsNullOrEmpty(data.questTargetId))
         {
             QuestManager.Instance?.ReportKill(data.questTargetId);
