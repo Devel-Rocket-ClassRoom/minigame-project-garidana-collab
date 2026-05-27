@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a37bfa008f4394b449ab827fac688706, type: 3}
-  m_Name: Chest3
+  m_Name: Helmet5
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemId: chest_third
-  displayName: Artisan's Chestplate
-  description: Precisely made Chest part
+  itemId: helmet_fifth
+  displayName: Arclight Helmet
+  description: Helmet blessed by light
   itemType: 1
-  equipmentPart: 4
-  tier: 3
+  equipmentPart: 3
+  tier: 5
   attackBonus: 0
-  maxHealthBonus: 10
+  maxHealthBonus: 20
   price: 200
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: f532e671664e6cf4f985bf14ed6f75d0, type: 3}
   worldPrefab: {fileID: 0}
-  equipObjectName: Body_3
+  equipObjectName: Head_5
   isDefaultEquipment: 0
