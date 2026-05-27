@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b77c0e2bd1bf45fbba62943e0b83019, type: 3}
   m_Name: SecondQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
-  questId: 
-  questTitle: 
-  description: 
+  questId: second
+  questTitle: Eliminate 30 Bumbles
+  description: Eliminate 30 Bumbles and return to the magician
   objectiveType: 0
-  targetId: 
-  requiredAmount: 1
-  prerequisiteQuest: {fileID: 0}
-  nextQuest: {fileID: 0}
+  targetId: bumble
+  requiredAmount: 30
+  prerequisiteQuest: {fileID: 11400000, guid: b898781c2a50e474dbe5382be9a45660, type: 2}
+  nextQuest: {fileID: 11400000, guid: 20a599f70f3ec3c478b4a2de1aadf529, type: 2}
   reward:
-    gold: 0
-    level: 0
+    gold: 200
+    level: 5
     exp: 0
