@@ -267,8 +267,18 @@ public class BaseMonster : MonoBehaviour, IDamageable
         playerStats.AddGold(gold);
         playerStats.AddExp(data.expReward);
         
+        if (data.questDrops == null || QuestManager.Instance == null)
+        {
+            return;
+        }
+
         foreach (var entry in data.questDrops)
         {
+            if (!CanDropQuestItem(entry))
+            {
+                continue;
+            }
+
             if (Random.value <= entry.dropChance)
             {
                 DropItem(entry.item);
@@ -276,12 +286,25 @@ public class BaseMonster : MonoBehaviour, IDamageable
         }
     }
 
+    private bool CanDropQuestItem(DropEntry entry)
+    {
+        if (entry == null || entry.item == null || string.IsNullOrEmpty(entry.item.itemId))
+        {
+            return false;
+        }
+
+        return QuestManager.Instance.IsCurrentQuestTarget(QuestObjectiveType.CollectItem, entry.item.itemId);
+    }
+
     // 몬스터 아이템 드롭 함수
     private void DropItem(ItemData item)
     {
-        // 월드에 아이템 오브젝트를 스폰
-        // item.worldPrefab은 ItemData에 등록된 아이템 프리팹
-        //Instantiate(item.worldPrefab, transform.position, Vector3.up * 0.5f, Quaternion.identity);
+        if (item == null)
+        {
+            return;
+        }
+
+        QuestManager.Instance?.ReportItemCollected(item.itemId);
     }
 
     private IEnumerator SinkAndDestroy()

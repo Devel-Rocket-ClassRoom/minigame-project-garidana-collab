@@ -22,4 +22,6 @@ MonoBehaviour:
   goldMax: 20
   expReward: 20
   questTargetId: chick
-  questDrops: []
+  questDrops:
+  - item: {fileID: 11400000, guid: 7d725f25fb3d4304a8365db31e289cb5, type: 2}
+    dropChance: 1
