@@ -304,7 +304,31 @@ public class BaseMonster : MonoBehaviour, IDamageable
             return;
         }
 
-        QuestManager.Instance?.ReportItemCollected(item.itemId);
+        if (item.worldPrefab == null)
+        {
+            Debug.LogWarning ($"Quest item {item.itemId} has no worldPrefab.");
+            QuestManager.Instance.ReportItemCollected(item.itemId);
+            return;
+        }
+
+        Vector3 spawnPosition = transform.position + Vector3.up * 0.6f;
+
+        GameObject spawnedItem = Instantiate(
+        item.worldPrefab,
+        spawnPosition,
+        Quaternion.identity
+        );
+
+        QuestItemCollectEffect collectEffect = spawnedItem.GetComponent<QuestItemCollectEffect>();
+
+        if (collectEffect == null)
+        {
+            Debug.LogWarning($"Quest item prefab '{item.worldPrefab.name}' has no QuestItemCollectEffect. Progress will be reported immediately.");
+            QuestManager.Instance?.ReportItemCollected(item.itemId);
+            Destroy(spawnedItem);
+            return;
+        }   
+        collectEffect.Initialize(item, player);
     }
 
     private IEnumerator SinkAndDestroy()
