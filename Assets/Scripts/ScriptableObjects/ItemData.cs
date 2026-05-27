@@ -4,5 +4,5 @@ using UnityEngine;
 public class ItemData : ScriptableObject
 {
     public string itemId;
-    public GameObject collectEffectPrefab;
+    public GameObject worldPrefab;
 }

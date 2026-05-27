@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: EggItem
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: egg
+  worldPrefab: {fileID: 2940656471968488061, guid: 077e90a4b0e214ce7a05a13c4fba8f3f, type: 3}
