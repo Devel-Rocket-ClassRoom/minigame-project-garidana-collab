@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37bfa008f4394b449ab827fac688706, type: 3}
+  m_Name: Sword6
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemId: sword_sixth
+  displayName: Corrupted King's Sword
+  description: Sword that is Corrupted
+  itemType: 1
+  equipmentPart: 1
+  tier: 6
+  attackBonus: 50
+  maxHealthBonus: 0
+  price: 0
+  icon: {fileID: 21300000, guid: 3b2220bdcc5ae614989fe7e53ca9e620, type: 3}
+  worldPrefab: {fileID: 5837111106984361419, guid: 816c906947cb041f195ec22367ae8931, type: 3}
+  equipObjectName: Sword_5
+  isDefaultEquipment: 0

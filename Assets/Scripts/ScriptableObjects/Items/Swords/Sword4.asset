@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37bfa008f4394b449ab827fac688706, type: 3}
+  m_Name: Sword4
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemId: sword_fourth
+  displayName: Mana Sword
+  description: Sword full of Mana
+  itemType: 1
+  equipmentPart: 1
+  tier: 1
+  attackBonus: 30
+  maxHealthBonus: 0
+  price: 0
+  icon: {fileID: 21300000, guid: 6c959ef7b94bbee42b83852a0cc7dbc2, type: 3}
+  worldPrefab: {fileID: 2851962512400394832, guid: 567c3c23af4fe4c28b5f4a2bac51722d, type: 3}
+  equipObjectName: Sword_4
+  isDefaultEquipment: 0
