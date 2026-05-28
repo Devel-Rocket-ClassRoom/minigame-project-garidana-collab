@@ -43,6 +43,11 @@ public class BaseMonster : MonoBehaviour, IDamageable
 
     [SerializeField]
     private float knockbackDuration = 0.8f;
+    [SerializeField]
+    private FloatingTextEffect floatingTextPrefab;
+
+    [SerializeField]
+    private Transform floatingTextPoint;
 
     private bool isKnockbacking;
     private Coroutine knockbackCoroutine;
@@ -154,7 +159,15 @@ public class BaseMonster : MonoBehaviour, IDamageable
     public void TakeDamage(float damage)
     {
         if (isDead) return;
+
         currentHp -= damage;
+
+        ShowFloatingText(
+            Mathf.RoundToInt(damage).ToString(),
+            Color.white,
+            Vector3.zero
+        );
+
         animator.SetTrigger(ParamTakeDamage);
 
         OnHpChanged?.Invoke(currentHp / data.maxHp);
@@ -266,7 +279,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
         PlayerStats playerStats = player.GetComponent<PlayerStats>();
         playerStats.AddGold(gold);
         playerStats.AddExp(data.expReward);
-        
+
         if (data.questDrops == null || QuestManager.Instance == null)
         {
             return;
@@ -329,6 +342,27 @@ public class BaseMonster : MonoBehaviour, IDamageable
             return;
         }   
         collectEffect.Initialize(item, player);
+    }
+
+    private void ShowFloatingText (string text, Color color, Vector3 offset)
+    {
+        if (floatingTextPrefab == null)
+        {
+            return;
+        }
+
+        Vector3 basePos = floatingTextPoint != null
+            ? floatingTextPoint.position
+            : transform.position + Vector3.up * 2f;
+
+
+        FloatingTextEffect effect = Instantiate(
+            floatingTextPrefab,
+            basePos + offset,
+            Quaternion.identity
+        );
+
+        effect.Initialize(text, color);
     }
 
     private IEnumerator SinkAndDestroy()

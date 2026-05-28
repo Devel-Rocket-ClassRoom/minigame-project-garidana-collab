@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: data
       value: 
       objectReference: {fileID: 11400000, guid: 83667bae0ed4d2b4db16d0a9e5cc4e7e, type: 2}
+    - target: {fileID: 1592453169578146486, guid: 888a2743e21511340ab5e6007fadd92d, type: 3}
+      propertyPath: floatingTextPrefab
+      value: 
+      objectReference: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
     - target: {fileID: 9220383817017189025, guid: 888a2743e21511340ab5e6007fadd92d, type: 3}
       propertyPath: m_Layer
       value: 6

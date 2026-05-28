@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Phantom Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 3863170903147799064, guid: add7e67fb68b0d54a9d9893bd0356223, type: 3}
+      propertyPath: floatingTextPrefab
+      value: 
+      objectReference: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
     - target: {fileID: 5441209308122559353, guid: add7e67fb68b0d54a9d9893bd0356223, type: 3}
       propertyPath: m_StoppingDistance
       value: 1.5
