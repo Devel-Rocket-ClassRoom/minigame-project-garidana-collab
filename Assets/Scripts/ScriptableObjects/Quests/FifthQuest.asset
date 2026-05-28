@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b77c0e2bd1bf45fbba62943e0b83019, type: 3}
   m_Name: FifthQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
-  questId: 
+  questId: fifth
   questTitle: 
   description: 
   objectiveType: 0

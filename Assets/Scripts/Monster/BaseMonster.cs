@@ -333,13 +333,13 @@ public class BaseMonster : MonoBehaviour, IDamageable
 
     private IEnumerator SinkAndDestroy()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
-        float sinkDuration = 2f;
+        float sinkDuration = 3f;
         float elapsed = 0f;
 
         Vector3 startPosition = transform.position;
-        Vector3 endPosition = startPosition + Vector3.down * 1.5f;
+        Vector3 endPosition = startPosition + Vector3.down * 2f;
 
         while (elapsed < sinkDuration)
         {
@@ -348,6 +348,6 @@ public class BaseMonster : MonoBehaviour, IDamageable
             yield return null;
         }
 
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
+    }
 }
