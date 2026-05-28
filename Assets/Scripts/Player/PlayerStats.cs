@@ -52,8 +52,10 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
 
     public event Action Died;
+    public event Action Respawned;
     public event Action<int> LevelChanged;
     public event Action<int> GoldGained;
+    public event Action<int> GoldSpent;
     public event Action<int> ExpGained;
     public event Action<int> DamageTaken;
 
@@ -161,13 +163,19 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
     public bool SpendGold (int amount)
     {
+        if (amount <= 0)
+        {
+            return true;
+        }
+
         if (_gold < amount)
         {
             Debug.Log("골드 부족");
             return false;
         }
+
         _gold -= amount;
-        // 후에 UI 업데이트
+        GoldSpent?.Invoke(amount);
         return true;
     }
 
@@ -202,6 +210,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
     {
         _level++;
         IncreaseAttackPower(1f);
+        IncreaseMaxHealth(5f);
+
         LevelChanged?.Invoke(_level);
         Debug.Log($"레벨업! 현재 레벨: {_level}, 현재 공격력: {_attackPower}");
         // 나중에 레벨업 이펙트 UI 추가
@@ -219,5 +229,42 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
         // 플레이어 사망 이벤트 발생
         Died?.Invoke();
+    }
+
+    public void TeleportTo(Vector3 position)
+    {
+        MoveToPosition(position);
+    }
+
+    public void RespawnAt(Vector3 position)
+    {
+        _isDead = false;
+        _currentHealth = _maxHealth;
+        _currentStamina = _maxStamina;
+        _lastDamagedTime = -999f;
+        _lastStaminaUsedTime = -999f;
+
+        MoveToPosition(position);
+
+        if (_animator != null)
+        {
+            _animator.Rebind();
+            _animator.Update(0f);
+        }
+
+        Respawned?.Invoke();
+    }
+
+    private void MoveToPosition(Vector3 position)
+    {
+        transform.position = position;
+
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
+        if (rigidbody != null)
+        {
+            rigidbody.linearVelocity = Vector3.zero;
+            rigidbody.angularVelocity = Vector3.zero;
+            rigidbody.position = position;
+        }
     }
 }

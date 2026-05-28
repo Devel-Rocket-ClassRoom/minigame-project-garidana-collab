@@ -63,6 +63,12 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
+        if (_playerStats != null && _playerStats.IsDead)
+        {
+            ClearInteraction();
+            return;
+        }
+
         RefreshCurrentTarget();
         RefreshInteractionUi();
     }
@@ -82,7 +88,6 @@ public class PlayerInteractor : MonoBehaviour
     private void HandlePlayerDied()
     {
         ClearInteraction();
-        enabled = false;
     }
 
     private void RefreshCurrentTarget()
@@ -100,7 +105,7 @@ public class PlayerInteractor : MonoBehaviour
         {
             if (!hit.TryGetComponent<IInteractable>(out var interactable))
             {
-                interactable = hit.GetComponent<IInteractable>();
+                interactable = hit.GetComponentInParent<IInteractable>();
             }
 
             if (interactable == null)

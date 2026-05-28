@@ -31,6 +31,7 @@ public class PlayerHud : MonoBehaviour
         if (_playerStats != null)
         {
             _playerStats.GoldGained += ShowGoldGain;
+            _playerStats.GoldSpent += ShowGoldSpent;
         }
     }
 
@@ -39,6 +40,7 @@ public class PlayerHud : MonoBehaviour
         if (_playerStats != null)
         {
             _playerStats.GoldGained -= ShowGoldGain;
+            _playerStats.GoldSpent -= ShowGoldSpent;
         }
     }
 
@@ -77,9 +79,19 @@ public class PlayerHud : MonoBehaviour
 
     private void ShowGoldGain(int amount)
     {
+        ShowGoldFloatingText($"+{amount} G", Color.yellow);
+    }
+
+    private void ShowGoldSpent(int amount)
+    {
+        ShowGoldFloatingText($"-{amount} G", Color.red);
+    }
+
+    private void ShowGoldFloatingText(string value, Color color)
+    {
         if (goldFloatingTextPrefab == null || goldText == null)
         {
-                return;
+            return;
         }
 
         Transform parent = goldFloatingTextParent != null
@@ -97,7 +109,7 @@ public class PlayerHud : MonoBehaviour
 
         goldFloatingTextStack++;
 
-        effect.Initialize($"+{amount} G", Color.yellow);
+        effect.Initialize(value, color);
 
         StartCoroutine(ReleaseGoldFloatingTextSlot()); 
     }

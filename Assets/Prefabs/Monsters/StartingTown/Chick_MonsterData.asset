@@ -20,7 +20,7 @@ MonoBehaviour:
   attackCooldown: 3
   goldMin: 10
   goldMax: 20
-  expReward: 20
+  expReward: 10
   questTargetId: chick
   questDrops:
   - item: {fileID: 11400000, guid: 7d725f25fb3d4304a8365db31e289cb5, type: 2}
