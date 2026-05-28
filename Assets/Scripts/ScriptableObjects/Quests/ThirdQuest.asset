@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: ThirdQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questId: third
-  questTitle: 'Eliminate '
-  description: 
-  objectiveType: 0
-  targetId: 
+  questTitle: Collect Dark Mana Crystal
+  description: Collect Dark Mana Crystal from Death Mage
+  objectiveType: 1
+  targetId: dark
   requiredAmount: 1
-  prerequisiteQuest: {fileID: 0}
-  nextQuest: {fileID: 0}
+  prerequisiteQuest: {fileID: 11400000, guid: fa1948d9e427fb54abe6e550c07f070d, type: 2}
+  nextQuest: {fileID: 11400000, guid: e58d10dfadae29f4e9bca8fbebc3a019, type: 2}
   reward:
-    gold: 0
-    level: 0
+    gold: 300
+    level: 5
     exp: 0

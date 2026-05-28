@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a37bfa008f4394b449ab827fac688706, type: 3}
-  m_Name: EggItem
+  m_Name: DarkManaSrystal_Item
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemId: egg
-  displayName: Egg
-  description: Egg from Chick monster
+  itemId: dark
+  displayName: Dark Mana Crystal
+  description: Corrupted Mana Crystal
   itemType: 0
   equipmentPart: 0
   tier: 1
   attackBonus: 0
   maxHealthBonus: 0
   price: 0
-  icon: {fileID: 21300000, guid: a864651aae4f64b9182246ce1631794b, type: 3}
-  worldPrefab: {fileID: 2940656471968488061, guid: 077e90a4b0e214ce7a05a13c4fba8f3f, type: 3}
+  icon: {fileID: 21300000, guid: 99e5f352f6deb9f419e484b09c16f176, type: 3}
+  worldPrefab: {fileID: 9176984569687111534, guid: f9e6bf0df800b0448b462cf4b8d8d9cd, type: 3}
   equipObjectName: 
   isDefaultEquipment: 0
