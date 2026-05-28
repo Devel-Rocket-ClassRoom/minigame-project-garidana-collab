@@ -14,6 +14,12 @@ public class PlayerAttack : MonoBehaviour
     private float[] _hitDelays = { 0.12f, 0.14f, 0.18f };
 
     [SerializeField]
+    private bool _useAnimationHitEvent = true;
+
+    [SerializeField]
+    private bool _useHitDelayFallback = true;
+
+    [SerializeField]
     private float _comboWindowStartOffset = 0.25f;
 
     [SerializeField]
@@ -27,6 +33,18 @@ public class PlayerAttack : MonoBehaviour
 
     [SerializeField]
     private LayerMask _hitLayers = ~0;
+
+    [SerializeField]
+    private Vector3 _hitBoxCenterOffset = new Vector3(0f, 1f, 1f);
+
+    [SerializeField]
+    private Vector3 _hitBoxHalfExtents = new Vector3(0.8f, 1f, 0.8f);
+
+    [SerializeField]
+    private bool _showRuntimeHitGizmo = true;
+
+    [SerializeField]
+    private float _runtimeHitGizmoDuration = 0.2f;
 
     // 콘보 히트스탑 시간
     [SerializeField]
@@ -50,6 +68,12 @@ public class PlayerAttack : MonoBehaviour
 
     private float _pendingHitTime;
     private bool _hasPendingHit;
+    private bool _hitAppliedThisAttack;
+    private Vector3 _lastHitCenter;
+    private Vector3 _lastHitBoxHalfExtents;
+    private Quaternion _lastHitRotation;
+    private float _lastHitGizmoEndTime;
+    private bool _hasRuntimeHitGizmo;
 
     private const int MaxComboStep = 3;
     private const string MoveStateName = "Move";
@@ -100,7 +124,7 @@ public class PlayerAttack : MonoBehaviour
         if (_hasPendingHit && Time.time >= _pendingHitTime)
         {
             _hasPendingHit = false;
-            ApplyHit(_pendingHitComboStep);
+            TryApplyHit(_pendingHitComboStep);
         }
     }
 
@@ -144,16 +168,18 @@ public class PlayerAttack : MonoBehaviour
         _comboStep = Mathf.Clamp(step, 1, MaxComboStep);
         _isAttacking = true;
         _comboQueued = false;
+        _hitAppliedThisAttack = false;
 
         float attackDuration = GetComboValue(_attackDurations, _comboStep, 0.6f);
         float hitDelay = GetComboValue(_hitDelays, _comboStep, 0.12f);
+        float fallbackDelay = _useAnimationHitEvent ? Mathf.Max(hitDelay, attackDuration - 0.05f) : hitDelay;
 
         _attackEndTime = Time.time + attackDuration;
         _comboWindowStart = Time.time + Mathf.Min(_comboWindowStartOffset, attackDuration);
         _comboWindowEnd = Time.time + Mathf.Min(_comboWindowEndOffset, attackDuration);
-        _pendingHitTime = Time.time + hitDelay;
+        _pendingHitTime = Time.time + fallbackDelay;
         _pendingHitComboStep = _comboStep;
-        _hasPendingHit = true;
+        _hasPendingHit = !_useAnimationHitEvent || _useHitDelayFallback;
 
         Debug.Log(
             $"Player attack started. ComboStep: {_comboStep}, AttackStage: {GetAttackStageName()}, AttackPower: {GetAttackPower()}, ExpectedDamage: {CalculateDamage(_comboStep)}"
@@ -171,6 +197,7 @@ public class PlayerAttack : MonoBehaviour
         _isAttacking = false;
         _comboQueued = false;
         _hasPendingHit = false;
+        _hitAppliedThisAttack = false;
 
         if (_animator != null)
         {
@@ -178,15 +205,30 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    private void TryApplyHit(int comboStep)
+    {
+        if (_hitAppliedThisAttack)
+        {
+            return;
+        }
+
+        _hitAppliedThisAttack = true;
+        ApplyHit(comboStep);
+    }
+
     private void ApplyHit(int comboStep)
     {
-        float hitRange = GetHitRange();
-        float hitRadius = GetHitRadius();
-        Vector3 hitCenter = transform.position + transform.forward * hitRange;
-        int hitCount = Physics.OverlapSphereNonAlloc(
+        Vector3 hitCenter = GetHitBoxCenter();
+        Vector3 hitBoxHalfExtents = GetHitBoxHalfExtents();
+        Quaternion hitRotation = transform.rotation;
+
+        RememberRuntimeHitGizmo(hitCenter, hitBoxHalfExtents, hitRotation);
+
+        int hitCount = Physics.OverlapBoxNonAlloc(
             hitCenter,
-            hitRadius,
+            hitBoxHalfExtents,
             _hitResults,
+            hitRotation,
             _hitLayers,
             QueryTriggerInteraction.Ignore
         );
@@ -227,7 +269,7 @@ public class PlayerAttack : MonoBehaviour
         if (validTargetCount == 0)
         {
             Debug.Log(
-                $"Player attack found no valid targets. ComboStep: {comboStep}, HitCenter: {hitCenter}, HitRadius: {hitRadius}, RawHitCount: {hitCount}"
+                $"Player attack found no valid targets. ComboStep: {comboStep}, HitCenter: {hitCenter}, HitBoxHalfExtents: {hitBoxHalfExtents}, RawHitCount: {hitCount}"
             );
         }
     }
@@ -260,6 +302,32 @@ public class PlayerAttack : MonoBehaviour
         return _attackUpgrade != null ? _attackUpgrade.CurrentStageName : "Normal";
     }
 
+    private Vector3 GetHitBoxCenter()
+    {
+        Vector3 localCenter = _hitBoxCenterOffset;
+        localCenter.z += GetHitRange() - _hitRange;
+        return transform.TransformPoint(localCenter);
+    }
+
+    private Vector3 GetHitBoxHalfExtents()
+    {
+        float radiusScale = GetHitRadius() / Mathf.Max(0.01f, _hitRadius);
+        return new Vector3(
+            Mathf.Max(0f, _hitBoxHalfExtents.x * radiusScale),
+            Mathf.Max(0f, _hitBoxHalfExtents.y),
+            Mathf.Max(0f, _hitBoxHalfExtents.z * radiusScale)
+        );
+    }
+
+    private void RememberRuntimeHitGizmo(Vector3 hitCenter, Vector3 hitBoxHalfExtents, Quaternion hitRotation)
+    {
+        _lastHitCenter = hitCenter;
+        _lastHitBoxHalfExtents = hitBoxHalfExtents;
+        _lastHitRotation = hitRotation;
+        _lastHitGizmoEndTime = Time.time + Mathf.Max(0f, _runtimeHitGizmoDuration);
+        _hasRuntimeHitGizmo = true;
+    }
+
     private static T GetComboValue<T>(T[] values, int comboStep, T fallback)
     {
         int index = comboStep - 1;
@@ -282,12 +350,39 @@ public class PlayerAttack : MonoBehaviour
         _attackUpgrade.PlayAttackEffect(_comboStep, transform);
     }
 
+    // Animation Event에서 호출하여 검이 실제로 닿는 프레임에 데미지를 적용합니다.
+    public void OnAttackHitEvent()
+    {
+        if (!_isAttacking || _comboStep <= 0)
+        {
+            return;
+        }
+
+        _hasPendingHit = false;
+        TryApplyHit(_comboStep);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!_showRuntimeHitGizmo || !Application.isPlaying || !_hasRuntimeHitGizmo || Time.time > _lastHitGizmoEndTime)
+        {
+            return;
+        }
+
+        DrawHitBoxGizmo(_lastHitCenter, _lastHitBoxHalfExtents, _lastHitRotation, Color.red);
+    }
+
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        float hitRange = Application.isPlaying ? GetHitRange() : _hitRange;
-        float hitRadius = Application.isPlaying ? GetHitRadius() : _hitRadius;
-        Vector3 hitCenter = transform.position + transform.forward * hitRange;
-        Gizmos.DrawWireSphere(hitCenter, hitRadius);
+        DrawHitBoxGizmo(GetHitBoxCenter(), GetHitBoxHalfExtents(), transform.rotation, Color.yellow);
+    }
+
+    private static void DrawHitBoxGizmo(Vector3 center, Vector3 halfExtents, Quaternion rotation, Color color)
+    {
+        Gizmos.color = color;
+        Matrix4x4 oldMatrix = Gizmos.matrix;
+        Gizmos.matrix = Matrix4x4.TRS(center, rotation, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
+        Gizmos.matrix = oldMatrix;
     }
 }

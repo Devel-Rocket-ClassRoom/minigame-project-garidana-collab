@@ -16,7 +16,7 @@ MonoBehaviour:
   attackDamage: 10
   moveSpeed: 3
   detectionRange: 5
-  attackRange: 1.5
+  attackRange: 1
   attackCooldown: 3
   goldMin: 10
   goldMax: 20

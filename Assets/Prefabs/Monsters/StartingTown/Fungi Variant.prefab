@@ -372,7 +372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BaseMonster
   data: {fileID: 11400000, guid: 380fefae520edaa4db577ec57efdbce9, type: 2}
   patrolDistance: 3
-  knockbackDistance: 0.35
-  knockbackDuration: 0.8
+  knockbackDistance: 0.4
+  knockbackDuration: 0.6
   floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
   floatingTextPoint: {fileID: 0}
