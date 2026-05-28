@@ -209,8 +209,10 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public void LevelUp()
     {
         _level++;
+        _expToLevelUp = 100 + ((_level - 1) / 10) * 100;
         IncreaseAttackPower(1f);
         IncreaseMaxHealth(5f);
+        _currentHealth = _maxHealth;
 
         LevelChanged?.Invoke(_level);
         Debug.Log($"레벨업! 현재 레벨: {_level}, 현재 공격력: {_attackPower}");
