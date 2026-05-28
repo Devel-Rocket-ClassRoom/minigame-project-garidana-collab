@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: SecondQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questId: second
-  questTitle: Eliminate 30 Bumbles
-  description: Eliminate 30 Bumbles and return to the magician
+  questTitle: Eliminate 15 Stings
+  description: Eliminate 5 Stings and return to the magician
   objectiveType: 0
-  targetId: bumble
-  requiredAmount: 30
+  targetId: sting
+  requiredAmount: 5
   prerequisiteQuest: {fileID: 11400000, guid: b898781c2a50e474dbe5382be9a45660, type: 2}
   nextQuest: {fileID: 11400000, guid: 20a599f70f3ec3c478b4a2de1aadf529, type: 2}
   reward:

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>김경일의 모험: Origin — 프로젝트 진행도 (2026-05-28)</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #222535;
+      --border: #2e3147;
+      --accent: #6c63ff;
+      --accent2: #4ecdc4;
+      --accent3: #f7c59f;
+      --green: #4ade80;
+      --yellow: #facc15;
+      --red: #f87171;
+      --blue: #60a5fa;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --tag-bg: #2d3148;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      line-height: 1.6;
+      padding: 2rem 1.5rem 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .header {
+      border-left: 4px solid var(--accent);
+      padding-left: 1.2rem;
+      margin-bottom: 2.5rem;
+    }
+    .header .date { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem; }
+    .header h1 { font-size: 1.8rem; font-weight: 700; color: var(--text); }
+    .header h1 span { color: var(--accent); }
+    .header .subtitle { color: var(--muted); font-size: 0.95rem; margin-top: 0.4rem; }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 2.4rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Info cards ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+    }
+    .info-card .label { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.25rem; }
+    .info-card .value { font-size: 1rem; font-weight: 600; color: var(--text); }
+    .info-card .value.accent { color: var(--accent); }
+    .info-card .value.green { color: var(--green); }
+    .info-card .value.yellow { color: var(--yellow); }
+
+    /* ── Overview box ── */
+    .overview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+    .overview p + p { margin-top: 0.6rem; }
+
+    /* ── Progress bar ── */
+    .progress-section { display: flex; flex-direction: column; gap: 1rem; }
+    .progress-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+    .progress-title { font-size: 0.95rem; font-weight: 600; }
+    .progress-label { font-size: 0.8rem; font-weight: 600; border-radius: 4px; padding: 0.2rem 0.6rem; }
+    .label-done   { background: #14532d; color: var(--green); }
+    .label-wip    { background: #713f12; color: var(--yellow); }
+    .label-todo   { background: #1e1b4b; color: #a5b4fc; }
+
+    .bar-track {
+      background: var(--surface2);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+    .bar-fill.green  { background: var(--green); }
+    .bar-fill.yellow { background: var(--yellow); }
+    .bar-fill.blue   { background: var(--blue); }
+    .bar-fill.muted  { background: var(--muted); }
+
+    .progress-note { font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem; }
+
+    /* ── System table ── */
+    .sys-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .sys-table th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.5rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .sys-table td {
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .sys-table tr:last-child td { border-bottom: none; }
+    .sys-table tr:hover td { background: var(--surface2); }
+
+    .tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin: 0.1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+    }
+    .badge-done   { background: #14532d; color: var(--green); }
+    .badge-wip    { background: #713f12; color: var(--yellow); }
+    .badge-todo   { background: #1e1b4b; color: #a5b4fc; }
+    .badge-basic  { background: #1e3a5f; color: var(--blue); }
+
+    /* ── Bug / notes ── */
+    .note-list { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+    .note-list li {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+    .note-list li::before { content: attr(data-icon); font-size: 1rem; flex-shrink: 0; }
+
+    /* ── Build targets ── */
+    .target-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    @media (max-width: 600px) { .target-grid { grid-template-columns: 1fr; } }
+    .target-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+    }
+    .target-card .t-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .target-card .t-desc  { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── HEADER ─── -->
+  <div class="header">
+    <div class="date">2026-05-28 · 프로젝트 진행도 보고서</div>
+    <h1><span>김경일의 모험</span>: Origin</h1>
+    <div class="subtitle">Unity 3D Action RPG · ka_origin · feature/ui-inventory 브랜치</div>
+  </div>
+
+  <!-- ─── 기본 정보 ─── -->
+  <div class="section-title">기본 정보</div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">프로젝트명</div>
+      <div class="value accent">ka_origin</div>
+    </div>
+    <div class="info-card">
+      <div class="label">빌드 버전</div>
+      <div class="value">0.1.0 (1주차)</div>
+    </div>
+    <div class="info-card">
+      <div class="label">현재 브랜치</div>
+      <div class="value yellow">feature/ui-inventory</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Unity 버전</div>
+      <div class="value">6000.3.15f1</div>
+    </div>
+    <div class="info-card">
+      <div class="label">빌드 플랫폼</div>
+      <div class="value">Windows (D3D12)</div>
+    </div>
+    <div class="info-card">
+      <div class="label">현재 주차</div>
+      <div class="value green">2주차 진행 중</div>
+    </div>
+  </div>
+
+  <!-- ─── 게임 개요 ─── -->
+  <div class="section-title">게임 개요</div>
+  <div class="overview">
+    <p><strong>김경일의 모험: Origin</strong>은 3D 뷰 액션 RPG입니다. 플레이어는 8방향 이동과 3단 콤보 공격, 대시를 사용해 몬스터를 처치하고, 경험치와 골드를 획득해 레벨업하며 공격을 강화합니다.</p>
+    <p>핵심 플레이 루프는 <strong>퀘스트 수락 → 몬스터 처치 / 아이템 수집 → 퀘스트 완료 → 레벨업 / 공격 강화 → 다음 구역 진입</strong>으로 설계되어 있습니다.</p>
+    <p>Low-poly 아트 스타일 기반의 여러 구역(시작 마을, 어둠의 숲, 황무지/사막 구역)으로 구성되며, NPC 및 상자 상호작용, 인벤토리(장비창) 시스템을 2주차에서 완성 목표로 진행 중입니다.</p>
+  </div>
+
+  <!-- ─── 전체 진행도 ─── -->
+  <div class="section-title">전체 진행도</div>
+  <div class="progress-section">
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">🕹️ 플레이어 기본 시스템</span>
+        <span class="progress-label label-done">완료</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div>
+      <div class="progress-note">이동(8방향), 대시(Shift), 3단 콤보 공격, 스태미나, HP, 경험치, 골드, 레벨업, 사망 처리 모두 구현 완료</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">⚔️ 전투 시스템</span>
+        <span class="progress-label label-done">완료</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div>
+      <div class="progress-note">콤보 공격, 히트스탑(HitStopManager), 피격 넉백, 무적 프레임, 몬스터 사망·보상 지급까지 구현</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">🧠 몬스터 AI</span>
+        <span class="progress-label label-done">완료</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div>
+      <div class="progress-note">NavMeshAgent 기반 배회·감지·추격·공격 상태 전환, 머리 위 HP바, ScriptableObject 데이터 구조, 2개 구역 몬스터 배치 완료</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">✨ 공격 강화 시스템</span>
+        <span class="progress-label label-done">완료</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill green" style="width:95%"></div></div>
+      <div class="progress-note">Normal → Enhanced 1 (Lv10) → Enhanced 2 (Lv20) → Enhanced 3 (Lv30) → Enhanced 4 (Lv40), 이펙트 색·범위 단계별 변화 구현</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">📜 퀘스트 시스템</span>
+        <span class="progress-label label-done">완료</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill green" style="width:90%"></div></div>
+      <div class="progress-note">QuestManager 싱글턴, 몬스터 처치 / 아이템 수집 / 상호작용 3가지 목표 유형, 선행 퀘스트 체인, 완료 보상(Gold·EXP·Level) 구현</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">🎒 인벤토리 / 장비창</span>
+        <span class="progress-label label-wip">진행 중</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill yellow" style="width:30%"></div></div>
+      <div class="progress-note">ItemData ScriptableObject 구조 완성, DropEntry 드랍 테이블 구조 완성. InventoryUi.cs 골격만 생성된 상태 — UI 로직 미구현 (현재 브랜치 WIP)</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">🗺️ 맵 / 구역</span>
+        <span class="progress-label label-wip">진행 중</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill yellow" style="width:65%"></div></div>
+      <div class="progress-note">시작 마을(StartingTown) + 황무지(DesertedLand) 2구역 몬스터 프리팹 배치 완료. 다음 구역 진입 조건·잠금 해제 흐름은 미완성</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">🖥️ UI / HUD</span>
+        <span class="progress-label label-wip">진행 중</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill yellow" style="width:70%"></div></div>
+      <div class="progress-note">HP·스태미나·레벨·경험치·골드 HUD, 대시 UI, HP 회복 UI, 게임오버 UI, 퀘스트 진행 UI, 퀘스트 아이템 수집 이펙트 구현. 인벤토리 UI 미완성</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">🔧 인터랙션 / 상호작용</span>
+        <span class="progress-label label-done">완료</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill green" style="width:85%"></div></div>
+      <div class="progress-note">IInteractable 인터페이스, NPCInteractable, ChestInteractable, PlayerInteractor, 상호작용 UI 프롬프트 구현</div>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-title">🎬 씬 관리 / 타이틀</span>
+        <span class="progress-label label-done">완료</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill green" style="width:80%"></div></div>
+      <div class="progress-note">SceneLoader, PauseManager, MainTitleUi, OptionMenuUi 구현. SampleScene + Sample_Level 씬 구성</div>
+    </div>
+
+  </div>
+
+  <!-- ─── 시스템별 상세 ─── -->
+  <div class="section-title">시스템별 구현 상세</div>
+  <table class="sys-table">
+    <thead>
+      <tr>
+        <th>시스템</th>
+        <th>주요 파일</th>
+        <th>상태</th>
+        <th>비고</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>플레이어 이동</td>
+        <td><span class="tag">PlayerMovement.cs</span><span class="tag">PlayerInputReader.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>8방향 이동, 대시, 스태미나 소모</td>
+      </tr>
+      <tr>
+        <td>플레이어 스탯</td>
+        <td><span class="tag">PlayerStats.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>HP·스태미나·경험치·골드·레벨, IDamageable 구현</td>
+      </tr>
+      <tr>
+        <td>공격 콤보</td>
+        <td><span class="tag">PlayerAttack.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>3단 콤보, 히트박스(OverlapSphere), 히트스탑 연동</td>
+      </tr>
+      <tr>
+        <td>공격 강화</td>
+        <td><span class="tag">PlayerAttackUpgrade.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>레벨 기반 5단계(Lv1/10/20/30/40), 범위·색·이펙트 스케일 단계별 변화</td>
+      </tr>
+      <tr>
+        <td>체력 회복</td>
+        <td><span class="tag">PlayerHealing.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>회복 사용, HpRegenUi 연동</td>
+      </tr>
+      <tr>
+        <td>카메라</td>
+        <td><span class="tag">PlayerCameraZoom.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>Cinemachine 기반 줌</td>
+      </tr>
+      <tr>
+        <td>몬스터 AI</td>
+        <td><span class="tag">BaseMonster.cs</span><span class="tag">MonsterData.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>NavMesh, 배회·추격·공격·사망, 넉백</td>
+      </tr>
+      <tr>
+        <td>몬스터 HP바</td>
+        <td><span class="tag">MonsterHpBar.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>피격 시 HPChanged 이벤트 갱신</td>
+      </tr>
+      <tr>
+        <td>아이템 데이터</td>
+        <td><span class="tag">ItemData.cs</span><span class="tag">DropEntry.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>Quest·Equipment·Consumable·Material 타입, 장비 슬롯 구분</td>
+      </tr>
+      <tr>
+        <td>인벤토리 UI</td>
+        <td><span class="tag">InventoryUi.cs</span></td>
+        <td><span class="badge badge-wip">WIP</span></td>
+        <td>클래스 골격만 생성, 로직 미구현 (현재 브랜치 작업 중)</td>
+      </tr>
+      <tr>
+        <td>퀘스트 시스템</td>
+        <td><span class="tag">QuestManager.cs</span><span class="tag">QuestData.cs</span><span class="tag">QuestState.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>싱글턴, Kill·Collect·Interact 목표 유형, 선행 퀘스트 체인, 보상 지급</td>
+      </tr>
+      <tr>
+        <td>퀘스트 NPC</td>
+        <td><span class="tag">NPCQuestGiver.cs</span><span class="tag">NPCInteractable.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>퀘스트 수락·완료 상호작용, 빌보드 아이콘</td>
+      </tr>
+      <tr>
+        <td>퀘스트 UI</td>
+        <td><span class="tag">QuestUi.cs</span><span class="tag">QuestProgressionUi.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>퀘스트 목표·진행도 HUD 표시</td>
+      </tr>
+      <tr>
+        <td>씬 로드</td>
+        <td><span class="tag">SceneLoader.cs</span><span class="tag">PauseManager.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>씬 전환, 일시정지/재개</td>
+      </tr>
+      <tr>
+        <td>히트스탑</td>
+        <td><span class="tag">HitStopManager.cs</span></td>
+        <td><span class="badge badge-done">완료</span></td>
+        <td>PauseManager와 역할 분리됨, 공격 타격감 연출</td>
+      </tr>
+      <tr>
+        <td>미니맵</td>
+        <td>AA Map and Minimap System (에셋)</td>
+        <td><span class="badge badge-basic">에셋 임포트</span></td>
+        <td>임포트 완료, 연동 여부 확인 필요</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── 알려진 이슈 ─── -->
+  <div class="section-title">알려진 이슈 / 개선 사항</div>
+  <ul class="note-list">
+    <li data-icon="🐛">몬스터에게 플레이어가 밀리는 이슈 — 1주차 빌드 조건부 통과, 개선 필요</li>
+    <li data-icon="🎨">경험치 바 위치 및 HUD 가독성 개선 필요 (1주차 지적 사항)</li>
+    <li data-icon="🏗️">InventoryUi.cs — 클래스 골격만 존재, 아이템 표시/드래그앤드롭/장착 로직 미구현</li>
+    <li data-icon="🗺️">다음 구역(황무지) 진입 조건 잠금 해제 흐름 미완성</li>
+    <li data-icon="📦">몬스터 아이템 드랍 — DropEntry 구조는 완성, 드랍 실행 로직과 아이템 픽업 연동 확인 필요</li>
+    <li data-icon="💡">레벨업 이펙트 UI 미추가 (PlayerStats.cs 주석에 TODO 명시)</li>
+  </ul>
+
+  <!-- ─── 2주차 남은 목표 ─── -->
+  <div class="section-title">2주차 남은 목표 (2026-05-28 기준)</div>
+  <div class="target-grid">
+    <div class="target-card">
+      <div class="t-title">🎒 인벤토리 UI 완성</div>
+      <div class="t-desc">아이템 획득 → 인벤토리 표시, 드래그앤드롭, 장착/탈착, 소모품 사용 횟수 감소</div>
+    </div>
+    <div class="target-card">
+      <div class="t-title">📦 몬스터 드랍 연동</div>
+      <div class="t-desc">DropEntry 기반 드랍 실행, 퀘스트 아이템 자동 획득(범위 진입 시 픽업)</div>
+    </div>
+    <div class="target-card">
+      <div class="t-title">🗺️ 다음 구역 진입 조건</div>
+      <div class="t-desc">퀘스트 완료 또는 레벨/공격 강화 달성 시 다음 구역 잠금 해제 흐름 연결</div>
+    </div>
+    <div class="target-card">
+      <div class="t-title">💊 소모품 사용</div>
+      <div class="t-desc">체력 포션 등 소모품 사용 후 수량 감소, 인벤토리 연동</div>
+    </div>
+    <div class="target-card">
+      <div class="t-title">🎇 경험치/골드 드랍 이펙트</div>
+      <div class="t-desc">몬스터 처치 시 획득 팝업 또는 이펙트로 피드백 강화</div>
+    </div>
+    <div class="target-card">
+      <div class="t-title">🐛 밀림 이슈 수정</div>
+      <div class="t-desc">플레이어가 몬스터에 과도하게 밀리는 현상 물리/넉백 조정</div>
+    </div>
+  </div>
+
+  <!-- ─── Footer ─── -->
+  <footer>
+    Generated 2026-05-28 · ka_origin / 김경일의 모험: Origin · Unity 6000.3.15f1
+  </footer>
+
+</body>
+</html>

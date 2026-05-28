@@ -53,7 +53,9 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
     public event Action Died;
     public event Action<int> LevelChanged;
-
+    public event Action<int> GoldGained;
+    public event Action<int> ExpGained;
+    public event Action<int> DamageTaken;
 
     private void Awake()
     {
@@ -125,6 +127,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
         _lastDamagedTime = Time.time;
         _currentHealth = Mathf.Max(0, _currentHealth - damage);
 
+        DamageTaken?.Invoke(Mathf.RoundToInt(damage));
+
         if (_currentHealth <= 0)
         {
             Die();
@@ -151,6 +155,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public void AddGold(int amount)
     {
         _gold += amount;
+        GoldGained?.Invoke(amount);
         Debug.Log($"골드 :{amount}, 현재 골드: {_gold}");   
     }
 
@@ -174,6 +179,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
         }
 
         _currentExp += amount;
+        ExpGained?.Invoke(amount);
         Debug.Log($"경험치 +{amount}, 현재 경험치: {_currentExp}/{_expToLevelUp}");
         
         while (_currentExp >= _expToLevelUp && _level < 50)

@@ -17,10 +17,10 @@ MonoBehaviour:
   description: 'Collect 20 eggs from chick and talk to YongSoo Lim. '
   objectiveType: 1
   targetId: egg
-  requiredAmount: 20
+  requiredAmount: 2
   prerequisiteQuest: {fileID: 0}
   nextQuest: {fileID: 11400000, guid: fa1948d9e427fb54abe6e550c07f070d, type: 2}
   reward:
     gold: 100
-    level: 40
+    level: 5
     exp: 0

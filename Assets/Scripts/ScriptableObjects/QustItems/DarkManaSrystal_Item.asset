@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37bfa008f4394b449ab827fac688706, type: 3}
+  m_Name: DarkManaSrystal_Item
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemId: dark
+  displayName: Dark Mana Crystal
+  description: Corrupted Mana Crystal
+  itemType: 0
+  equipmentPart: 0
+  tier: 1
+  attackBonus: 0
+  maxHealthBonus: 0
+  price: 0
+  icon: {fileID: 21300000, guid: 99e5f352f6deb9f419e484b09c16f176, type: 3}
+  worldPrefab: {fileID: 9176984569687111534, guid: f9e6bf0df800b0448b462cf4b8d8d9cd, type: 3}
+  equipObjectName: 
+  isDefaultEquipment: 0
