@@ -424,6 +424,8 @@ MonoBehaviour:
   patrolDistance: 3
   knockbackDistance: 0.35
   knockbackDuration: 0.8
+  floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
+  floatingTextPoint: {fileID: 0}
 --- !u!195 &4104481924212922407
 NavMeshAgent:
   m_ObjectHideFlags: 0

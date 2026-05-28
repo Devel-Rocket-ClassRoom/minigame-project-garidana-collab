@@ -28,6 +28,10 @@ PrefabInstance:
       propertyPath: knockbackDuration
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1905536526586201434, guid: 70834eb7a6373b14e9e8bebb51c1b364, type: 3}
+      propertyPath: floatingTextPrefab
+      value: 
+      objectReference: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
     - target: {fileID: 2092435244419778259, guid: 70834eb7a6373b14e9e8bebb51c1b364, type: 3}
       propertyPath: m_Layer
       value: 6

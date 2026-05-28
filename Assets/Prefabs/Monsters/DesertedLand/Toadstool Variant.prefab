@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4649987497328753520, guid: 6817f99c996d6954bbc09b0c865d9807, type: 3}
+      propertyPath: floatingTextPrefab
+      value: 
+      objectReference: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
     - target: {fileID: 8666222085425075172, guid: 6817f99c996d6954bbc09b0c865d9807, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10.12

@@ -200,6 +200,8 @@ MonoBehaviour:
   patrolDistance: 3
   knockbackDistance: 0.5
   knockbackDuration: 0.2
+  floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
+  floatingTextPoint: {fileID: 0}
 --- !u!54 &4685321476706262621
 Rigidbody:
   m_ObjectHideFlags: 0

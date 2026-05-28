@@ -377,6 +377,8 @@ MonoBehaviour:
   patrolDistance: 3
   knockbackDistance: 0.35
   knockbackDuration: 0.8
+  floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
+  floatingTextPoint: {fileID: 0}
 --- !u!4 &5652663197671712506 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3925056490110497726, guid: eb44c0459dbc5ac4a8df592ecacbead3, type: 3}

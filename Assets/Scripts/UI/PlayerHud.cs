@@ -1,12 +1,21 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerHud : MonoBehaviour
 {
 
     [SerializeField] 
     private PlayerStats _playerStats;
+
+    [SerializeField] 
+    private FloatingHudGoldTextEffect goldFloatingTextPrefab;
+
+    [SerializeField]
+    private RectTransform goldFloatingTextParent;
+
+    private int goldFloatingTextStack;
 
     public Slider healthSlider;
     public Slider expSlider;
@@ -16,6 +25,22 @@ public class PlayerHud : MonoBehaviour
     public TextMeshProUGUI hpText;
     public TextMeshProUGUI staminaText;
     public TextMeshProUGUI expText;
+
+    private void OnEnable()
+    {
+        if (_playerStats != null)
+        {
+            _playerStats.GoldGained += ShowGoldGain;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_playerStats != null)
+        {
+            _playerStats.GoldGained -= ShowGoldGain;
+        }
+    }
 
     private void Awake()
     {
@@ -48,5 +73,38 @@ public class PlayerHud : MonoBehaviour
         goldText.text = $"{_playerStats.Gold} G";
 
         levelText.text = $"Lv. {_playerStats.Level}";
+    }
+
+    private void ShowGoldGain(int amount)
+    {
+        if (goldFloatingTextPrefab == null || goldText == null)
+        {
+                return;
+        }
+
+        Transform parent = goldFloatingTextParent != null
+            ? goldFloatingTextParent
+            : goldText.transform.parent;
+
+        FloatingHudGoldTextEffect effect = Instantiate(goldFloatingTextPrefab, parent);
+
+        RectTransform effectRect = effect.GetComponent<RectTransform>();
+        RectTransform goldRect = goldText.GetComponent<RectTransform>();
+
+        effectRect.position = goldRect.position;
+
+        effectRect.anchoredPosition += Vector2.up * (goldFloatingTextStack * 24f);
+
+        goldFloatingTextStack++;
+
+        effect.Initialize($"+{amount} G", Color.yellow);
+
+        StartCoroutine(ReleaseGoldFloatingTextSlot()); 
+    }
+
+    private IEnumerator ReleaseGoldFloatingTextSlot()
+    {
+        yield return new WaitForSeconds(0.8f);
+        goldFloatingTextStack = Mathf.Max(0, goldFloatingTextStack - 1);
     }
 }
