@@ -21,6 +21,8 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
     [SerializeField]
     private GameObject lockedIcon;
 
+    private bool subscribed;
+
     public string InteractionPrompt
     {
         get
@@ -52,6 +54,12 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
     }
 
     private void OnEnable()
+    {
+        SubscribeQuestEvents();
+        RefreshIcon();
+    }
+
+    private void Start()
     {
         SubscribeQuestEvents();
         RefreshIcon();
@@ -126,7 +134,7 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
 
     private void SubscribeQuestEvents()
     {
-        if (QuestManager.Instance == null)
+        if (subscribed || QuestManager.Instance == null)
         {
             return;
         }
@@ -134,11 +142,13 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
         QuestManager.Instance.QuestAccepted += HandleQuestChanged;
         QuestManager.Instance.QuestReadyToComplete += HandleQuestChanged;
         QuestManager.Instance.QuestCompleted += HandleQuestChanged;
+
+        subscribed = true;
     }
 
     private void UnsubscribeQuestEvents()
     {
-        if (QuestManager.Instance == null)
+        if (!subscribed || QuestManager.Instance == null)
         {
             return;
         }
@@ -146,6 +156,8 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
         QuestManager.Instance.QuestAccepted -= HandleQuestChanged;
         QuestManager.Instance.QuestReadyToComplete -= HandleQuestChanged;
         QuestManager.Instance.QuestCompleted -= HandleQuestChanged;
+
+        subscribed = false;
     }
 
     private void HandleQuestChanged(QuestData quest)

@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Basic Chestplate
   description: Very basic chest plate
   itemType: 1
-  equipmentPart: 1
+  equipmentPart: 4
   tier: 1
   attackBonus: 0
   maxHealthBonus: 0
