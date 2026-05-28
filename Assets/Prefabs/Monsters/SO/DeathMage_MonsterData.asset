@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d79af6fa1e5bd6a4e848dd5b9a848f9a, type: 3}
+  m_Name: DeathMage_MonsterData
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterData
+  maxHp: 400
+  attackDamage: 100
+  moveSpeed: 4
+  detectionRange: 8
+  attackRange: 4
+  attackCooldown: 1
+  goldMin: 500
+  goldMax: 600
+  expReward: 350
+  questTargetId: 
+  questDrops:
+  - item: {fileID: 11400000, guid: 9801a499c7539de4c80d7316b099a6a4, type: 2}
+    dropChance: 1

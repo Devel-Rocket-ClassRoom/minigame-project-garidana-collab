@@ -43,6 +43,11 @@ public class BaseMonster : MonoBehaviour, IDamageable
 
     [SerializeField]
     private float knockbackDuration = 0.8f;
+    [SerializeField]
+    private FloatingTextEffect floatingTextPrefab;
+
+    [SerializeField]
+    private Transform floatingTextPoint;
 
     private bool isKnockbacking;
     private Coroutine knockbackCoroutine;
@@ -154,7 +159,15 @@ public class BaseMonster : MonoBehaviour, IDamageable
     public void TakeDamage(float damage)
     {
         if (isDead) return;
+
         currentHp -= damage;
+
+        ShowFloatingText(
+            Mathf.RoundToInt(damage).ToString(),
+            Color.white,
+            Vector3.zero
+        );
+
         animator.SetTrigger(ParamTakeDamage);
 
         OnHpChanged?.Invoke(currentHp / data.maxHp);
@@ -266,7 +279,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
         PlayerStats playerStats = player.GetComponent<PlayerStats>();
         playerStats.AddGold(gold);
         playerStats.AddExp(data.expReward);
-        
+
         if (data.questDrops == null || QuestManager.Instance == null)
         {
             return;
@@ -331,15 +344,36 @@ public class BaseMonster : MonoBehaviour, IDamageable
         collectEffect.Initialize(item, player);
     }
 
+    private void ShowFloatingText (string text, Color color, Vector3 offset)
+    {
+        if (floatingTextPrefab == null)
+        {
+            return;
+        }
+
+        Vector3 basePos = floatingTextPoint != null
+            ? floatingTextPoint.position
+            : transform.position + Vector3.up * 2f;
+
+
+        FloatingTextEffect effect = Instantiate(
+            floatingTextPrefab,
+            basePos + offset,
+            Quaternion.identity
+        );
+
+        effect.Initialize(text, color);
+    }
+
     private IEnumerator SinkAndDestroy()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
-        float sinkDuration = 2f;
+        float sinkDuration = 3f;
         float elapsed = 0f;
 
         Vector3 startPosition = transform.position;
-        Vector3 endPosition = startPosition + Vector3.down * 1.5f;
+        Vector3 endPosition = startPosition + Vector3.down * 2f;
 
         while (elapsed < sinkDuration)
         {
@@ -348,6 +382,6 @@ public class BaseMonster : MonoBehaviour, IDamageable
             yield return null;
         }
 
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
+    }
 }
