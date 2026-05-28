@@ -199,7 +199,7 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 5613e21a7745a4847a0a246716da7978, type: 2}
   patrolDistance: 3
   knockbackDistance: 0.5
-  knockbackDuration: 0.2
+  knockbackDuration: 0.3
   floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
   floatingTextPoint: {fileID: 0}
 --- !u!54 &4685321476706262621
