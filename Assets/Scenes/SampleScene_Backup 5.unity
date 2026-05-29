@@ -6689,7 +6689,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.50610894, y: 0, z: 0, w: 0.86246955}
-  m_LocalPosition: {x: -86.2, y: 8.730071, z: 180.82292}
+  m_LocalPosition: {x: 114.6, y: 5.560071, z: 112.92293}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24037,7 +24037,7 @@ Transform:
   m_GameObject: {fileID: 1098598069}
   serializedVersion: 2
   m_LocalRotation: {x: 0.50610894, y: 0, z: 0, w: 0.86246955}
-  m_LocalPosition: {x: -86.2, y: 8.730071, z: 180.82292}
+  m_LocalPosition: {x: 114.6, y: 5.560071, z: 112.92293}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -38648,7 +38648,7 @@ MonoBehaviour:
   m_SerializedVersion: 0
   m_AgentTypeID: 0
   m_CollectObjects: 1
-  m_Size: {x: 70, y: 5.64, z: 80}
+  m_Size: {x: 70, y: 6.161435, z: 80}
   m_Center: {x: 10, y: -5.9192824, z: 15}
   m_LayerMask:
     serializedVersion: 2
@@ -47716,23 +47716,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1361530536063904997, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _attackPower
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1361530536063904997, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _damageInvincibleDuration
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5072401534506280260, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -86.2
+      value: 114.6
       objectReference: {fileID: 0}
     - target: {fileID: 5072401534506280260, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -3.17
       objectReference: {fileID: 0}
     - target: {fileID: 5072401534506280260, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 185.7
+      value: 117.8
       objectReference: {fileID: 0}
     - target: {fileID: 5072401534506280260, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_LocalRotation.w
