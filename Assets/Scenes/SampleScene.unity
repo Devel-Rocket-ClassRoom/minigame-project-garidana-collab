@@ -39801,6 +39801,18 @@ PrefabInstance:
       propertyPath: _attackStages.Array.data[3]._hitRadius
       value: 1.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2513827689037799418, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_Name
+      value: shield_5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986922995614936787, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_Name
+      value: shield_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5019418533997732735, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_Name
+      value: shield_4
+      objectReference: {fileID: 0}
     - target: {fileID: 5072401534506280260, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.4
@@ -39842,6 +39854,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5543240726957329514, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_Name
+      value: shield_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543240726957329514, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -39849,6 +39865,14 @@ PrefabInstance:
       propertyPath: _interactionUi
       value: 
       objectReference: {fileID: 336640924}
+    - target: {fileID: 7014904664203065760, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_Name
+      value: shield_6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159127718578007274, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_Name
+      value: shield_1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
