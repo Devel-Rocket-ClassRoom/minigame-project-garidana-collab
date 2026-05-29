@@ -20,6 +20,6 @@ MonoBehaviour:
   attackCooldown: 3
   goldMin: 20
   goldMax: 30
-  expReward: 25
+  expReward: 15
   questTargetId: fungi
   questDrops: []

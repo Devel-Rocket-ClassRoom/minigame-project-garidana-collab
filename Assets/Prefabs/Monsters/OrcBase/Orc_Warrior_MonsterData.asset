@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d79af6fa1e5bd6a4e848dd5b9a848f9a, type: 3}
-  m_Name: Phatom_MonsterData
+  m_Name: Orc_Warrior_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
-  maxHp: 400
-  attackDamage: 30
-  moveSpeed: 3
-  detectionRange: 5
+  maxHp: 300
+  attackDamage: 70
+  moveSpeed: 7
+  detectionRange: 8
   attackRange: 2
   attackCooldown: 2
-  goldMin: 80
-  goldMax: 100
+  goldMin: 100
+  goldMax: 200
   expReward: 50
-  questTargetId: 
+  questTargetId: orc
   questDrops: []

@@ -37,6 +37,9 @@ public class BaseMonster : MonoBehaviour, IDamageable
     [SerializeField]
     private float patrolDistance = 3f;
 
+    [SerializeField]
+    private float turnSpeed = 720f;
+
     [Header("Hit Reaction")]
     [SerializeField]
     private float knockbackDistance = 0.35f;
@@ -62,6 +65,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
 
         currentHp = data.maxHp;
         agent.speed = data.moveSpeed;
+        agent.angularSpeed = turnSpeed;
 
         patrolStartPos = transform.position;
     }
