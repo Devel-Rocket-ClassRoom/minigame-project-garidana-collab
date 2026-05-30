@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d79af6fa1e5bd6a4e848dd5b9a848f9a, type: 3}
   m_Name: Orc_Chieftain_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
-  maxHp: 600
-  attackDamage: 80
+  maxHp: 1000
+  attackDamage: 130
   moveSpeed: 6
-  detectionRange: 8
+  detectionRange: 13
   attackRange: 2
-  attackCooldown: 2
+  attackCooldown: 1
   goldMin: 400
   goldMax: 500
-  expReward: 80
+  expReward: 100
   questTargetId: orc
   questDrops: []

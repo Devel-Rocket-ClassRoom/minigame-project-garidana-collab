@@ -15,7 +15,7 @@ MonoBehaviour:
   maxHp: 300
   attackDamage: 30
   moveSpeed: 8
-  detectionRange: 6
+  detectionRange: 8
   attackRange: 4
   attackCooldown: 1
   goldMin: 100

@@ -165,6 +165,42 @@ public class WaypointManager : MonoBehaviour
         return false;
     }
 
+    public List<WaypointNode> GetTravelDestinations(string fromWaypointId)
+    {
+        List<WaypointNode> destinations = new();
+
+        if (!_waypointMap.TryGetValue(fromWaypointId, out WaypointNode fromWaypoint))
+        {
+            return destinations;
+        }
+
+        WaypointType targetType = fromWaypoint.WaypointType == WaypointType.Town
+            ? WaypointType.Region
+            : WaypointType.Town;
+
+        foreach (WaypointNode waypoint in _waypoints)
+        {
+            if (waypoint == null || waypoint == fromWaypoint)
+            {
+                continue;
+            }
+
+            if (waypoint.WaypointType != targetType)
+            {
+                continue;
+            }
+
+            if (!IsUnlocked(waypoint.WaypointId))
+            {
+                continue;
+            }
+
+            destinations.Add(waypoint);
+        }
+
+        return destinations;
+    }
+
     public bool TeleportPlayerTo(string destinationWaypointId, GameObject interactor)
     {
         if (interactor == null)
