@@ -115,7 +115,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public void IncreaseMaxHealth(float amount)
     {
         _maxHealth += amount;
-        _currentHealth += amount;
+       //_currentHealth += amount;
     }
 
     public void TakeDamage(float damage)
