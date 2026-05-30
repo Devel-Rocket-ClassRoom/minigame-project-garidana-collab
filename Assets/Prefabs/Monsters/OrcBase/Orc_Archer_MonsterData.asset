@@ -15,11 +15,11 @@ MonoBehaviour:
   maxHp: 300
   attackDamage: 30
   moveSpeed: 8
-  detectionRange: 8
-  attackRange: 1.5
-  attackCooldown: 0.5
+  detectionRange: 13
+  attackRange: 2
+  attackCooldown: 1
   goldMin: 100
   goldMax: 200
-  expReward: 50
+  expReward: 70
   questTargetId: orc
   questDrops: []

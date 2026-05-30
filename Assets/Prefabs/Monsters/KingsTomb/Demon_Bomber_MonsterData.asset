@@ -15,11 +15,11 @@ MonoBehaviour:
   maxHp: 400
   attackDamage: 30
   moveSpeed: 3
-  detectionRange: 5
+  detectionRange: 10
   attackRange: 2
-  attackCooldown: 2
+  attackCooldown: 1
   goldMin: 80
   goldMax: 100
-  expReward: 50
+  expReward: 70
   questTargetId: 
   questDrops: []

@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d79af6fa1e5bd6a4e848dd5b9a848f9a, type: 3}
   m_Name: Orc_Shaman_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
-  maxHp: 600
+  maxHp: 450
   attackDamage: 60
   moveSpeed: 4
-  detectionRange: 8
-  attackRange: 2
+  detectionRange: 13
+  attackRange: 3
   attackCooldown: 2
   goldMin: 100
   goldMax: 200

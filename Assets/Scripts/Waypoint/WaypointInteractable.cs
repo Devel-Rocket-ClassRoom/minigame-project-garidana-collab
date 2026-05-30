@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class WaypointInteractable : MonoBehaviour, IInteractable
 {
@@ -25,6 +26,7 @@ public class WaypointInteractable : MonoBehaviour, IInteractable
     }
 
     public Transform Transform => _waypointNode != null ? _waypointNode.transform : transform;
+    public WaypointNode WaypointNode => _waypointNode;
 
     private void Awake()
     {
@@ -54,6 +56,18 @@ public class WaypointInteractable : MonoBehaviour, IInteractable
 
         WaypointManager.Instance.SetLastActivatedWaypoint(_waypointNode.WaypointId);
 
+        if (_waypointNode.WaypointType == WaypointType.Town)
+        {
+            if (WaypointManager.Instance.GetTravelDestinations(_waypointNode.WaypointId).Count == 0)
+            {
+                Debug.Log($"이동 가능한 웨이포인트가 없습니다: {_waypointNode.WaypointId}");
+                return;
+            }
+
+            Debug.Log($"웨이포인트 목적지 선택 필요: {_waypointNode.WaypointId}");
+            return;
+        }
+
         if (WaypointManager.Instance.TryGetTravelDestination(_waypointNode.WaypointId, out WaypointNode destination))
         {
             WaypointManager.Instance.TeleportPlayerTo(destination.WaypointId, interactor);
@@ -67,5 +81,27 @@ public class WaypointInteractable : MonoBehaviour, IInteractable
     {
         return WaypointManager.Instance != null
             && WaypointManager.Instance.IsUnlocked(_waypointNode.WaypointId);
+    }
+
+    public bool CanOpenSelectionMenu()
+    {
+        if (_waypointNode == null || WaypointManager.Instance == null)
+        {
+            return false;
+        }
+
+        return IsUnlocked()
+            && _waypointNode.WaypointType == WaypointType.Town
+            && WaypointManager.Instance.GetTravelDestinations(_waypointNode.WaypointId).Count > 0;
+    }
+
+    public List<WaypointNode> GetSelectionDestinations()
+    {
+        if (_waypointNode == null || WaypointManager.Instance == null)
+        {
+            return new List<WaypointNode>();
+        }
+
+        return WaypointManager.Instance.GetTravelDestinations(_waypointNode.WaypointId);
     }
 }

@@ -640,8 +640,8 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 1faa5a68df56f874da1b8f52253e2102, type: 2}
   patrolDistance: 3
   turnSpeed: 720
-  knockbackDistance: 0.8
-  knockbackDuration: 0.8
+  knockbackDistance: 0.25
+  knockbackDuration: 0.5
   floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
   floatingTextPoint: {fileID: 0}
 --- !u!136 &356966055389506312
@@ -675,7 +675,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3418096688614516446}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
