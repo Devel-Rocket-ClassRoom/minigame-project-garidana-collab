@@ -270,9 +270,6 @@ PrefabInstance:
       addedObject: {fileID: 8364248589342354186}
     - targetCorrespondingSourceObject: {fileID: 4558253575625511845, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4842255639828853221}
-    - targetCorrespondingSourceObject: {fileID: 4558253575625511845, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 6722331849355591221}
     - targetCorrespondingSourceObject: {fileID: 4558253575625511845, guid: 91b5d5ead6cb5f045bb0139cedb0e524, type: 3}
       insertIndex: -1
@@ -310,33 +307,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!54 &4842255639828853221
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1030101342387735233}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 3
 --- !u!135 &6722331849355591221
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -372,6 +342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BaseMonster
   data: {fileID: 11400000, guid: 380fefae520edaa4db577ec57efdbce9, type: 2}
   patrolDistance: 3
+  turnSpeed: 720
   knockbackDistance: 0.2
   knockbackDuration: 0.6
   floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}

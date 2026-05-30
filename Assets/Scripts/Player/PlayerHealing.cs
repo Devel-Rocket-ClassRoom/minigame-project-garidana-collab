@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerHealing : MonoBehaviour
@@ -21,6 +22,8 @@ public class PlayerHealing : MonoBehaviour
     private float _healCooldown = 1f;
 
     private float _lastUseTime = -999f;
+
+    public event Action<int> PotionHealed;
 
     public int HealItemCount => _healItemCount;
     public bool IsHealOnCooldown => Time.time < _lastUseTime + _healCooldown;
@@ -92,6 +95,7 @@ public class PlayerHealing : MonoBehaviour
         
         _healItemCount--;
         _lastUseTime = Time.time;
+        PotionHealed?.Invoke(Mathf.RoundToInt(_healAmount));
         return true;
     }
 
