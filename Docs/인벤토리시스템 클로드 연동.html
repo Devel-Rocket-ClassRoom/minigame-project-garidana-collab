@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>구현 가이드 — 검 & 방패 인벤토리 + 장착 시스템</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Serif+KR:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-l: #e8c96a;
+    --gold-d: #7a6230;
+    --bg: #0a0a0f;
+    --bg2: #10101a;
+    --bg3: #14141f;
+    --border: rgba(201,168,76,0.18);
+    --border-b: rgba(201,168,76,0.45);
+    --text: #d4c9b0;
+    --text-d: #6a6050;
+    --green: #27ae60;
+    --red: #c0392b;
+    --blue: #2980b9;
+    --orange: #e67e22;
+    --purple: #8e44ad;
+    --cyan: #16a085;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    line-height: 1.85;
+    background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(201,168,76,0.06) 0%, transparent 60%);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 70px 40px 52px;
+    border-bottom: 1px solid var(--border);
+    background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(201,168,76,0.10) 0%, transparent 70%);
+  }
+  .hero-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold-d);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    display: block;
+  }
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(26px, 5vw, 52px);
+    font-weight: 900;
+    color: var(--gold-l);
+    text-shadow: 0 0 40px rgba(201,168,76,0.35);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    line-height: 1.15;
+  }
+  .hero-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--gold-d);
+    letter-spacing: 3px;
+    margin-bottom: 28px;
+  }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .hero-tag {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid var(--border);
+    padding: 5px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+  }
+
+  /* ── LAYOUT ── */
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 28px; }
+
+  /* ── NAV ── */
+  .toc {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    overflow-x: auto;
+  }
+  .toc-inner { display:flex; max-width:1060px; margin:0 auto; white-space:nowrap; }
+  .toc a {
+    display: inline-block;
+    padding: 13px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-d);
+    text-decoration: none;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .toc a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── SECTION ── */
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  .sec-head { display:flex; align-items:center; gap:16px; margin-bottom:36px; }
+  .sec-num { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gold-d); letter-spacing:2px; min-width:36px; }
+  .sec-title { font-family:'Cinzel',serif; font-size:21px; font-weight:700; color:var(--gold-l); letter-spacing:1px; }
+  .sec-line { flex:1; height:1px; background:linear-gradient(to right,var(--gold-d),transparent); }
+
+  /* ── OVERVIEW CARDS ── */
+  .overview-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+  @media(max-width:680px){ .overview-grid{ grid-template-columns:1fr; } }
+  .ov-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold-d);
+    padding: 18px 22px;
+  }
+  .ov-card-title { font-family:'Cinzel',serif; font-size:13px; color:var(--gold); margin-bottom:10px; font-weight:700; letter-spacing:0.5px; }
+  .ov-card p { font-size:13px; line-height:1.8; color:var(--text); }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow { display:flex; flex-direction:column; gap:0; margin:24px 0; }
+  .flow-row { display:flex; align-items:center; gap:0; }
+  .flow-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    font-size: 13px;
+    flex: 1;
+    min-height: 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .flow-box-title { font-weight:700; color:var(--gold); font-size:13px; margin-bottom:2px; }
+  .flow-box-sub { font-size:11px; color:var(--text-d); font-family:'JetBrains Mono',monospace; }
+  .flow-arrow { padding: 0 12px; color:var(--gold-d); font-size:18px; flex-shrink:0; }
+  .flow-down { display:flex; justify-content:flex-start; padding:2px 0 2px 22px; color:var(--gold-d); font-size:16px; }
+
+  /* ── STEP CARDS ── */
+  .step-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .step-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(201,168,76,0.04);
+  }
+  .step-num-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold-d);
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--gold-d);
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .step-title { font-family:'Cinzel',serif; font-size:15px; font-weight:700; color:var(--gold-l); }
+  .step-eta {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold-d);
+    white-space: nowrap;
+  }
+  .step-body { padding: 22px; }
+
+  /* ── FILE BLOCK ── */
+  .file-block { margin-bottom: 24px; }
+  .file-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold-d);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .file-label span {
+    color: var(--gold);
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--gold-d);
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+  .file-label .action-new { background:rgba(39,174,96,0.12); border-color:rgba(39,174,96,0.4); color:#2ecc71; }
+  .file-label .action-mod { background:rgba(41,128,185,0.12); border-color:rgba(41,128,185,0.4); color:#3498db; }
+  .file-label .action-empty { background:rgba(231,76,60,0.10); border-color:rgba(231,76,60,0.35); color:#e74c3c; }
+
+  /* ── CODE BLOCK ── */
+  pre {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(201,168,76,0.1);
+    border-left: 3px solid var(--gold-d);
+    padding: 18px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #c8d0e0;
+    overflow-x: auto;
+    line-height: 1.65;
+    margin: 10px 0 16px;
+    white-space: pre;
+  }
+  .c-comment { color: #5a6878; }
+  .c-kw  { color: #c792ea; }
+  .c-type{ color: #82aaff; }
+  .c-str { color: #c3e88d; }
+  .c-num { color: #f78c6c; }
+  .c-fn  { color: #82aaff; }
+  .c-attr{ color: #ffcb6b; }
+  .c-ev  { color: #f07178; }
+
+  /* ── CAUTION BOX ── */
+  .caution {
+    display: flex;
+    gap: 14px;
+    padding: 16px 20px;
+    background: rgba(192,57,43,0.08);
+    border: 1px solid rgba(192,57,43,0.25);
+    border-left: 3px solid var(--red);
+    margin: 16px 0;
+  }
+  .caution-label { font-family:'JetBrains Mono',monospace; font-size:10px; color:#e74c3c; min-width:56px; letter-spacing:1px; margin-top:1px; }
+  .caution p { font-size:13px; line-height:1.7; }
+
+  .note {
+    display: flex;
+    gap: 14px;
+    padding: 14px 18px;
+    background: rgba(22,160,133,0.07);
+    border: 1px solid rgba(22,160,133,0.25);
+    border-left: 3px solid var(--cyan);
+    margin: 14px 0;
+  }
+  .note-label { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--cyan); min-width:56px; letter-spacing:1px; margin-top:1px; }
+  .note p { font-size:13px; line-height:1.7; }
+
+  /* ── INSPECTOR TABLE ── */
+  .insp-table { width:100%; border-collapse:collapse; margin:14px 0; }
+  .insp-table th {
+    background: rgba(201,168,76,0.07);
+    padding: 9px 14px;
+    text-align:left;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:1px;
+    color:var(--gold-d);
+    text-transform:uppercase;
+    border-bottom: 1px solid var(--border-b);
+  }
+  .insp-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(201,168,76,0.06);
+    font-size:13px;
+    vertical-align:top;
+  }
+  .insp-table td:first-child { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gold); }
+  .insp-table tr:last-child td { border-bottom:none; }
+
+  /* ── BADGE ── */
+  .badge {
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    padding:2px 8px;
+    border-radius:2px;
+    letter-spacing:1px;
+    margin-left:6px;
+    vertical-align:middle;
+  }
+  .bg { background:rgba(39,174,96,0.12); border:1px solid rgba(39,174,96,0.4); color:#2ecc71; }
+  .bb { background:rgba(41,128,185,0.12); border:1px solid rgba(41,128,185,0.4); color:#3498db; }
+  .br { background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.4); color:#e74c3c; }
+  .by { background:rgba(241,196,15,0.10); border:1px solid rgba(241,196,15,0.35); color:#f1c40f; }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style:none; margin:10px 0; }
+  .checklist li {
+    padding: 6px 0 6px 22px;
+    position:relative;
+    font-size:13px;
+    border-bottom:1px solid rgba(201,168,76,0.05);
+    line-height:1.7;
+  }
+  .checklist li:last-child { border-bottom:none; }
+  .checklist li::before { content:'□'; position:absolute; left:0; color:var(--gold-d); }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--gold);
+    background:rgba(201,168,76,0.08);
+    padding:1px 5px;
+    border:1px solid rgba(201,168,76,0.15);
+  }
+
+  p { margin-bottom:10px; line-height:1.85; }
+  p:last-child { margin-bottom:0; }
+
+  h4 { font-family:'Cinzel',serif; font-size:13px; color:var(--gold); margin:18px 0 8px; font-weight:700; letter-spacing:0.5px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align:center;
+    padding:36px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--text-d);
+    letter-spacing:2px;
+    border-top:1px solid var(--border);
+  }
+  footer span { color:var(--gold-d); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-badge">Implementation Guide · 김경일의 모험 : Origin · 2026.05</span>
+  <h1>검 & 방패 인벤토리<br>장착 교체 시스템</h1>
+  <div class="hero-sub">COWORK IMPLEMENTATION DOCUMENT</div>
+  <div class="hero-tags">
+    <span class="hero-tag">⚔ Sword / Shield only</span>
+    <span class="hero-tag">📦 ChestInteractable 연동</span>
+    <span class="hero-tag">🎒 PlayerInventory 신규</span>
+    <span class="hero-tag">🛡 EquipmentManager 신규</span>
+    <span class="hero-tag">🖥 InventoryUi 구현</span>
+    <span class="hero-tag">⏱ 예상 ~반나절</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#overview">개요</a>
+    <a href="#step1">1. PlayerInventory</a>
+    <a href="#step2">2. EquipmentManager</a>
+    <a href="#step3">3. ChestInteractable</a>
+    <a href="#step4">4. InventoryUi</a>
+    <a href="#step5">5. 씬 연결</a>
+    <a href="#checklist">체크리스트</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- 0. OVERVIEW -->
+<section id="overview">
+  <div class="sec-head">
+    <span class="sec-num">00</span>
+    <h2 class="sec-title">전체 구조 & 전제 조건</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="ov-card">
+      <div class="ov-card-title">🎯 이번 구현 범위</div>
+      <p>상자(ChestInteractable)를 열면 검 또는 방패 <code>ItemData</code>가 <code>PlayerInventory</code>에 추가됩니다. 인벤토리 UI(TAB키)에서 슬롯을 클릭하면 <code>EquipmentManager</code>가 모델을 교체하고 <code>PlayerStats</code> 스탯을 적용합니다. 방어구(Helmet/Chest/Legs)는 이번 범위에서 제외합니다.</p>
+    </div>
+    <div class="ov-card">
+      <div class="ov-card-title">✅ 이미 있는 것 (건드리지 않음)</div>
+      <p><code>ItemData.cs</code> — 완성 (equipObjectName, attackBonus 포함)<br>
+      <code>PlayerStats.cs</code> — <code>IncreaseAttackPower()</code>, <code>IncreaseMaxHealth()</code> 존재<br>
+      <code>DropEntry.cs</code> — 드랍 확률 구조체 완성<br>
+      <code>ChestInteractable.cs</code> — 뚜껑 애니메이션 완성, 드랍 로직만 없음<br>
+      Sword/Shield <code>.asset</code> 30종 전부 완성 (equipObjectName 세팅 완료)</p>
+    </div>
+  </div>
+
+  <h4>전체 데이터 흐름</h4>
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-box-title">ChestInteractable</div>
+        <div class="flow-box-sub">F키 → Interact()</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="flow-box-title">PlayerInventory</div>
+        <div class="flow-box-sub">AddItem(ItemData)</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="flow-box-title">InventoryUi</div>
+        <div class="flow-box-sub">TAB키 / 슬롯 클릭</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="flow-box-title">EquipmentManager</div>
+        <div class="flow-box-sub">EquipItem(ItemData)</div>
+      </div>
+    </div>
+    <div class="flow-down">↓</div>
+    <div class="flow-row" style="max-width:360px; margin-left:auto;">
+      <div class="flow-box" style="border-color:rgba(39,174,96,0.3);">
+        <div class="flow-box-title" style="color:#2ecc71;">PlayerStats</div>
+        <div class="flow-box-sub">attackBonus 적용 (이미 존재)</div>
+      </div>
+      <div class="flow-arrow">+</div>
+      <div class="flow-box" style="border-color:rgba(39,174,96,0.3);">
+        <div class="flow-box-title" style="color:#2ecc71;">캐릭터 모델</div>
+        <div class="flow-box-sub">무기/방패 오브젝트 교체</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="caution">
+    <div class="caution-label">NOTICE</div>
+    <p>이 문서는 <strong>코드를 직접 수정하지 않고</strong> Cowork에게 작업을 지시하기 위한 명세서입니다. 각 단계를 순서대로 Cowork에 전달하세요. 수정이 필요한 파일과 신규 생성할 파일이 명확히 구분되어 있습니다.</p>
+  </div>
+
+  <div class="note">
+    <div class="note-label">SCOPE</div>
+    <p>Sword1.asset의 <code>equipObjectName</code>은 <code>Sword_1</code>, Shield1.asset은 <code>shield_1</code>입니다. <code>EquipmentManager</code>는 이 문자열을 기준으로 캐릭터 모델의 자식 오브젝트를 찾아 활성화/비활성화합니다. 따라서 캐릭터 프리팹의 본(bone) 구조 안에 <code>Sword_1</code>, <code>Sword_2</code>… <code>shield_1</code>… 이름의 오브젝트가 미리 있어야 합니다. 없다면 <strong>5단계 씬 연결</strong>에서 직접 배치합니다.</p>
+  </div>
+</section>
+
+<!-- STEP 1 -->
+<section id="step1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">PlayerInventory.cs <span class="badge bg">신규 생성</span></h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-head">
+      <span class="step-num-badge">STEP 01</span>
+      <span class="step-title">인벤토리 데이터 컴포넌트</span>
+      <span class="step-eta">예상 30분</span>
+    </div>
+    <div class="step-body">
+
+      <p>플레이어 <code>GameObject</code>에 붙는 데이터 전용 컴포넌트입니다. UI나 모델 교체 로직은 여기에 없습니다. 아이템 목록을 들고 있고, 추가/제거/조회 메서드만 제공합니다.</p>
+
+      <div class="file-block">
+        <div class="file-label">
+          생성 경로 <span class="action-new">NEW</span>
+        </div>
+        <code>Assets/Scripts/Player/PlayerInventory.cs</code>
+      </div>
+
+<pre>
+<span class="c-kw">using</span> System;
+<span class="c-kw">using</span> System.Collections.Generic;
+<span class="c-kw">using</span> UnityEngine;
+
+<span class="c-kw">public class</span> <span class="c-type">PlayerInventory</span> : MonoBehaviour
+{
+    <span class="c-comment">// ── 인스펙터 설정 ───────────────────────────────────</span>
+    [SerializeField]
+    [<span class="c-attr">Range</span>(1, 40)]
+    <span class="c-kw">private int</span> _maxSlots = 20;
+
+    <span class="c-comment">// ── 이벤트 ───────────────────────────────────────────</span>
+    <span class="c-comment">// InventoryUi가 구독해서 슬롯을 다시 그립니다.</span>
+    <span class="c-kw">public event</span> <span class="c-type">Action</span> InventoryChanged;
+
+    <span class="c-comment">// ── 내부 상태 ─────────────────────────────────────────</span>
+    <span class="c-kw">private readonly</span> List&lt;<span class="c-type">ItemData</span>&gt; _items = <span class="c-kw">new</span> List&lt;<span class="c-type">ItemData</span>&gt;();
+
+    <span class="c-comment">// ── 공개 조회 ─────────────────────────────────────────</span>
+    <span class="c-kw">public</span> IReadOnlyList&lt;<span class="c-type">ItemData</span>&gt; Items =&gt; _items;
+    <span class="c-kw">public bool</span> IsFull =&gt; _items.Count &gt;= _maxSlots;
+    <span class="c-kw">public int</span> Count =&gt; _items.Count;
+
+    <span class="c-comment">// ── AddItem ───────────────────────────────────────────</span>
+    <span class="c-comment">// 성공하면 true, 인벤토리가 꽉 찼으면 false 반환</span>
+    <span class="c-kw">public bool</span> <span class="c-fn">AddItem</span>(<span class="c-type">ItemData</span> data)
+    {
+        <span class="c-kw">if</span> (data == <span class="c-kw">null</span> || IsFull)
+        {
+            Debug.Log(<span class="c-str">$"[Inventory] 추가 실패: data={data?.displayName}, full={IsFull}"</span>);
+            <span class="c-kw">return false</span>;
+        }
+
+        _items.Add(data);
+        InventoryChanged?.Invoke();
+
+        Debug.Log(<span class="c-str">$"[Inventory] 추가: {data.displayName} ({_items.Count}/{_maxSlots})"</span>);
+        <span class="c-kw">return true</span>;
+    }
+
+    <span class="c-comment">// ── RemoveItem ────────────────────────────────────────</span>
+    <span class="c-comment">// 장착 시 또는 버릴 때 호출</span>
+    <span class="c-kw">public bool</span> <span class="c-fn">RemoveItem</span>(<span class="c-type">ItemData</span> data)
+    {
+        <span class="c-kw">bool</span> removed = _items.Remove(data);
+        <span class="c-kw">if</span> (removed)
+        {
+            InventoryChanged?.Invoke();
+            Debug.Log(<span class="c-str">$"[Inventory] 제거: {data.displayName}"</span>);
+        }
+        <span class="c-kw">return</span> removed;
+    }
+
+    <span class="c-comment">// ── HasItem ───────────────────────────────────────────</span>
+    <span class="c-kw">public bool</span> <span class="c-fn">HasItem</span>(<span class="c-type">ItemData</span> data) =&gt; _items.Contains(data);
+}
+</pre>
+
+      <div class="note">
+        <div class="note-label">CHECK</div>
+        <p>이 스크립트는 데이터만 들고 있습니다. UI 갱신은 <code>InventoryChanged</code> 이벤트를 <code>InventoryUi</code>가 구독하는 방식으로 처리합니다. MonoBehaviour를 상속하기 때문에 플레이어 프리팹에 컴포넌트로 추가해야 합니다.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section id="step2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <h2 class="sec-title">EquipmentManager.cs <span class="badge bg">신규 생성</span></h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-head">
+      <span class="step-num-badge">STEP 02</span>
+      <span class="step-title">장착 & 모델 교체 컴포넌트</span>
+      <span class="step-eta">예상 1~1.5시간</span>
+    </div>
+    <div class="step-body">
+
+      <p>장착 슬롯(Sword 1개, Shield 1개)을 관리하고 <code>ItemData.equipObjectName</code>을 기반으로 캐릭터 모델 오브젝트를 교체합니다. 스탯 변동은 이전 장착 아이템의 보너스를 빼고 새 아이템의 보너스를 더하는 방식으로 처리합니다.</p>
+
+      <div class="caution">
+        <div class="caution-label">CRITICAL</div>
+        <p>스탯 중복 방지가 핵심입니다. <code>PlayerStats.IncreaseAttackPower()</code>는 더하기만 합니다. 따라서 장착 교체 시 <strong>이전 아이템의 보너스를 음수로 먼저 적용</strong>해서 뺀 뒤, 새 아이템 보너스를 더해야 합니다. <code>_equippedSword</code>, <code>_equippedShield</code> 필드에 현재 장착 정보를 항상 보관하는 이유입니다.</p>
+      </div>
+
+      <div class="file-block">
+        <div class="file-label">
+          생성 경로 <span class="action-new">NEW</span>
+        </div>
+        <code>Assets/Scripts/Player/EquipmentManager.cs</code>
+      </div>
+
+<pre>
+<span class="c-kw">using</span> UnityEngine;
+<span class="c-kw">using</span> System;
+
+<span class="c-kw">public class</span> <span class="c-type">EquipmentManager</span> : MonoBehaviour
+{
+    <span class="c-comment">// ── 인스펙터 설정 ───────────────────────────────────</span>
+    [Header(<span class="c-str">"References"</span>)]
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">PlayerStats</span>      _playerStats;
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">PlayerInventory</span>  _inventory;
+
+    [Header(<span class="c-str">"Weapon Mount Points"</span>)]
+    <span class="c-comment">// 캐릭터 Armature 안의 오른손 본 또는 무기 마운트 부모 Transform</span>
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">Transform</span> _swordMountParent;
+    <span class="c-comment">// 왼손 본 또는 방패 마운트 부모 Transform</span>
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">Transform</span> _shieldMountParent;
+
+    <span class="c-comment">// ── 이벤트 ───────────────────────────────────────────</span>
+    <span class="c-kw">public event</span> <span class="c-type">Action</span> EquipmentChanged;
+
+    <span class="c-comment">// ── 현재 장착 아이템 ─────────────────────────────────</span>
+    <span class="c-kw">private</span> <span class="c-type">ItemData</span> _equippedSword;
+    <span class="c-kw">private</span> <span class="c-type">ItemData</span> _equippedShield;
+
+    <span class="c-kw">public</span>  <span class="c-type">ItemData</span>  EquippedSword  =&gt; _equippedSword;
+    <span class="c-kw">public</span>  <span class="c-type">ItemData</span>  EquippedShield =&gt; _equippedShield;
+
+    <span class="c-comment">// ── 초기화 ───────────────────────────────────────────</span>
+    <span class="c-kw">private void</span> <span class="c-fn">Awake</span>()
+    {
+        <span class="c-kw">if</span> (_playerStats == <span class="c-kw">null</span>)
+            _playerStats = GetComponent&lt;<span class="c-type">PlayerStats</span>&gt;();
+        <span class="c-kw">if</span> (_inventory == <span class="c-kw">null</span>)
+            _inventory = GetComponent&lt;<span class="c-type">PlayerInventory</span>&gt;();
+    }
+
+    <span class="c-comment">// ── EquipItem (외부에서 호출) ─────────────────────────</span>
+    <span class="c-comment">// InventoryUi의 슬롯 클릭 이벤트에서 호출합니다.</span>
+    <span class="c-kw">public void</span> <span class="c-fn">EquipItem</span>(<span class="c-type">ItemData</span> data)
+    {
+        <span class="c-kw">if</span> (data == <span class="c-kw">null</span> || !data.IsEquipment)
+        {
+            Debug.LogWarning(<span class="c-str">"[Equipment] 장착 불가: 장비 아이템이 아닙니다."</span>);
+            <span class="c-kw">return</span>;
+        }
+
+        <span class="c-kw">switch</span> (data.equipmentPart)
+        {
+            <span class="c-kw">case</span> <span class="c-type">EquipmentPart</span>.Sword:
+                <span class="c-fn">SwapEquip</span>(<span class="c-kw">ref</span> _equippedSword, data, _swordMountParent);
+                <span class="c-kw">break</span>;
+            <span class="c-kw">case</span> <span class="c-type">EquipmentPart</span>.Shield:
+                <span class="c-fn">SwapEquip</span>(<span class="c-kw">ref</span> _equippedShield, data, _shieldMountParent);
+                <span class="c-kw">break</span>;
+            <span class="c-kw">default</span>:
+                Debug.LogWarning(<span class="c-str">$"[Equipment] {data.displayName}: 검/방패만 지원합니다."</span>);
+                <span class="c-kw">break</span>;
+        }
+    }
+
+    <span class="c-comment">// ── UnequipItem (해제) ───────────────────────────────</span>
+    <span class="c-kw">public void</span> <span class="c-fn">UnequipItem</span>(<span class="c-type">EquipmentPart</span> part)
+    {
+        <span class="c-kw">switch</span> (part)
+        {
+            <span class="c-kw">case</span> <span class="c-type">EquipmentPart</span>.Sword:
+                <span class="c-kw">if</span> (_equippedSword != <span class="c-kw">null</span>)
+                {
+                    <span class="c-fn">RemoveStats</span>(_equippedSword);
+                    <span class="c-fn">HideEquipModel</span>(_equippedSword.equipObjectName, _swordMountParent);
+                    _equippedSword = <span class="c-kw">null</span>;
+                    EquipmentChanged?.Invoke();
+                }
+                <span class="c-kw">break</span>;
+            <span class="c-kw">case</span> <span class="c-type">EquipmentPart</span>.Shield:
+                <span class="c-kw">if</span> (_equippedShield != <span class="c-kw">null</span>)
+                {
+                    <span class="c-fn">RemoveStats</span>(_equippedShield);
+                    <span class="c-fn">HideEquipModel</span>(_equippedShield.equipObjectName, _shieldMountParent);
+                    _equippedShield = <span class="c-kw">null</span>;
+                    EquipmentChanged?.Invoke();
+                }
+                <span class="c-kw">break</span>;
+        }
+    }
+
+    <span class="c-comment">// ── IsEquipped ───────────────────────────────────────</span>
+    <span class="c-comment">// InventoryUi에서 슬롯 하이라이트 여부 판단에 사용</span>
+    <span class="c-kw">public bool</span> <span class="c-fn">IsEquipped</span>(<span class="c-type">ItemData</span> data)
+    {
+        <span class="c-kw">return</span> data != <span class="c-kw">null</span> &&
+               (data == _equippedSword || data == _equippedShield);
+    }
+
+    <span class="c-comment">// ══════════════════════════════════════════════════════</span>
+    <span class="c-comment">// Private helpers</span>
+    <span class="c-comment">// ══════════════════════════════════════════════════════</span>
+
+    <span class="c-kw">private void</span> <span class="c-fn">SwapEquip</span>(<span class="c-kw">ref</span> <span class="c-type">ItemData</span> slot, <span class="c-type">ItemData</span> newItem, <span class="c-type">Transform</span> mountParent)
+    {
+        <span class="c-comment">// 1. 이전 장착 해제 (스탯 제거 → 모델 숨기기)</span>
+        <span class="c-kw">if</span> (slot != <span class="c-kw">null</span>)
+        {
+            <span class="c-fn">RemoveStats</span>(slot);
+            <span class="c-fn">HideEquipModel</span>(slot.equipObjectName, mountParent);
+        }
+
+        <span class="c-comment">// 2. 새 아이템 장착 (스탯 적용 → 모델 보이기)</span>
+        slot = newItem;
+        <span class="c-fn">ApplyStats</span>(slot);
+        <span class="c-fn">ShowEquipModel</span>(slot.equipObjectName, mountParent);
+
+        EquipmentChanged?.Invoke();
+
+        Debug.Log(<span class="c-str">$"[Equipment] 장착: {newItem.displayName}"</span>);
+    }
+
+    <span class="c-comment">// 스탯 적용</span>
+    <span class="c-kw">private void</span> <span class="c-fn">ApplyStats</span>(<span class="c-type">ItemData</span> data)
+    {
+        <span class="c-kw">if</span> (_playerStats == <span class="c-kw">null</span> || data == <span class="c-kw">null</span>) <span class="c-kw">return</span>;
+        <span class="c-kw">if</span> (data.attackBonus    != 0) _playerStats.<span class="c-fn">IncreaseAttackPower</span>(data.attackBonus);
+        <span class="c-kw">if</span> (data.maxHealthBonus != 0) _playerStats.<span class="c-fn">IncreaseMaxHealth</span>(data.maxHealthBonus);
+    }
+
+    <span class="c-comment">// 스탯 제거 (음수로 넘김)</span>
+    <span class="c-kw">private void</span> <span class="c-fn">RemoveStats</span>(<span class="c-type">ItemData</span> data)
+    {
+        <span class="c-kw">if</span> (_playerStats == <span class="c-kw">null</span> || data == <span class="c-kw">null</span>) <span class="c-kw">return</span>;
+        <span class="c-kw">if</span> (data.attackBonus    != 0) _playerStats.<span class="c-fn">IncreaseAttackPower</span>(-data.attackBonus);
+        <span class="c-kw">if</span> (data.maxHealthBonus != 0) _playerStats.<span class="c-fn">IncreaseMaxHealth</span>(-data.maxHealthBonus);
+    }
+
+    <span class="c-comment">// mountParent 하위에서 equipObjectName과 일치하는 오브젝트 활성화</span>
+    <span class="c-kw">private void</span> <span class="c-fn">ShowEquipModel</span>(<span class="c-kw">string</span> equipName, <span class="c-type">Transform</span> mountParent)
+    {
+        <span class="c-kw">if</span> (mountParent == <span class="c-kw">null</span> || <span class="c-kw">string</span>.IsNullOrEmpty(equipName)) <span class="c-kw">return</span>;
+
+        <span class="c-type">Transform</span> target = mountParent.Find(equipName);
+        <span class="c-kw">if</span> (target != <span class="c-kw">null</span>)
+        {
+            target.gameObject.SetActive(<span class="c-kw">true</span>);
+        }
+        <span class="c-kw">else</span>
+        {
+            Debug.LogWarning(<span class="c-str">$"[Equipment] '{equipName}' 오브젝트를 '{mountParent.name}' 하위에서 찾을 수 없습니다."</span>);
+        }
+    }
+
+    <span class="c-comment">// mountParent 하위에서 모든 자식 비활성화 후 해당 이름만 active</span>
+    <span class="c-kw">private void</span> <span class="c-fn">HideEquipModel</span>(<span class="c-kw">string</span> equipName, <span class="c-type">Transform</span> mountParent)
+    {
+        <span class="c-kw">if</span> (mountParent == <span class="c-kw">null</span> || <span class="c-kw">string</span>.IsNullOrEmpty(equipName)) <span class="c-kw">return</span>;
+
+        <span class="c-type">Transform</span> target = mountParent.Find(equipName);
+        <span class="c-kw">if</span> (target != <span class="c-kw">null</span>)
+        {
+            target.gameObject.SetActive(<span class="c-kw">false</span>);
+        }
+    }
+}
+</pre>
+
+      <h4>인스펙터 연결 항목</h4>
+      <table class="insp-table">
+        <thead><tr><th>필드</th><th>연결 대상</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>_playerStats</td><td>Player GameObject의 PlayerStats 컴포넌트</td><td>Awake에서 자동 찾기</td></tr>
+          <tr><td>_inventory</td><td>Player GameObject의 PlayerInventory 컴포넌트</td><td>Awake에서 자동 찾기</td></tr>
+          <tr><td>_swordMountParent</td><td>캐릭터 Armature 안의 오른손 본 또는 무기 마운트 Transform</td><td><strong>직접 드래그 필수</strong></td></tr>
+          <tr><td>_shieldMountParent</td><td>캐릭터 Armature 안의 왼손 본 또는 방패 마운트 Transform</td><td><strong>직접 드래그 필수</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <div class="note-label">ABOUT</div>
+        <p><code>ShowEquipModel</code>은 <code>mountParent.Find(equipObjectName)</code>으로 자식 오브젝트를 찾습니다. Sword1.asset의 <code>equipObjectName</code>이 <code>Sword_1</code>이므로, <code>_swordMountParent</code> 하위에 <code>Sword_1</code>이라는 이름의 오브젝트가 있어야 합니다. 해당 오브젝트가 없으면 Cowork에 "캐릭터 프리팹의 swordMountParent 하위에 Sword_1, Sword_2, Sword_3, Sword_4, Sword_5, Sword_6 이름의 자식 오브젝트를 확인해 달라"고 요청하세요.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section id="step3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <h2 class="sec-title">ChestInteractable.cs <span class="badge bb">수정</span></h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-head">
+      <span class="step-num-badge">STEP 03</span>
+      <span class="step-title">상자 드랍 로직 추가</span>
+      <span class="step-eta">예상 20~30분</span>
+    </div>
+    <div class="step-body">
+
+      <p>기존 파일에서 <strong>주석 처리된 드랍 관련 코드는 전부 삭제</strong>하고, 아래 내용으로 교체합니다. 뚜껑 애니메이션(RotateLid, RotateLid Coroutine)은 그대로 유지합니다.</p>
+
+      <div class="file-block">
+        <div class="file-label">
+          수정 경로 <span class="action-mod">MODIFY</span>
+        </div>
+        <code>Assets/Scripts/InteractableObjects/ChestInteractable.cs</code>
+      </div>
+
+      <h4>추가할 필드 (클래스 상단)</h4>
+<pre>
+[Header(<span class="c-str">"Drop Settings"</span>)]
+<span class="c-comment">// DropEntry는 이미 존재: ItemData item + float dropChance (0~1)</span>
+[SerializeField] <span class="c-kw">private</span> <span class="c-type">DropEntry</span>[] _dropTable;
+
+<span class="c-comment">// 플레이어 프리팹에서 자동 탐색 (Awake), 또는 인스펙터에서 드래그</span>
+[SerializeField] <span class="c-kw">private</span> <span class="c-type">PlayerInventory</span> _playerInventory;
+</pre>
+
+      <h4>Awake 메서드 추가 (또는 기존 Awake에 병합)</h4>
+<pre>
+<span class="c-kw">private void</span> <span class="c-fn">Awake</span>()
+{
+    <span class="c-comment">// 씬에 플레이어가 하나뿐이라는 가정</span>
+    <span class="c-kw">if</span> (_playerInventory == <span class="c-kw">null</span>)
+        _playerInventory = FindFirstObjectByType&lt;<span class="c-type">PlayerInventory</span>&gt;();
+}
+</pre>
+
+      <h4>Interact() 메서드 수정</h4>
+      <p>기존 <code>Interact()</code>에서 <code>OpenLid()</code>만 호출하던 부분을 아래와 같이 교체합니다.</p>
+<pre>
+<span class="c-kw">public void</span> <span class="c-fn">Interact</span>(GameObject interactor)
+{
+    OpenLid();      <span class="c-comment">// 기존 애니메이션 유지</span>
+    <span class="c-fn">RollDrops</span>();   <span class="c-comment">// 드랍 로직 추가</span>
+}
+
+<span class="c-kw">private void</span> <span class="c-fn">RollDrops</span>()
+{
+    <span class="c-kw">if</span> (_dropTable == <span class="c-kw">null</span> || _dropTable.Length == 0) <span class="c-kw">return</span>;
+    <span class="c-kw">if</span> (_playerInventory == <span class="c-kw">null</span>)
+    {
+        Debug.LogWarning(<span class="c-str">"[Chest] PlayerInventory를 찾을 수 없습니다."</span>);
+        <span class="c-kw">return</span>;
+    }
+
+    <span class="c-kw">foreach</span> (<span class="c-type">DropEntry</span> entry <span class="c-kw">in</span> _dropTable)
+    {
+        <span class="c-kw">if</span> (entry.item == <span class="c-kw">null</span>) <span class="c-kw">continue</span>;
+        <span class="c-kw">if</span> (Random.value &lt;= entry.dropChance)
+        {
+            <span class="c-kw">bool</span> added = _playerInventory.<span class="c-fn">AddItem</span>(entry.item);
+            Debug.Log(<span class="c-str">$"[Chest] 드랍: {entry.item.displayName}, 인벤 추가={added}"</span>);
+        }
+    }
+}
+</pre>
+
+      <h4>인스펙터에서 DropTable 설정 방법</h4>
+      <p>씬에 배치된 각 Chest 프리팹의 Inspector에서 <code>Drop Table</code>의 Size를 원하는 수만큼 설정한 뒤, 각 Entry의 Item에 <code>Assets/Scripts/ScriptableObjects/Items/Swords/Sword2.asset</code>(또는 Shield2~6.asset)를 드래그합니다. Drop Chance는 0~1 사이 값으로 설정합니다 (0.5 = 50%).</p>
+
+      <table class="insp-table">
+        <thead><tr><th>예시 상자</th><th>Item</th><th>Drop Chance</th></tr></thead>
+        <tbody>
+          <tr><td>황무지 상자</td><td>Sword2.asset</td><td>0.5</td></tr>
+          <tr><td>황무지 상자</td><td>Shield2.asset</td><td>0.4</td></tr>
+          <tr><td>어둠 숲 상자</td><td>Sword3.asset</td><td>0.45</td></tr>
+          <tr><td>오크 상자</td><td>Sword5.asset</td><td>0.35</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <div class="note-label">NOTE</div>
+        <p>Sword1.asset과 Shield1.asset은 <code>isDefaultEquipment = true</code>이고 <code>attackBonus = 0</code>입니다. 기본 장착 아이템이므로 드랍 테이블에 넣지 않아도 됩니다. Sword2 이상부터 드랍되도록 설계하는 것을 권장합니다.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STEP 4 -->
+<section id="step4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <h2 class="sec-title">InventoryUi.cs <span class="badge br">비어있음 → 구현</span></h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-head">
+      <span class="step-num-badge">STEP 04</span>
+      <span class="step-title">인벤토리 UI 코드 구현</span>
+      <span class="step-eta">예상 1~1.5시간</span>
+    </div>
+    <div class="step-body">
+
+      <p>현재 파일이 빈 껍데기입니다. 전체를 아래 코드로 교체합니다. TAB키로 패널을 열고 닫으며, 슬롯 클릭 시 즉시 장착합니다. 드래그앤드롭은 이번 단계에서 제외하고 기본 동작 확인 후 나중에 추가합니다.</p>
+
+      <div class="file-block">
+        <div class="file-label">
+          수정 경로 <span class="action-empty">EMPTY → IMPLEMENT</span>
+        </div>
+        <code>Assets/Scripts/UI/InventoryUi.cs</code>
+      </div>
+
+<pre>
+<span class="c-kw">using</span> System.Collections.Generic;
+<span class="c-kw">using</span> UnityEngine;
+<span class="c-kw">using</span> UnityEngine.UI;
+<span class="c-kw">using</span> TMPro;
+
+<span class="c-kw">public class</span> <span class="c-type">InventoryUi</span> : MonoBehaviour
+{
+    <span class="c-comment">// ── 인스펙터 연결 ────────────────────────────────────</span>
+    [Header(<span class="c-str">"References"</span>)]
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">PlayerInventory</span>  _inventory;
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">EquipmentManager</span> _equipment;
+
+    [Header(<span class="c-str">"UI"</span>)]
+    <span class="c-comment">// 인벤토리 전체 패널 루트 오브젝트 (SetActive 토글 대상)</span>
+    [SerializeField] <span class="c-kw">private</span> GameObject       _panelRoot;
+    <span class="c-comment">// 슬롯 버튼들이 들어갈 Grid Layout Group 부모 Transform</span>
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">Transform</span>          _slotContainer;
+    <span class="c-comment">// 슬롯 하나의 프리팹 (Button + Image + TextMeshProUGUI 구성)</span>
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">InventorySlotUi</span>    _slotPrefab;
+
+    [Header(<span class="c-str">"장착 슬롯 표시 (선택)"</span>)]
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">Image</span>  _equippedSwordIcon;
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">Image</span>  _equippedShieldIcon;
+
+    <span class="c-comment">// ── 내부 상태 ─────────────────────────────────────────</span>
+    <span class="c-kw">private readonly</span> List&lt;<span class="c-type">InventorySlotUi</span>&gt; _slots = <span class="c-kw">new</span> List&lt;<span class="c-type">InventorySlotUi</span>&gt;();
+    <span class="c-kw">private bool</span> _isOpen = <span class="c-kw">false</span>;
+
+    <span class="c-comment">// ── 초기화 ───────────────────────────────────────────</span>
+    <span class="c-kw">private void</span> <span class="c-fn">Awake</span>()
+    {
+        <span class="c-kw">if</span> (_inventory == <span class="c-kw">null</span>)
+            _inventory = FindFirstObjectByType&lt;<span class="c-type">PlayerInventory</span>&gt;();
+        <span class="c-kw">if</span> (_equipment == <span class="c-kw">null</span>)
+            _equipment = FindFirstObjectByType&lt;<span class="c-type">EquipmentManager</span>&gt;();
+
+        <span class="c-comment">// 패널 닫힌 상태로 시작</span>
+        <span class="c-fn">SetPanelActive</span>(<span class="c-kw">false</span>);
+    }
+
+    <span class="c-kw">private void</span> <span class="c-fn">OnEnable</span>()
+    {
+        <span class="c-kw">if</span> (_inventory != <span class="c-kw">null</span>)
+            _inventory.InventoryChanged += <span class="c-fn">RefreshSlots</span>;
+        <span class="c-kw">if</span> (_equipment != <span class="c-kw">null</span>)
+            _equipment.EquipmentChanged += <span class="c-fn">RefreshSlots</span>;
+    }
+
+    <span class="c-kw">private void</span> <span class="c-fn">OnDisable</span>()
+    {
+        <span class="c-kw">if</span> (_inventory != <span class="c-kw">null</span>)
+            _inventory.InventoryChanged -= <span class="c-fn">RefreshSlots</span>;
+        <span class="c-kw">if</span> (_equipment != <span class="c-kw">null</span>)
+            _equipment.EquipmentChanged -= <span class="c-fn">RefreshSlots</span>;
+    }
+
+    <span class="c-comment">// ── TAB 키 처리 ──────────────────────────────────────</span>
+    <span class="c-comment">// PlayerInputReader.cs에 OnInventory(InputValue) 콜백 추가 후</span>
+    <span class="c-comment">// InputSystem에서 TAB 키를 "Inventory" 액션으로 바인딩하면</span>
+    <span class="c-comment">// 아래 메서드를 직접 호출합니다. 그 전까지는 Update에서 임시 처리.</span>
+    <span class="c-kw">private void</span> <span class="c-fn">Update</span>()
+    {
+        <span class="c-kw">if</span> (Input.GetKeyDown(KeyCode.Tab))
+            <span class="c-fn">TogglePanel</span>();
+    }
+
+    <span class="c-kw">public void</span> <span class="c-fn">TogglePanel</span>()
+    {
+        <span class="c-fn">SetPanelActive</span>(!_isOpen);
+    }
+
+    <span class="c-kw">private void</span> <span class="c-fn">SetPanelActive</span>(<span class="c-kw">bool</span> active)
+    {
+        _isOpen = active;
+        <span class="c-kw">if</span> (_panelRoot != <span class="c-kw">null</span>)
+            _panelRoot.SetActive(active);
+
+        <span class="c-kw">if</span> (active)
+            <span class="c-fn">RefreshSlots</span>();
+    }
+
+    <span class="c-comment">// ── 슬롯 갱신 ────────────────────────────────────────</span>
+    <span class="c-comment">// 인벤토리 변경 또는 장착 변경 시 자동 호출됩니다.</span>
+    <span class="c-kw">private void</span> <span class="c-fn">RefreshSlots</span>()
+    {
+        <span class="c-kw">if</span> (_inventory == <span class="c-kw">null</span> || _slotContainer == <span class="c-kw">null</span>) <span class="c-kw">return</span>;
+
+        <span class="c-comment">// 슬롯 수 맞추기</span>
+        <span class="c-kw">int</span> itemCount = _inventory.Count;
+        <span class="c-fn">EnsureSlotCount</span>(itemCount);
+
+        <span class="c-comment">// 슬롯 데이터 채우기</span>
+        <span class="c-kw">for</span> (<span class="c-kw">int</span> i = 0; i &lt; _slots.Count; i++)
+        {
+            <span class="c-kw">if</span> (i &lt; itemCount)
+            {
+                <span class="c-type">ItemData</span> data = _inventory.Items[i];
+                <span class="c-kw">bool</span> isEquipped = _equipment != <span class="c-kw">null</span> && _equipment.<span class="c-fn">IsEquipped</span>(data);
+                _slots[i].<span class="c-fn">Setup</span>(data, isEquipped, <span class="c-fn">OnSlotClicked</span>);
+                _slots[i].gameObject.SetActive(<span class="c-kw">true</span>);
+            }
+            <span class="c-kw">else</span>
+            {
+                _slots[i].gameObject.SetActive(<span class="c-kw">false</span>);
+            }
+        }
+
+        <span class="c-comment">// 장착 슬롯 아이콘 갱신 (있을 때만)</span>
+        <span class="c-fn">RefreshEquippedIcons</span>();
+    }
+
+    <span class="c-kw">private void</span> <span class="c-fn">OnSlotClicked</span>(<span class="c-type">ItemData</span> data)
+    {
+        <span class="c-kw">if</span> (data == <span class="c-kw">null</span> || _equipment == <span class="c-kw">null</span>) <span class="c-kw">return</span>;
+        _equipment.<span class="c-fn">EquipItem</span>(data);
+        <span class="c-comment">// EquipmentChanged 이벤트 → RefreshSlots 자동 호출</span>
+    }
+
+    <span class="c-kw">private void</span> <span class="c-fn">EnsureSlotCount</span>(<span class="c-kw">int</span> needed)
+    {
+        <span class="c-kw">while</span> (_slots.Count &lt; needed)
+        {
+            <span class="c-type">InventorySlotUi</span> slot = Instantiate(_slotPrefab, _slotContainer);
+            _slots.Add(slot);
+        }
+    }
+
+    <span class="c-kw">private void</span> <span class="c-fn">RefreshEquippedIcons</span>()
+    {
+        <span class="c-kw">if</span> (_equippedSwordIcon != <span class="c-kw">null</span>)
+        {
+            <span class="c-type">ItemData</span> sw = _equipment?.EquippedSword;
+            _equippedSwordIcon.sprite  = sw?.icon;
+            _equippedSwordIcon.enabled = sw != <span class="c-kw">null</span>;
+        }
+        <span class="c-kw">if</span> (_equippedShieldIcon != <span class="c-kw">null</span>)
+        {
+            <span class="c-type">ItemData</span> sh = _equipment?.EquippedShield;
+            _equippedShieldIcon.sprite  = sh?.icon;
+            _equippedShieldIcon.enabled = sh != <span class="c-kw">null</span>;
+        }
+    }
+}
+</pre>
+
+      <h4>같은 파일에 함께 작성 — InventorySlotUi.cs (별도 파일 또는 하단 추가)</h4>
+      <p>슬롯 하나의 버튼 동작을 담당하는 작은 컴포넌트입니다. <code>InventorySlotUi.cs</code>라는 이름으로 별도 생성하거나, <code>InventoryUi.cs</code> 하단에 같이 넣어도 됩니다.</p>
+
+      <div class="file-block">
+        <div class="file-label">
+          생성 경로 <span class="action-new">NEW</span>
+        </div>
+        <code>Assets/Scripts/UI/InventorySlotUi.cs</code>
+      </div>
+
+<pre>
+<span class="c-kw">using</span> System;
+<span class="c-kw">using</span> UnityEngine;
+<span class="c-kw">using</span> UnityEngine.UI;
+<span class="c-kw">using</span> TMPro;
+
+<span class="c-kw">public class</span> <span class="c-type">InventorySlotUi</span> : MonoBehaviour
+{
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">Image</span>             _iconImage;
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">TextMeshProUGUI</span>   _nameText;
+    [SerializeField] <span class="c-kw">private</span> <span class="c-type">Button</span>            _button;
+    <span class="c-comment">// 장착 중일 때 보여줄 하이라이트 오브젝트 (테두리 이미지 등)</span>
+    [SerializeField] <span class="c-kw">private</span> GameObject       _equippedHighlight;
+
+    <span class="c-kw">private</span> <span class="c-type">ItemData</span>          _data;
+    <span class="c-kw">private</span> Action&lt;<span class="c-type">ItemData</span>&gt; _onClicked;
+
+    <span class="c-kw">public void</span> <span class="c-fn">Setup</span>(<span class="c-type">ItemData</span> data, <span class="c-kw">bool</span> isEquipped, Action&lt;<span class="c-type">ItemData</span>&gt; onClicked)
+    {
+        _data      = data;
+        _onClicked = onClicked;
+
+        <span class="c-kw">if</span> (_iconImage != <span class="c-kw">null</span>)
+        {
+            _iconImage.sprite  = data.icon;
+            _iconImage.enabled = data.icon != <span class="c-kw">null</span>;
+        }
+        <span class="c-kw">if</span> (_nameText != <span class="c-kw">null</span>)
+            _nameText.text = data.displayName;
+
+        <span class="c-kw">if</span> (_equippedHighlight != <span class="c-kw">null</span>)
+            _equippedHighlight.SetActive(isEquipped);
+
+        _button.onClick.RemoveAllListeners();
+        _button.onClick.AddListener(HandleClick);
+    }
+
+    <span class="c-kw">private void</span> <span class="c-fn">HandleClick</span>()
+    {
+        _onClicked?.Invoke(_data);
+    }
+}
+</pre>
+
+    </div>
+  </div>
+</section>
+
+<!-- STEP 5 -->
+<section id="step5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <h2 class="sec-title">씬 & 프리팹 연결</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-head">
+      <span class="step-num-badge">STEP 05</span>
+      <span class="step-title">Unity 에디터 작업 (코딩 없음)</span>
+      <span class="step-eta">예상 30~60분</span>
+    </div>
+    <div class="step-body">
+
+      <h4>5-1. 플레이어 프리팹에 컴포넌트 추가</h4>
+      <p><code>Assets/Prefabs/Player/Player.prefab</code>을 열고 루트 오브젝트에 아래 컴포넌트를 추가합니다.</p>
+      <ul class="checklist">
+        <li>Add Component → <code>PlayerInventory</code> (Max Slots = 20)</li>
+        <li>Add Component → <code>EquipmentManager</code></li>
+      </ul>
+
+      <h4>5-2. 무기 마운트 포인트 확인 & 연결</h4>
+      <p>캐릭터 Armature(Hierarchy에서 Player → Armature 하위)를 펼쳐 오른손 본을 찾습니다. 보통 <code>hand_r</code>, <code>mixamorig:RightHand</code> 등의 이름입니다.</p>
+      <ul class="checklist">
+        <li>해당 본을 EquipmentManager의 <code>Sword Mount Parent</code>에 드래그</li>
+        <li>왼손 본을 <code>Shield Mount Parent</code>에 드래그</li>
+      </ul>
+
+      <div class="caution">
+        <div class="caution-label">중요</div>
+        <p>마운트 포인트 하위에 <code>Sword_1</code>, <code>Sword_2</code>, ..., <code>Sword_6</code>, <code>shield_1</code>, ..., <code>shield_6</code> 이름의 자식 오브젝트가 있어야 합니다. 없다면 각 Sword/Shield 3D 프리팹(<code>Assets/Prefabs/Items/Equips/Sword/</code>)을 해당 본의 자식으로 드래그해서 배치하고, 이름을 ItemData.asset의 <code>equipObjectName</code>과 동일하게 맞춰야 합니다. 배치 후 모두 <code>SetActive(false)</code>로 꺼두세요.</p>
+      </div>
+
+      <h4>5-3. UI 씬 설정</h4>
+      <p>Canvas 하위에 인벤토리 패널을 구성합니다.</p>
+      <ul class="checklist">
+        <li>Canvas 하위 → 새 Panel 생성 → 이름: <code>InventoryPanel</code></li>
+        <li>Panel 하위 → Grid Layout Group 붙인 <code>SlotContainer</code> 오브젝트 생성</li>
+        <li><code>InventorySlotUi</code> 프리팹 제작: Button + Image(아이콘) + TextMeshProUGUI(이름) 구성. 장착 하이라이트용 테두리 Image 하나 추가 (기본 비활성화)</li>
+        <li>씬의 InventoryUi 컴포넌트(또는 Player GameObject)에 Panel Root, Slot Container, Slot Prefab 연결</li>
+        <li>초기 상태에서 <code>InventoryPanel</code>을 비활성화</li>
+      </ul>
+
+      <h4>5-4. 상자 드랍 테이블 설정</h4>
+      <p>씬에 배치된 각 Chest 프리팹을 선택합니다.</p>
+      <ul class="checklist">
+        <li>ChestInteractable 컴포넌트 → Drop Table Size 설정 (예: 2)</li>
+        <li>각 Entry에 Sword2~6.asset 또는 Shield2~6.asset 드래그, Drop Chance 설정 (0.3~0.6 권장)</li>
+        <li>Player Inventory 필드는 비워둬도 됩니다 (Awake에서 자동 탐색)</li>
+      </ul>
+
+      <h4>5-5. 기본 장착 아이템 처리 (선택)</h4>
+      <p>게임 시작 시 Sword1을 자동 장착하려면 플레이어 오브젝트에 아래 스크립트를 추가하거나, <code>EquipmentManager.Awake()</code> 안에 직접 처리합니다.</p>
+<pre>
+<span class="c-comment">// EquipmentManager.Awake() 하단에 추가</span>
+<span class="c-comment">// 기본 장착 아이템을 Resources 또는 인스펙터 참조로 지정</span>
+[Header(<span class="c-str">"Default Equipment"</span>)]
+[SerializeField] <span class="c-kw">private</span> <span class="c-type">ItemData</span> _defaultSword;
+[SerializeField] <span class="c-kw">private</span> <span class="c-type">ItemData</span> _defaultShield;
+
+<span class="c-kw">private void</span> <span class="c-fn">Start</span>()
+{
+    <span class="c-kw">if</span> (_defaultSword != <span class="c-kw">null</span>)  <span class="c-fn">EquipItem</span>(_defaultSword);
+    <span class="c-kw">if</span> (_defaultShield != <span class="c-kw">null</span>) <span class="c-fn">EquipItem</span>(_defaultShield);
+}
+</pre>
+
+    </div>
+  </div>
+</section>
+
+<!-- CHECKLIST -->
+<section id="checklist">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <h2 class="sec-title">전체 완료 체크리스트</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="ov-card">
+      <div class="ov-card-title">📝 스크립트 작업</div>
+      <ul class="checklist">
+        <li><code>PlayerInventory.cs</code> 생성 완료</li>
+        <li><code>EquipmentManager.cs</code> 생성 완료</li>
+        <li><code>ChestInteractable.cs</code> DropTable 로직 추가</li>
+        <li><code>InventoryUi.cs</code> 전체 구현</li>
+        <li><code>InventorySlotUi.cs</code> 생성 완료</li>
+        <li>컴파일 에러 없음 확인</li>
+      </ul>
+    </div>
+    <div class="ov-card">
+      <div class="ov-card-title">🎮 Unity 에디터 작업</div>
+      <ul class="checklist">
+        <li>Player 프리팹에 PlayerInventory 추가</li>
+        <li>Player 프리팹에 EquipmentManager 추가</li>
+        <li>SwordMountParent, ShieldMountParent 본 연결</li>
+        <li>마운트 본 하위에 Sword_1~6, shield_1~6 오브젝트 배치 (비활성)</li>
+        <li>InventoryPanel UI 제작 (SlotContainer + Prefab)</li>
+        <li>InventoryUi 컴포넌트 참조 연결</li>
+        <li>상자 DroptTable 설정 (Sword2+, Shield2+)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ov-card" style="margin-top:16px; border-left-color:var(--green);">
+    <div class="ov-card-title" style="color:#2ecc71;">🧪 검증 시나리오</div>
+    <ul class="checklist">
+      <li>게임 시작 → Sword_1이 캐릭터 손에 활성화되어 있음</li>
+      <li>상자에 F키 → 콘솔에 "[Chest] 드랍: Sword2" 로그 출력</li>
+      <li>TAB 키 → 인벤토리 패널 열림, Sword2 슬롯 표시</li>
+      <li>슬롯 클릭 → 캐릭터 손에 Sword2 모델로 교체</li>
+      <li>다른 검 슬롯 클릭 → 이전 검 비활성, 새 검 활성</li>
+      <li>PlayerStats 창에서 attackBonus가 올바르게 반영됨</li>
+    </ul>
+  </div>
+
+</section>
+
+</div><!-- /wrap -->
+
+<footer>
+  구현 가이드 v1.0 &nbsp;·&nbsp; <span>김경일의 모험 : Origin</span> &nbsp;·&nbsp; Generated 2026.05.29
+</footer>
+
+</body>
+</html>
