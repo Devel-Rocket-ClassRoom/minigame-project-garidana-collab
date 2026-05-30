@@ -209,7 +209,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public void LevelUp()
     {
         _level++;
-        _expToLevelUp = 100 + ((_level - 1) / 10) * 100;
+        _expToLevelUp += 20;
         IncreaseAttackPower(1f);
         IncreaseMaxHealth(5f);
         _currentHealth = _maxHealth;

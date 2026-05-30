@@ -7605,6 +7605,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 1.68
       objectReference: {fileID: 0}
+    - target: {fileID: 4473038037853710187, guid: 42cc6fae18c6bef45b1f18be656c131b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.98
+      objectReference: {fileID: 0}
     - target: {fileID: 6002363354704882721, guid: 42cc6fae18c6bef45b1f18be656c131b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.04
@@ -17600,6 +17604,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: orc_chest_epic
       objectReference: {fileID: 0}
+    - target: {fileID: 1001315367759806, guid: c7f26af3aa2dd664e87d75195673c51c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137289221912292, guid: c7f26af3aa2dd664e87d75195673c51c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1386334363695168, guid: c7f26af3aa2dd664e87d75195673c51c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 4985671837221248, guid: c7f26af3aa2dd664e87d75195673c51c, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -17650,6 +17666,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4985671837221248, guid: c7f26af3aa2dd664e87d75195673c51c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 95952117627599164, guid: c7f26af3aa2dd664e87d75195673c51c, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
