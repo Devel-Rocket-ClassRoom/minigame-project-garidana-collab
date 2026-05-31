@@ -37,6 +37,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: cd1dda0d824b73746a77e7bd26c94704, type: 2}
     - target: {fileID: 1637311356642487291, guid: e2dbe5dbdecf9b745b7743f89028d0f8, type: 3}
+      propertyPath: patrolDistance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1637311356642487291, guid: e2dbe5dbdecf9b745b7743f89028d0f8, type: 3}
+      propertyPath: knockbackDistance
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1637311356642487291, guid: e2dbe5dbdecf9b745b7743f89028d0f8, type: 3}
+      propertyPath: knockbackDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1637311356642487291, guid: e2dbe5dbdecf9b745b7743f89028d0f8, type: 3}
       propertyPath: floatingTextPrefab
       value: 
       objectReference: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
