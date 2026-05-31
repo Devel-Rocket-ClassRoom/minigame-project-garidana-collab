@@ -225,6 +225,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
         _isDead = true;
         _currentHealth = 0f;
+        _currentExp = 0;
 
         Debug.Log($"{name} died.");
         _animator.SetTrigger("Dead");

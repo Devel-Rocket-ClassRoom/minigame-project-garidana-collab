@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Shade_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   maxHp: 60
-  attackDamage: 20
+  attackDamage: 35
   moveSpeed: 3
   detectionRange: 5
-  attackRange: 1.5
-  attackCooldown: 2
+  attackRange: 2
+  attackCooldown: 1
   goldMin: 50
   goldMax: 100
   expReward: 40

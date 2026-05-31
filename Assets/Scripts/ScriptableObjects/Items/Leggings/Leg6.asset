@@ -24,6 +24,6 @@ MonoBehaviour:
   maxHealthBonus: 30
   price: 0
   icon: {fileID: 21300000, guid: c5903a4aeb4bf8d42a244e7e4f906ecd, type: 3}
-  worldPrefab: {fileID: 0}
+  worldPrefab: {fileID: 6336182271289358860, guid: cb527aa3fdc738a4fbf4fe5df94316e6, type: 3}
   equipObjectName: Leg_6
   isDefaultEquipment: 0

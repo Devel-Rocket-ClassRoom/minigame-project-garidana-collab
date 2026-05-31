@@ -22,6 +22,6 @@ MonoBehaviour:
   maxHealthBonus: 30
   price: 0
   icon: {fileID: 21300000, guid: b4b3b9d5d882f994c99c1466039d3a90, type: 3}
-  worldPrefab: {fileID: 0}
+  worldPrefab: {fileID: 1806563079739110458, guid: 3298390142a9681449e6b20982db9329, type: 3}
   equipObjectName: Body_6
   isDefaultEquipment: 0

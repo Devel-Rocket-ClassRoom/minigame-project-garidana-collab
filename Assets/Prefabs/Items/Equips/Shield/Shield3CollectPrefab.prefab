@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 904462033205556401}
   - component: {fileID: 4054211410638141218}
+  - component: {fileID: 4576241466218436611}
   m_Layer: 0
   m_Name: Shield3CollectPrefab
   m_TagString: Untagged
@@ -91,3 +92,19 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &4576241466218436611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233553755111812314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f2479872f8065f4aaae092fe0c39a7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentCollectEffect
+  _duration: 0.65
+  _arcHeigth: 1.5
+  _scatterRadius: 0.8
+  _targetOffset: {x: 0, y: 1, z: 0}

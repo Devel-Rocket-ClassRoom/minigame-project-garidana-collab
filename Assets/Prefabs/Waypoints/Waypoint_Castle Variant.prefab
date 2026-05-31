@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6267594111134650559
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1025131792637428, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_Name
+      value: Waypoint_Castle Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 1025131792637428, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 196.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.31
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 59.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9063079
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.42261827
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127525336391656, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677999114056282459, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: _waypointId
+      value: castle
+      objectReference: {fileID: 0}
+    - target: {fileID: 677999114056282459, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: _displayName
+      value: King's Tomb
+      objectReference: {fileID: 0}
+    - target: {fileID: 677999114056282459, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      propertyPath: _waypointType
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1025131792637428, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4819847671465028910}
+  m_SourcePrefab: {fileID: 100100000, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+--- !u!1 &6267132685758221643 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1025131792637428, guid: 43963d2c0317f354fbdbc1a54b6fbc38, type: 3}
+  m_PrefabInstance: {fileID: 6267594111134650559}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &4819847671465028910
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6267132685758221643}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 2.716, y: 1.9640001, z: 1.6380001}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.9640001, z: 0}
+  m_TimeToStationary: 0.5
