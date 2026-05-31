@@ -18,21 +18,28 @@ public class InventorySlotUi : MonoBehaviour
     {
         _data      = data;
         _onClicked = onClicked;
+        bool canClick = data != null && data.IsEquipment;
 
         if (_iconImage != null)
         {
-            _iconImage.sprite  = data.icon;
-            _iconImage.enabled = data.icon != null;
+            _iconImage.sprite  = data != null ? data.icon : null;
+            _iconImage.enabled = data != null && data.icon != null;
         }
 
         if (_nameText != null)
-            _nameText.text = data.displayName;
+            _nameText.text = data != null ? data.displayName : "-";
 
         if (_equippedHighlight != null)
-            _equippedHighlight.SetActive(isEquipped);
+            _equippedHighlight.SetActive(canClick && isEquipped);
 
-        _button.onClick.RemoveAllListeners();
-        _button.onClick.AddListener(HandleClick);
+        if (_button != null)
+            _button.interactable = canClick;
+
+        if (_button != null)
+        {
+            _button.onClick.RemoveAllListeners();
+            _button.onClick.AddListener(HandleClick);
+        }
     }
 
     private void HandleClick()

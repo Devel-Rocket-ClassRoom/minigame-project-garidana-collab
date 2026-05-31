@@ -8,6 +8,9 @@ public class InventoryUi : MonoBehaviour
     [Header("References")]
     [SerializeField] private PlayerInventory  _inventory;
     [SerializeField] private EquipmentManager _equipment;
+    [SerializeField] private PlayerInputReader _playerInputReader;
+    [SerializeField] private PlayerStats _playerStats;
+    [SerializeField] private PlayerAttackUpgrade _playerAttackUpgrade;
 
     [Header("UI")]
     // 인벤토리 전체 패널 루트 (SetActive 토글 대상)
@@ -21,7 +24,15 @@ public class InventoryUi : MonoBehaviour
     [SerializeField] private Image _equippedSwordIcon;
     [SerializeField] private Image _equippedShieldIcon;
 
+    [Header("Stat UI")]
+    [SerializeField] private TextMeshProUGUI _levelText;
+    [SerializeField] private TextMeshProUGUI _attackText;
+    [SerializeField] private TextMeshProUGUI _hpText;
+    [SerializeField] private TextMeshProUGUI _upgradeStageText;
+    [SerializeField] private TextMeshProUGUI[] _completedQuestTexts;
+
     private readonly List<InventorySlotUi> _slots = new List<InventorySlotUi>();
+    private readonly List<ItemData> _ownedEquipmentItems = new List<ItemData>();
     private bool _isOpen = false;
 
     private void Awake()
@@ -30,6 +41,12 @@ public class InventoryUi : MonoBehaviour
             _inventory = FindFirstObjectByType<PlayerInventory>();
         if (_equipment == null)
             _equipment = FindFirstObjectByType<EquipmentManager>();
+        if (_playerInputReader == null)
+            _playerInputReader = FindFirstObjectByType<PlayerInputReader>();
+        if (_playerStats == null)
+            _playerStats = FindFirstObjectByType<PlayerStats>();
+        if (_playerAttackUpgrade == null)
+            _playerAttackUpgrade = FindFirstObjectByType<PlayerAttackUpgrade>();
 
         SetPanelActive(false);
     }
@@ -38,19 +55,14 @@ public class InventoryUi : MonoBehaviour
     {
         if (_inventory != null) _inventory.InventoryChanged  += RefreshSlots;
         if (_equipment != null) _equipment.EquipmentChanged  += RefreshSlots;
+        if (_playerInputReader != null) _playerInputReader.InventoryPressed += TogglePanel;
     }
 
     private void OnDisable()
     {
         if (_inventory != null) _inventory.InventoryChanged  -= RefreshSlots;
         if (_equipment != null) _equipment.EquipmentChanged  -= RefreshSlots;
-    }
-
-    // TODO: PlayerInputReader에 OnInventory 콜백 추가 후 InputSystem으로 교체
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab))
-            TogglePanel();
+        if (_playerInputReader != null) _playerInputReader.InventoryPressed -= TogglePanel;
     }
 
     public void TogglePanel()
@@ -65,21 +77,35 @@ public class InventoryUi : MonoBehaviour
             _panelRoot.SetActive(active);
 
         if (active)
+        {
             RefreshSlots();
+            RefreshStatSection();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (_isOpen)
+        {
+            RefreshStatSection();
+        }
     }
 
     private void RefreshSlots()
     {
-        if (_inventory == null || _slotContainer == null) return;
+        RefreshEquippedIcons();
 
-        int itemCount = _inventory.Count;
+        if (_inventory == null || _slotContainer == null || _slotPrefab == null) return;
+
+        CollectOwnedEquipmentItems();
+        int itemCount = _ownedEquipmentItems.Count;
         EnsureSlotCount(itemCount);
 
         for (int i = 0; i < _slots.Count; i++)
         {
             if (i < itemCount)
             {
-                ItemData data      = _inventory.Items[i];
+                ItemData data      = _ownedEquipmentItems[i];
                 bool     isEquipped = _equipment != null && _equipment.IsEquipped(data);
                 _slots[i].Setup(data, isEquipped, OnSlotClicked);
                 _slots[i].gameObject.SetActive(true);
@@ -90,7 +116,83 @@ public class InventoryUi : MonoBehaviour
             }
         }
 
-        RefreshEquippedIcons();
+    }
+
+    private void RefreshStatSection()
+    {
+        RefreshPlayerStatTexts();
+        RefreshCompletedQuestTexts();
+    }
+
+    private void RefreshPlayerStatTexts()
+    {
+        if (_playerStats != null)
+        {
+            if (_levelText != null)
+                _levelText.text = _playerStats.Level.ToString();
+
+            if (_attackText != null)
+                _attackText.text = _playerStats.AttackPower.ToString("F0");
+
+            if (_hpText != null)
+                _hpText.text = $"{_playerStats.CurrentHealth:F0} / {_playerStats.MaxHealth:F0}";
+        }
+
+        if (_upgradeStageText != null)
+        {
+            _upgradeStageText.text = _playerAttackUpgrade != null
+                ? _playerAttackUpgrade.CurrentStageName
+                : "-";
+        }
+    }
+
+    private void CollectOwnedEquipmentItems()
+    {
+        _ownedEquipmentItems.Clear();
+
+        if (_inventory == null || _inventory.Items == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _inventory.Items.Count; i++)
+        {
+            ItemData item = _inventory.Items[i];
+            if (item != null && item.IsEquipment)
+            {
+                _ownedEquipmentItems.Add(item);
+            }
+        }
+    }
+
+    private void RefreshCompletedQuestTexts()
+    {
+        if (_completedQuestTexts == null || _completedQuestTexts.Length == 0)
+        {
+            return;
+        }
+
+        IReadOnlyList<QuestData> completedQuests = QuestManager.Instance != null
+            ? QuestManager.Instance.CompletedQuests
+            : null;
+
+        for (int i = 0; i < _completedQuestTexts.Length; i++)
+        {
+            TextMeshProUGUI text = _completedQuestTexts[i];
+            if (text == null)
+            {
+                continue;
+            }
+
+            if (completedQuests != null && i < completedQuests.Count && completedQuests[i] != null)
+            {
+                text.text = completedQuests[i].QuestTitle;
+            }
+            else
+            {
+                text.text = "-";
+            }
+        }
     }
 
     private void OnSlotClicked(ItemData data)

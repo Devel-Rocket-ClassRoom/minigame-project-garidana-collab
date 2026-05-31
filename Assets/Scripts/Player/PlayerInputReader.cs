@@ -14,6 +14,7 @@ public class PlayerInputReader : MonoBehaviour
     public bool HealRequested {get; private set; }
 
     public event Action InteractPressed;
+    public event Action InventoryPressed;
 
     private void Awake()
     {
@@ -119,6 +120,14 @@ public class PlayerInputReader : MonoBehaviour
         if (value.isPressed)
         {
             HealRequested = true;
+        }
+    }
+
+    public void OnInventory(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            InventoryPressed?.Invoke();
         }
     }
 }
