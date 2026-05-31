@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   maxHp: 150
   attackDamage: 50
-  moveSpeed: 5
+  moveSpeed: 6
   detectionRange: 4
-  attackRange: 1.5
-  attackCooldown: 3
+  attackRange: 2
+  attackCooldown: 2
   goldMin: 100
   goldMax: 500
   expReward: 123

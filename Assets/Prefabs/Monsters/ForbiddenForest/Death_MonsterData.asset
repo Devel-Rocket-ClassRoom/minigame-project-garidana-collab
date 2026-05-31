@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Death_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   maxHp: 200
-  attackDamage: 30
+  attackDamage: 40
   moveSpeed: 5
   detectionRange: 7
   attackRange: 2
