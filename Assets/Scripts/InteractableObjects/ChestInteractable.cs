@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChestInteractable : MonoBehaviour, IInteractable
@@ -12,12 +13,11 @@ public class ChestInteractable : MonoBehaviour, IInteractable
     public Vector3 openAngle = new Vector3(-90f, 0f, 0f);
     public float openDuration = 0.5f;
 
-    [Header("Drop Settings")]
-    [SerializeField] private DropEntry[] _dropTable;
-    // 아이템이 스폰될 오프셋 (상자 위쪽)
-    [SerializeField] private Vector3 _spawnOffset = new Vector3(0f, 0.5f, 0f);
-    // 스폰 후 튀어오르는 힘
-    [SerializeField] private float _popForce = 3f;
+    [Header("Reward Settings")]
+    [SerializeField]
+    private ItemData[] _rewardItems;
+    [SerializeField]
+    private Vector3 _spawnOffset = new Vector3 (0f, 0.5f, 0f);
 
     private bool isOpen = false;
     private bool isAnimating = false;
@@ -32,8 +32,20 @@ public class ChestInteractable : MonoBehaviour, IInteractable
 
     public void Interact(GameObject interactor)
     {
+        if (!CanInteract(interactor))
+        {
+            return;
+        }
+
+        PlayerInventory inventory = interactor.GetComponentInParent<PlayerInventory>();
+        if (inventory == null)
+        {
+            Debug.LogWarning("[Chest] PlayerInventory를 찾을 수 없습니다.");
+            return;
+        }
+
         OpenLid();
-        RollDrops();
+        SpawnRewards(interactor.transform, inventory);
     }
 
     public void OpenLid()
@@ -67,47 +79,52 @@ public class ChestInteractable : MonoBehaviour, IInteractable
         isAnimating = false;
     }
 
-    private void RollDrops()
+    private void SpawnRewards(Transform player, PlayerInventory inventory)
     {
-        if (_dropTable == null || _dropTable.Length == 0)
-            return;
-
-        foreach (DropEntry entry in _dropTable)
+        if (_rewardItems == null || _rewardItems.Length == 0)
         {
-            if (entry.item == null)
-                continue;
+            Debug.LogWarning($"[Chest]  {name}에 연결된 보상 아이템이 없습니다.");
+            return;
+        }
 
-            if (Random.value <= entry.dropChance)
-                SpawnItem(entry.item);
+        for (int i = 0; i < _rewardItems.Length; i++)
+        {
+            ItemData item = _rewardItems[i];
+            if (item == null)
+            {
+                continue;
+            }
+
+            SpawnRewardItem(item, player, inventory, i);
         }
     }
 
-    private void SpawnItem(ItemData itemData)
+    private void SpawnRewardItem(ItemData itemData, Transform player, PlayerInventory inventory, int index)
     {
         if (itemData.worldPrefab == null)
         {
-            Debug.LogWarning($"[Chest] {itemData.displayName}의 worldPrefab이 없습니다.");
+            Debug.LogWarning ($"[Chest] {itemData.displayName}의 worldPrefab이 없습니다.");
             return;
         }
 
-        Vector3 spawnPos = transform.position + _spawnOffset;
-        GameObject go = Instantiate(itemData.worldPrefab, spawnPos, Quaternion.identity);
-
-        // EquipmentItemPickup 스크립트에 ItemData 주입
-        EquipmentItemPickup pickup = go.GetComponent<EquipmentItemPickup>();
-        if (pickup != null)
-            pickup.Init(itemData);
-        else
-            Debug.LogWarning($"[Chest] {go.name}에 EquipmentItemPickup 컴포넌트가 없습니다.");
-
-        // 위로 튀어오르는 물리 효과
-        Rigidbody rb = go.GetComponent<Rigidbody>();
-        if (rb != null)
+        if (inventory.HasItem(itemData))
         {
-            Vector3 popDir = (Vector3.up + Random.insideUnitSphere * 0.3f).normalized;
-            rb.AddForce(popDir * _popForce, ForceMode.Impulse);
+            Debug.Log ($"[Chest] 이미 보유 중인 장비입니다: {itemData.displayName}");
         }
 
-        Debug.Log($"[Chest] {itemData.displayName} 스폰됨");
+        Vector3 spreadOffset = new Vector3 ((index - (_rewardItems.Length - 1) * 0.5f) * 0.35f, 0f , 0f);
+        Vector3 spawnPosition = transform.position + _spawnOffset + spreadOffset;
+
+        GameObject spawned = Instantiate(itemData.worldPrefab, spawnPosition, Quaternion.identity);
+
+        EquipmentCollectEffect collectEffect = spawned.GetComponent<EquipmentCollectEffect>();
+        if (collectEffect == null)
+        {
+            Debug.LogWarning ($"[Chest] {spawned.name}에 worldPrefab에 EquipmentCollectEffect가 없습니다.");
+            Destroy(spawned);
+            return;
+        }
+
+        collectEffect.Initialize(itemData, player,inventory);
     }
 }
