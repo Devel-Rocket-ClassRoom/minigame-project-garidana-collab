@@ -10,6 +10,7 @@ public class QuestManager : MonoBehaviour
     private PlayerStats playerStats;
 
     private readonly HashSet<string> completedQuestIds = new HashSet<string>();
+    private readonly List<QuestData> completedQuests = new List<QuestData>();
 
     private QuestData currentQuest;
     private int currentAmount;
@@ -17,6 +18,7 @@ public class QuestManager : MonoBehaviour
     public QuestData CurrentQuest => currentQuest;
     public int CurrentAmount => currentAmount;
     public bool HasCurrentQuest => currentQuest != null;
+    public IReadOnlyList<QuestData> CompletedQuests => completedQuests;
 
     public event Action<QuestData> QuestAccepted;
     public event Action<QuestData, int, int> QuestProgressChanged;
@@ -113,6 +115,7 @@ public class QuestManager : MonoBehaviour
 
         ApplyReward(quest.Reward);
         completedQuestIds.Add(quest.QuestId);
+        completedQuests.Add(quest);
 
         QuestData completedQuest = currentQuest;
         currentQuest = null;

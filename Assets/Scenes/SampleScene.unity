@@ -1296,7 +1296,7 @@ RectTransform:
   - {fileID: 1877387339}
   - {fileID: 1116724248}
   - {fileID: 336640923}
-  - {fileID: 864167668}
+  - {fileID: 213955521}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3581,6 +3581,74 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5652663197671712506, guid: fb052928498e54c4f916bc8b863997e3, type: 3}
   m_PrefabInstance: {fileID: 211631406}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &213955520
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 213955521}
+  - component: {fileID: 213955522}
+  m_Layer: 5
+  m_Name: InvnetoryUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &213955521
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 213955520}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 864167668}
+  m_Father: {fileID: 99066463}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &213955522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 213955520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11a60188035acf94582d1367be22783a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUi
+  _inventory: {fileID: 7266921804891619165}
+  _equipment: {fileID: 7266921804891619164}
+  _playerInputReader: {fileID: 7266921804891619160}
+  _playerStats: {fileID: 1350820517}
+  _playerAttackUpgrade: {fileID: 7266921804891619157}
+  _panelRoot: {fileID: 864167667}
+  _slotContainer: {fileID: 0}
+  _slotPrefab: {fileID: 0}
+  _equippedSwordIcon: {fileID: 607804020}
+  _equippedShieldIcon: {fileID: 1826536635}
+  _levelText: {fileID: 1136572060}
+  _attackText: {fileID: 1794277647}
+  _hpText: {fileID: 200730545}
+  _upgradeStageText: {fileID: 1166294047}
+  _completedQuestTexts:
+  - {fileID: 1890914442}
+  - {fileID: 294512981}
+  - {fileID: 1475401880}
+  - {fileID: 1616468657}
 --- !u!1001 &215968622
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12404,7 +12472,7 @@ GameObject:
   - component: {fileID: 607804021}
   - component: {fileID: 607804020}
   m_Layer: 5
-  m_Name: Sword
+  m_Name: SwordSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12686,6 +12754,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8649261329610932437, guid: 1b2099365896b8e48a58faee4d7893d4, type: 3}
   m_PrefabInstance: {fileID: 639082649}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &643298874 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 66929614204128028, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+  m_PrefabInstance: {fileID: 7266921804891619149}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &644300845
 PrefabInstance:
@@ -14759,7 +14832,7 @@ GameObject:
   - component: {fileID: 748213945}
   - component: {fileID: 748213944}
   m_Layer: 5
-  m_Name: Helmet
+  m_Name: HelmetSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17757,6 +17830,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1831228287370547980, guid: eb2a071605d8778439e0f5a6774e1d71, type: 3}
   m_PrefabInstance: {fileID: 1066411946}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &858335925 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1934388813850880432, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+  m_PrefabInstance: {fileID: 7266921804891619149}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &859504722
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17853,18 +17931,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 864167667}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 986566444}
-  m_Father: {fileID: 99066463}
+  m_Father: {fileID: 213955521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1819.3224, y: 980}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &864167669
 MonoBehaviour:
@@ -18716,7 +18794,7 @@ GameObject:
   - component: {fileID: 892337896}
   - component: {fileID: 892337895}
   m_Layer: 5
-  m_Name: Chest
+  m_Name: ChestSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26600,7 +26678,7 @@ GameObject:
   - component: {fileID: 1271955354}
   - component: {fileID: 1271955353}
   m_Layer: 5
-  m_Name: Leg
+  m_Name: LegSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28571,7 +28649,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1361530536063904997, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
   m_PrefabInstance: {fileID: 7266921804891619149}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 643298874}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 487cf237633d9fa4a9d18972e0a370b9, type: 3}
@@ -30305,6 +30383,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 1739303719346994204, guid: 6364893f20b1a7a4aad3ff8ace08dda0, type: 3}
   m_PrefabInstance: {fileID: 1440051710}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1442224496 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3824950645952800542, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+  m_PrefabInstance: {fileID: 7266921804891619149}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1443219555
 GameObject:
@@ -38871,7 +38954,7 @@ GameObject:
   - component: {fileID: 1826536636}
   - component: {fileID: 1826536635}
   m_Layer: 5
-  m_Name: Shield
+  m_Name: ShieldSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46054,6 +46137,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 495581673241188673, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _attackStages.Array.data[2]._hitRange
       value: 1.4
@@ -46089,6 +46176,10 @@ PrefabInstance:
     - target: {fileID: 1361530536063904997, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: _damageInvincibleDuration
       value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1985646206826362447, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2513827689037799418, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_Name
@@ -46170,9 +46261,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: shield_6
       objectReference: {fileID: 0}
+    - target: {fileID: 7014904664203065760, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7159127718578007274, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: m_Name
       value: shield_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159127718578007274, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7781871417143770860, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
       propertyPath: playerHealing
@@ -46193,14 +46292,20 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 66929614204128028, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7266921804891619165}
+    - targetCorrespondingSourceObject: {fileID: 66929614204128028, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7266921804891619164}
   m_SourcePrefab: {fileID: 100100000, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
 --- !u!114 &7266921804891619153 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5178035093233889139, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
   m_PrefabInstance: {fileID: 7266921804891619149}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 643298874}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0c48d172e5e4924d925b0374f357e5c, type: 3}
@@ -46211,12 +46316,65 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3663537564811569972, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
   m_PrefabInstance: {fileID: 7266921804891619149}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 643298874}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1de42ca880e5a042888ac225df967a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealing
+--- !u!114 &7266921804891619157 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1319062453411226361, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+  m_PrefabInstance: {fileID: 7266921804891619149}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643298874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f7c8d2e4a5b4f1d8c3e6a7b9d0f2c14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttackUpgrade
+--- !u!114 &7266921804891619160 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8368843528665687178, guid: 8d9c2369b77f5fc448c3dbfa0ff728f4, type: 3}
+  m_PrefabInstance: {fileID: 7266921804891619149}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643298874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83f9e2c6721123441860cfc0ff366887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
+--- !u!114 &7266921804891619164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643298874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef18c7906387849e8b5cc52540b916bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentManager
+  _playerStats: {fileID: 1350820517}
+  _inventory: {fileID: 7266921804891619165}
+  _swordMountParent: {fileID: 858335925}
+  _shieldMountParent: {fileID: 1442224496}
+  _defaultSword: {fileID: 11400000, guid: 14e20b81400ed43ee8ce28ba2ad69961, type: 2}
+  _defaultShield: {fileID: 11400000, guid: 200ea51f788ae4c58aaed4105aef8551, type: 2}
+--- !u!114 &7266921804891619165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643298874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dfb47beb0e074174bd039a874c20614, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  _maxSlots: 20
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
