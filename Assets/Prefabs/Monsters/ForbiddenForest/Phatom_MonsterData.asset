@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Phatom_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   maxHp: 400
-  attackDamage: 30
-  moveSpeed: 3
+  attackDamage: 40
+  moveSpeed: 4
   detectionRange: 8
-  attackRange: 2
-  attackCooldown: 2
+  attackRange: 3
+  attackCooldown: 1
   goldMin: 80
   goldMax: 100
   expReward: 50

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Wraith_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   maxHp: 300
-  attackDamage: 30
+  attackDamage: 70
   moveSpeed: 5
   detectionRange: 15
   attackRange: 5
-  attackCooldown: 1.5
+  attackCooldown: 1
   goldMin: 100
   goldMax: 200
   expReward: 30

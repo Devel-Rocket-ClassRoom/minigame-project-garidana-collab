@@ -638,10 +638,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseMonster
   data: {fileID: 11400000, guid: 1faa5a68df56f874da1b8f52253e2102, type: 2}
-  patrolDistance: 3
+  patrolDistance: 5
   turnSpeed: 720
   knockbackDistance: 0.25
-  knockbackDuration: 0.5
+  knockbackDuration: 0.25
   floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
   floatingTextPoint: {fileID: 0}
 --- !u!136 &356966055389506312

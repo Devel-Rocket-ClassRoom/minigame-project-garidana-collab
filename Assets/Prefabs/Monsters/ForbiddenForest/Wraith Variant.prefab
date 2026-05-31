@@ -77,6 +77,10 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3695135040494006985, guid: 2f25d744ee9f4bc40815c9e035878b1b, type: 3}
+      propertyPath: knockbackDuration
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695135040494006985, guid: 2f25d744ee9f4bc40815c9e035878b1b, type: 3}
       propertyPath: floatingTextPrefab
       value: 
       objectReference: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
