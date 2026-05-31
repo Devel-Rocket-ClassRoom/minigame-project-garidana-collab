@@ -100,3 +100,9 @@ public class InventorySlotUi : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
     }
 }
+
+/*
+
+
+
+*/
