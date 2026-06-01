@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Sword2
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: sword_second
-  displayName: Knight Sword
-  description: Sword of a knight
+  displayName: "\uAE30\uC0AC\uC758 \uAC80"
+  description: "\uAE30\uC0AC\uB4E4\uC774 \uC0AC\uC6A9\uD558\uB358 \uAC80\uC774\uB2E4."
   itemType: 1
   equipmentPart: 1
   tier: 2

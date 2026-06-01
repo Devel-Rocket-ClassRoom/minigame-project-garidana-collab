@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Sword6
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: sword_sixth
-  displayName: Corrupted King's Sword
-  description: Sword that is Corrupted
+  displayName: "\uD0C0\uB77D\uD55C \uC655\uC758 \uAC80"
+  description: "\uD55C\uB54C \uCC2C\uB780\uD588\uB358 \uC655\uAD6D\uC758 \uC704\uB300\uD55C
+    \uC655\uC774 \uC0AC\uC6A9\uD558\uB358 \uAC80\uC774\uB2E4."
   itemType: 1
   equipmentPart: 1
   tier: 6

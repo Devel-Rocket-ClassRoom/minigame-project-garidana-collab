@@ -7,10 +7,10 @@ public class WaypointInteractable : MonoBehaviour, IInteractable
     private WaypointNode _waypointNode;
 
     [SerializeField]
-    private string _lockedPrompt = "Activate Waypoint";
+    private string _lockedPrompt = "웨이포인트 활성화";
 
     [SerializeField]
-    private string _unlockedPrompt = "Use Waypoint";
+    private string _unlockedPrompt = "웨이포인트 사용";
 
     public string InteractionPrompt
     {

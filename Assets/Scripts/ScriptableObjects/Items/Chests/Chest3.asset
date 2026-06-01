@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: Chest3
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: chest_third
-  displayName: Artisan's Chestplate
-  description: Precisely made Chest part
+  displayName: "\uC7A5\uC778\uC758 \uD749\uAC11"
+  description: "\uC7A5\uC778\uC774 \uC81C\uC791\uD55C \uACAC\uACE0\uD55C \uAC00\uC2B4
+    \uBC29\uC5B4\uAD6C\uC774\uB2E4."
   itemType: 1
   equipmentPart: 4
   tier: 3
   attackBonus: 0
   maxHealthBonus: 10
   price: 200
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d19ff095b630052488b8d0d1d0589dc7, type: 3}
   worldPrefab: {fileID: 0}
   equipObjectName: Body_3
   isDefaultEquipment: 0

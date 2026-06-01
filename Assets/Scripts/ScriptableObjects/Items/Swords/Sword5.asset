@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Sword5
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: sword_fifth
-  displayName: 1000 Sword
-  description: Sword that took 1000 lives
+  displayName: "\uCC9C\uBA85\uC744 \uBCA4 \uAC80"
+  description: "\uC624\uD06C \uC871\uC7A5\uC774 \uD559\uC0B4\uC744 \uD558\uB358 \uAC80\uC774\uB2E4."
   itemType: 1
   equipmentPart: 1
   tier: 5

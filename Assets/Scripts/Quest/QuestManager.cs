@@ -125,6 +125,25 @@ public class QuestManager : MonoBehaviour
         return true;
     }
 
+#if UNITY_EDITOR
+    public bool CompleteCurrentQuestForDebug()
+    {
+        if (currentQuest == null)
+        {
+            return false;
+        }
+
+        if (!IsCurrentQuestComplete())
+        {
+            currentAmount = currentQuest.RequiredAmount;
+            QuestProgressChanged?.Invoke(currentQuest, currentAmount, currentQuest.RequiredAmount);
+            QuestReadyToComplete?.Invoke(currentQuest);
+        }
+
+        return CompleteQuest(currentQuest);
+    }
+#endif
+
     public bool IsCompleted(QuestData quest)
     {
         return quest != null && completedQuestIds.Contains(quest.QuestId);

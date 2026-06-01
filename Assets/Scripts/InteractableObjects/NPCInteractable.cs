@@ -3,10 +3,10 @@ using UnityEngine;
 public class NPCInteractable : MonoBehaviour, IInteractable
 {
     [SerializeField]
-    private string _npcName = "Town Healer";
+    private string _npcName = "마을 치유사";
 
     [SerializeField]
-    private string _interactionPrompt = "Interact to refill Heal";
+    private string _interactionPrompt = "체력 회복 충전 200 G";
 
     [SerializeField]    
     private int _refillCost = 100;

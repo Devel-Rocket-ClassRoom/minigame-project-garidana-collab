@@ -3,7 +3,14 @@ using UnityEngine;
 public class NPCQuestGiver : MonoBehaviour, IInteractable
 {
     [SerializeField]
-    private string npcName = "Quest NPC";
+    private string npcName = "퀘스트 NPC";
+
+    [SerializeField]
+    private Sprite npcPortrait;
+
+    [TextArea]
+    [SerializeField]
+    private string availableDialogue = "부탁하고 싶은 일이 있습니다.";
 
     [SerializeField]
     private QuestData questData;
@@ -31,18 +38,21 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
 
             if (state == QuestState.ReadyToComplete)
             {
-                return "Quest Completed";
+                return "퀘스트 완료";
             }
 
             if (state == QuestState.Available)
             {
-                return "Quest Available";
+                return "퀘스트 진행 가능";
             }
 
             return npcName;
         }
     }
 
+    public string NpcName => npcName;
+    public Sprite NpcPortrait => npcPortrait;
+    public string AvailableDialogue => availableDialogue;
     public Transform Transform => transform;
 
     private void Awake()
@@ -74,7 +84,6 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
     {
         QuestState state = GetState();
         return state == QuestState.Available
-            || state == QuestState.InProgress
             || state == QuestState.ReadyToComplete;
     }
 
@@ -98,7 +107,9 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
         {
             if (questUi != null)
             {
-                questUi.Open(this, questData);
+                PlayerInteractor playerInteractor = interactor.GetComponent<PlayerInteractor>();
+                float closeDistance = playerInteractor != null ? playerInteractor.InteractRadius : 2f;
+                questUi.Open(this, questData, interactor.transform, closeDistance);
             }
             else
             {

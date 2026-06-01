@@ -35,10 +35,28 @@ public class PlayerStats : MonoBehaviour, IDamageable
     private float _currentHealth;
     private Animator _animator;
     private bool _isDead = false;
+#if UNITY_EDITOR
+    private bool _debugGodMode;
+    private bool _debugAttackPowerOverrideEnabled;
+    private float _debugAttackPower;
+#endif
 
     public float MaxHealth => _maxHealth;
     public float CurrentHealth => _currentHealth;
-    public float AttackPower => _attackPower;
+    public float AttackPower
+    {
+        get
+        {
+#if UNITY_EDITOR
+            if (_debugAttackPowerOverrideEnabled)
+            {
+                return _debugAttackPower;
+            }
+#endif
+
+            return _attackPower;
+        }
+    }
 
     public bool IsDead => _isDead;
     public float MaxStamina => _maxStamina;
@@ -49,6 +67,9 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public int ExpToLevelUp => _expToLevelUp;
     public int Gold => _gold;
     public bool CanHeal => !_isDead && _currentHealth < _maxHealth;
+#if UNITY_EDITOR
+    public bool DebugGodMode => _debugGodMode;
+#endif
 
 
     public event Action Died;
@@ -121,6 +142,13 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public void TakeDamage(float damage)
     {
         if (_isDead) return;
+
+#if UNITY_EDITOR
+        if (_debugGodMode)
+        {
+            return;
+        }
+#endif
 
         if (Time.time < _lastDamagedTime + _damageInvincibleDuration)
         {
@@ -257,6 +285,25 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
         Respawned?.Invoke();
     }
+
+#if UNITY_EDITOR
+    public void SetDebugGodMode(bool enabled)
+    {
+        _debugGodMode = enabled;
+
+        if (_debugGodMode && !_isDead)
+        {
+            _currentHealth = _maxHealth;
+            _currentStamina = _maxStamina;
+        }
+    }
+
+    public void SetDebugAttackPowerOverride(bool enabled, float attackPower)
+    {
+        _debugAttackPowerOverrideEnabled = enabled;
+        _debugAttackPower = attackPower;
+    }
+#endif
 
     private void MoveToPosition(Vector3 position)
     {

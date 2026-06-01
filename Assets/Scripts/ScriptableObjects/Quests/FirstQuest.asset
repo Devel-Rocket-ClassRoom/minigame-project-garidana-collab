@@ -13,14 +13,19 @@ MonoBehaviour:
   m_Name: FirstQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questId: first
-  questTitle: 'Collect 20 eggs '
-  description: 'Collect 20 eggs from chick and talk to YongSoo Lim. '
+  questTitle: "\uACC4\uB780 20\uAC1C \uAC00\uC838\uC624\uAE30"
+  chapter: 1
+  description: "\uB9C8\uC744\uC758 \uBCD1\uC544\uB9AC\uB4E4\uC774 \uC774\uC0C1\uD558\uAC8C
+    \uBCC0\uD588\uC5B4\uC694. \uBCD1\uC544\uB9AC\uB4E4\uC774 \uC704\uD611\uC801\uC73C\uB85C
+    \uBCC0\uD574\uC11C \uB9C8\uC744 \uC0AC\uB78C\uB4E4\uC774 \uACC4\uB780\uC744 \uBABB\uBA39\uACE0
+    \uC788\uC5B4\uC694... \uACC4\uB780 20\uAC1C \uC815\uB3C4\uB9CC \uAD6C\uD574\uC8FC\uC2E4
+    \uC218 \uC788\uB098\uC694 \uACBD\uC77C\uC528? "
   objectiveType: 1
   targetId: egg
-  requiredAmount: 2
+  requiredAmount: 1
   prerequisiteQuest: {fileID: 0}
   nextQuest: {fileID: 11400000, guid: fa1948d9e427fb54abe6e550c07f070d, type: 2}
   reward:
-    gold: 100
+    gold: 200
     level: 5
     exp: 0

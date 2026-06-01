@@ -34,6 +34,9 @@ public class QuestData : ScriptableObject
     [SerializeField]
     private string questTitle;
 
+    [SerializeField]
+    private int chapter;
+
     [TextArea]
     [SerializeField]
     private string description;
@@ -61,6 +64,7 @@ public class QuestData : ScriptableObject
 
     public string QuestId => questId;
     public string QuestTitle => questTitle;
+    public int Chapter => chapter;
     public string Description => description;
     public QuestObjectiveType ObjectiveType => objectiveType;
     public string TargetId => targetId;
@@ -71,6 +75,7 @@ public class QuestData : ScriptableObject
 
     private void OnValidate()
     {
+        chapter = Mathf.Max(1, chapter);
         requiredAmount = Mathf.Max(1, requiredAmount);
     }
 }

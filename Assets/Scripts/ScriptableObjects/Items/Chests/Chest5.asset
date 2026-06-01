@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Chest5
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: chest_fifth
-  displayName: Arclight Chestplate
-  description: Shining Chestplate with arclight
+  displayName: "\uBE5B\uB098\uB294 \uD749\uAC11"
+  description: "\uCC9C\uC0AC\uC758 \uAC00\uD638\uAC00 \uAE43\uB4E0 \uAC00\uC2B4 \uBC29\uC5B4\uAD6C\uC774\uB2E4."
   itemType: 1
   equipmentPart: 4
   tier: 5

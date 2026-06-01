@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Leg3
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: leg_third
-  displayName: Artisan's Leggings
-  description: Precisely made Leggings
+  displayName: "\uC7A5\uC778\uC758 \uAC01\uBC18"
+  description: "\uC7A5\uC778\uC758 \uC190\uAE38\uC744 \uAC70\uCE5C \uAC01\uBC18\uC774\uB2E4."
   itemType: 1
   equipmentPart: 5
   tier: 3

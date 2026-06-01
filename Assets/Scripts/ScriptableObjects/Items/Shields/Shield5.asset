@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Shield5
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: shield_fifth
-  displayName: Giant Shield
-  description: Shield big as a warrior
+  displayName: "\uAC70\uB300\uD55C \uBC29\uD328"
+  description: "\uCC38\uC73C\uB85C \uAC70\uB300\uD55C \uBC29\uD328\uC774\uB2E4."
   itemType: 1
   equipmentPart: 2
   tier: 1

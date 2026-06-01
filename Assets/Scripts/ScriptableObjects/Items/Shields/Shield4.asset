@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Shield4
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: shield_fourth
-  displayName: Invincible Shield
-  description: Shield that can't be penetrated
+  displayName: "\uB6AB\uC9C0 \uBABB\uD558\uB294 \uBC29\uD328"
+  description: "\uBB34\uC5C7\uC73C\uB85C\uB3C4 \uB6AB\uC744 \uC218 \uC5C6\uB294 \uBC29\uD328\uC774\uB2E4."
   itemType: 1
   equipmentPart: 2
   tier: 4

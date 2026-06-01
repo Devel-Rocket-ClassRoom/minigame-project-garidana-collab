@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Sword3
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: sword_third
-  displayName: Artisan's Sword
-  description: Precisely made sword
+  displayName: "\uC7A5\uC778\uC758 \uAC80"
+  description: "\uC7A5\uC778\uC774 \uB0A0\uCE74\uB86D\uAC8C \uB2E8\uC870\uD55C \uAC80\uC774\uB2E4. "
   itemType: 1
   equipmentPart: 1
   tier: 3
   attackBonus: 20
   maxHealthBonus: 0
-  price: 0
+  price: 150
   icon: {fileID: 21300000, guid: 02a504cbb1170e9438f953f84e671690, type: 3}
   worldPrefab: {fileID: 7145595410180640036, guid: 45d3b4083b36e4378ba04ca9c5cec952, type: 3}
   equipObjectName: Sword_3

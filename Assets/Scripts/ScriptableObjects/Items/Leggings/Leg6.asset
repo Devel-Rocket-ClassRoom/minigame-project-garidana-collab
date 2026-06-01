@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: Leg6
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: leg_sixth
-  displayName: Golem Leggings
-  description: 'Golem''s Legs
-
-'
+  displayName: "\uACE8\uB818 \uB2E4\uB9AC"
+  description: "\uACE8\uB818\uC758 \uB2E4\uB9AC\uC774\uB2E4."
   itemType: 1
   equipmentPart: 5
   tier: 6

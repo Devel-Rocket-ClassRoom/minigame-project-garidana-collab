@@ -7,7 +7,7 @@ public class ChestInteractable : MonoBehaviour, IInteractable
     public GameObject lid;
     public GameObject body;
 
-    private string _interactionPtompt = "Open Chest";
+    private string _interactionPtompt = "상자 열기";
 
     [Header("Lid Open Settings")]
     public Vector3 openAngle = new Vector3(-90f, 0f, 0f);

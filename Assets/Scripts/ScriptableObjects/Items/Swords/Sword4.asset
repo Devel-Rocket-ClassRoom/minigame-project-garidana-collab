@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Sword4
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: sword_fourth
-  displayName: Mana Sword
-  description: Sword full of Mana
+  displayName: "\uB9D0\uD558\uB294 \uAC80"
+  description: "\uAC80\uC774 \uB0B4\uAC8C \uC18D\uC0AD\uC778\uB2E4....."
   itemType: 1
   equipmentPart: 1
   tier: 1

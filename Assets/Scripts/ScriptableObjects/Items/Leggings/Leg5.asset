@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Leg5
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: leg_fifth
-  displayName: Arclight Leggings
-  description: Leggings bleesed with light
+  displayName: "\uBE5B\uC758 \uAC01\uBC18"
+  description: "\uBE5B\uC758 \uD798\uC774 \uC11C\uB9B0 \uAC01\uBC18\uC774\uB2E4."
   itemType: 1
   equipmentPart: 5
   tier: 5

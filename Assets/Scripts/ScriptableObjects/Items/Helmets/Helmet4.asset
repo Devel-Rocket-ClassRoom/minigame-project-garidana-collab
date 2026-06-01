@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: Helmet4
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: helmet_fourth
-  displayName: Meister's Helmet
-  description: 'Perfectly forgred Helmet
-
-'
+  displayName: "\uB2EC\uC778\uC758 \uD22C\uAD6C"
+  description: "\uBA85\uC7A5 \"\uC784\uC7A5\uBE44\"\uC528\uAC00 \uC81C\uC791\uD55C
+    \uCD5C\uACE0\uC758 \uD22C\uAD6C\uC774\uB2E4."
   itemType: 1
   equipmentPart: 3
   tier: 4

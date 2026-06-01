@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questId: fourth
   questTitle: Annihilate Orcs
+  chapter: 4
   description: Eliminate all Orcs
   objectiveType: 0
   targetId: orc
