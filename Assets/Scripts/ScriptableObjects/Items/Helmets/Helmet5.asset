@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Helmet5
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: helmet_fifth
-  displayName: "\uBE5B\uC758 \uD22C\uAD6C"
-  description: "\uBE5B\uC758 \uAC00\uD638\uAC00 \uAE43\uB4E0 \uD22C\uAD6C\uC774\uB2E4."
+  displayName: "\uBE5B\uB098\uB294 \uD22C\uAD6C"
+  description: "\uB300\uCC9C\uC0AC\uC758 \uAC00\uD638\uAC00 \uAE43\uB4E0 \uD22C\uAD6C\uC774\uB2E4."
   itemType: 1
   equipmentPart: 3
   tier: 5

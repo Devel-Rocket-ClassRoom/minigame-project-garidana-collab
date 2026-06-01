@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class QuestMiniMapUi : MonoBehaviour
@@ -11,6 +12,14 @@ public class QuestMiniMapUi : MonoBehaviour
     [SerializeField] private RectTransform markerBounds;
     [SerializeField] private RectTransform questMarker;
     [SerializeField] private RectTransform edgeIndicator;
+
+    [Header("Marker Sprites")]
+    [SerializeField] private Image questMarkerImage;
+    [SerializeField] private Sprite questMarkerDefaultSprite;
+    [SerializeField] private Sprite questMarkerReadySprite;
+    [SerializeField] private Image edgeIndicatorImage;
+    [SerializeField] private Sprite edgeIndicatorDefaultSprite;
+    [SerializeField] private Sprite edgeIndicatorReadySprite;
 
     [Header("Camera Tracking")]
     [SerializeField] private float cameraHeight = 45f;
@@ -53,6 +62,9 @@ public class QuestMiniMapUi : MonoBehaviour
         {
             return;
         }
+
+        ApplyMarkerSprites();
+
         UpdateCameraTransform();
         UpdateQuestGuide();
     }
@@ -154,12 +166,14 @@ public class QuestMiniMapUi : MonoBehaviour
             return;
         }
 
+        bool shouldShowEdgeIndicator = ShouldShowEdgeIndicator();
+
         Vector3 worldPoint = _targetNpc.Transform.position + markerWorldOffset;
         Vector3 viewport = miniMapCamera.WorldToViewportPoint(worldPoint);
         if (viewport.z <= 0f)
         {
             questMarker.gameObject.SetActive(false);
-            edgeIndicator.gameObject.SetActive(false);
+            edgeIndicator.gameObject.SetActive(shouldShowEdgeIndicator);
             return;
         }
 
@@ -176,7 +190,12 @@ public class QuestMiniMapUi : MonoBehaviour
         }
 
         questMarker.gameObject.SetActive(false);
-        edgeIndicator.gameObject.SetActive(true);
+        edgeIndicator.gameObject.SetActive(shouldShowEdgeIndicator);
+
+        if (!shouldShowEdgeIndicator)
+        {
+            return;
+        }
 
         Vector2 direction = centeredViewport.sqrMagnitude > 0.001f
             ? centeredViewport.normalized
@@ -201,5 +220,65 @@ public class QuestMiniMapUi : MonoBehaviour
         {
             _playerStats = playerStats;
         }
+
+        if (questMarkerImage == null && questMarker != null)
+        {
+            questMarkerImage = questMarker.GetComponent<Image>();
+        }
+
+        if (edgeIndicatorImage == null && edgeIndicator != null)
+        {
+            edgeIndicatorImage = edgeIndicator.GetComponent<Image>();
+        }
+    }
+
+    private void ApplyMarkerSprites()
+    {
+        bool isReadyToComplete = IsTargetQuestReadyToComplete();
+
+        if (questMarkerImage != null)
+        {
+            Sprite markerSprite = isReadyToComplete && questMarkerReadySprite != null
+                ? questMarkerReadySprite
+                : questMarkerDefaultSprite;
+
+            if (markerSprite != null)
+            {
+                questMarkerImage.sprite = markerSprite;
+            }
+        }
+
+        if (edgeIndicatorImage != null)
+        {
+            Sprite indicatorSprite = isReadyToComplete && edgeIndicatorReadySprite != null
+                ? edgeIndicatorReadySprite
+                : edgeIndicatorDefaultSprite;
+
+            if (indicatorSprite != null)
+            {
+                edgeIndicatorImage.sprite = indicatorSprite;
+            }
+        }
+    }
+
+    private bool IsTargetQuestReadyToComplete()
+    {
+        if (_questManager == null || _targetNpc == null || _targetNpc.QuestData == null)
+        {
+            return false;
+        }
+
+        return _questManager.GetQuestState(_targetNpc.QuestData) == QuestState.ReadyToComplete;
+    }
+
+    private bool ShouldShowEdgeIndicator()
+    {
+        if (_questManager == null || _targetNpc == null || _targetNpc.QuestData == null)
+        {
+            return false;
+        }
+
+        QuestState state = _questManager.GetQuestState(_targetNpc.QuestData);
+        return state == QuestState.Available || state == QuestState.ReadyToComplete;
     }
 }

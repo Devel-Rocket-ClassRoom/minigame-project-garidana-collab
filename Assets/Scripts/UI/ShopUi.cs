@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -9,8 +10,10 @@ public class ShopUi : MonoBehaviour
     [SerializeField] private GameObject _panelRoot;
     [SerializeField] private Transform _contentRoot;
     [SerializeField] private ShopItemSlotUi _slotTemplate;
+    [SerializeField] private TextMeshProUGUI _dialogueText;
 
     private readonly List<ShopItemSlotUi> _slots = new List<ShopItemSlotUi>();
+    private string _defaultDialogueText;
     private IReadOnlyList<ItemData> _currentStock;
     private PlayerInventory _buyerInventory;
     private PlayerStats _buyerStats;
@@ -98,12 +101,14 @@ public class ShopUi : MonoBehaviour
         _currentStock = merchant.Stock;
 
         ResolveReferences();
+        ResetMerchantDialogue();
         Refresh();
         SetOpen(true);
     }
 
     public void Close()
     {
+        ResetMerchantDialogue();
         SetOpen(false);
         _lastClosedFrame = Time.frameCount;
         _currentMerchant = null;
@@ -153,6 +158,7 @@ public class ShopUi : MonoBehaviour
         if (!_buyerStats.SpendGold(item.price))
         {
             Debug.Log($"[Shop] 골드가 부족합니다. 필요 골드: {item.price}, 현재 골드: {_buyerStats.Gold}");
+            SetMerchantDialogue("골드가 부족하군..");
             return;
         }
 
@@ -164,6 +170,7 @@ public class ShopUi : MonoBehaviour
             }
 
             Debug.Log($"[Shop] 구매 완료: {item.displayName} ({item.price} G)");
+            SetMerchantDialogue($"{item.displayName}을 구매했군.");
             Refresh();
             return;
         }
@@ -248,6 +255,20 @@ public class ShopUi : MonoBehaviour
             _slotTemplate = _contentRoot.GetComponentInChildren<ShopItemSlotUi>(true);
         }
 
+        if (_dialogueText == null)
+        {
+            Transform dialogueRoot = FindChildRecursive(transform, "NPCDialogue");
+            if (dialogueRoot != null)
+            {
+                _dialogueText = dialogueRoot.GetComponentInChildren<TextMeshProUGUI>(true);
+            }
+        }
+
+        if (_dialogueText != null && _defaultDialogueText == null)
+        {
+            _defaultDialogueText = _dialogueText.text;
+        }
+
         _ = ItemTooltipUi.EnsureForCanvas(GetComponentInParent<Canvas>());
     }
 
@@ -299,6 +320,26 @@ public class ShopUi : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void SetMerchantDialogue(string message)
+    {
+        if (_dialogueText == null || string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        _dialogueText.text = message;
+    }
+
+    private void ResetMerchantDialogue()
+    {
+        if (_dialogueText == null)
+        {
+            return;
+        }
+
+        _dialogueText.text = _defaultDialogueText ?? string.Empty;
     }
 
     private static ShopUi FindExistingShopUi()

@@ -1,5 +1,8 @@
 using UnityEngine;
 using System;
+#if UNITY_EDITOR
+using UnityEngine.InputSystem;
+#endif
 
 
 public class PlayerStats : MonoBehaviour, IDamageable
@@ -90,6 +93,9 @@ public class PlayerStats : MonoBehaviour, IDamageable
     private void Update()
     {
         StaminaRegen();
+#if UNITY_EDITOR
+        HandleEditorDebugInput();
+#endif
     }
 
     // 스태미나 회복 함수
@@ -287,6 +293,20 @@ public class PlayerStats : MonoBehaviour, IDamageable
     }
 
 #if UNITY_EDITOR
+    private void HandleEditorDebugInput()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        if (keyboard.pKey.wasPressedThisFrame)
+        {
+            AddGold(1000);
+        }
+    }
+
     public void SetDebugGodMode(bool enabled)
     {
         _debugGodMode = enabled;
@@ -302,6 +322,11 @@ public class PlayerStats : MonoBehaviour, IDamageable
     {
         _debugAttackPowerOverrideEnabled = enabled;
         _debugAttackPower = attackPower;
+    }
+
+    public void TriggerDebugDeath()
+    {
+        Die();
     }
 #endif
 
