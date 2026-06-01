@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Shield6
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: shield_sixth
-  displayName: King's Shield
-  description: Shield of the King's knight
+  displayName: "\uD0C0\uB77D\uD55C \uC655\uC758 \uCE5C\uC704\uB300\uC7A5\uC758 \uBC29\uD328"
+  description: "\uD55C\uB54C\uB294 \uCC2C\uB780\uD588\uB358 \uC655\uAD6D\uC758 \uC655\uC758
+    \uCE5C\uC704\uB300\uC7A5\uC758 \uBC29\uD328\uC774\uB2E4. \uC5C4\uCCAD\uB09C \uD328\uAE30\uAC00
+    \uB290\uAEF4\uC9C4\uB2E4."
   itemType: 1
   equipmentPart: 2
   tier: 6

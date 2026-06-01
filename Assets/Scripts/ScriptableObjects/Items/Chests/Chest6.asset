@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Chest6
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: chest_sixth
-  displayName: Golem's Chestplate
-  description: Golem's Body
+  displayName: "\uACE8\uB818 \uBAB8\uD1B5"
+  description: "\uACE8\uB818\uC758 \uBAB8\uD1B5\uC774\uB2E4."
   itemType: 1
   equipmentPart: 4
   tier: 6

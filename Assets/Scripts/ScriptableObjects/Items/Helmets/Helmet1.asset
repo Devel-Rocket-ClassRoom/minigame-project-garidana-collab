@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Helmet1
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: helmet_first
-  displayName: Basic Helmet
-  description: Not really good Helmet
+  displayName: "\uBAA8\uD5D8\uAC00\uC758 \uD22C\uAD6C"
+  description: "\uBCC4\uB85C \uC88B\uC9C0 \uC54A\uC740 \uBAA8\uC591\uB9CC \uD22C\uAD6C\uC774\uB2E4."
   itemType: 1
   equipmentPart: 3
   tier: 1

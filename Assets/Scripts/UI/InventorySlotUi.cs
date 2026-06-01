@@ -16,6 +16,7 @@ public class InventorySlotUi : MonoBehaviour, IPointerEnterHandler, IPointerExit
     private ItemData _data;
     private Action<ItemData> _onClicked;
     private bool _canClick;
+    private string _actionHint;
 
     private void Awake()
     {
@@ -34,11 +35,12 @@ public class InventorySlotUi : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
     }
 
-    public void Setup(ItemData data, bool isEquipped, Action<ItemData> onClicked, Sprite backgroundSprite = null)
+    public void Setup(ItemData data, bool isEquipped, Action<ItemData> onClicked, Sprite backgroundSprite = null, string actionHint = "[Right Click to Equip]")
     {
         _data      = data;
         _onClicked = onClicked;
         _canClick = data != null && data.IsEquipment;
+        _actionHint = actionHint;
 
         if (_backgroundImage != null && backgroundSprite != null)
         {
@@ -69,7 +71,7 @@ public class InventorySlotUi : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
 
         Debug.Log($"[InventorySlotUi] Hover: {_data.displayName}");
-        ItemTooltipUi.Show(_data, eventData.position, _canClick ? "[Right Click to Equip]" : null);
+        ItemTooltipUi.Show(_data, eventData.position, _canClick ? _actionHint : null);
     }
 
     public void OnPointerExit(PointerEventData eventData)

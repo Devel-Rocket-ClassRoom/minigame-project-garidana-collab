@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Chest1
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: body_first
-  displayName: Basic Chestplate
-  description: Very basic chest plate
+  displayName: "\uBAA8\uD5D8\uAC00\uC758 \uC0C1\uC758"
+  description: "\uCC9C\uC73C\uB85C \uB9CC\uB4E0 \uD5C8\uB984\uD55C \uC0C1\uC758\uB2E4."
   itemType: 1
   equipmentPart: 4
   tier: 1

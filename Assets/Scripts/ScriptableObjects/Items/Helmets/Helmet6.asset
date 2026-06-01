@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Helmet6
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: helmet_sixth
-  displayName: Golem Helmet
-  description: Golem's Head
+  displayName: "\uACE8\uB818 \uBA38\uB9AC"
+  description: "\uACE8\uB818\uC758 \uBA38\uB9AC\uC774\uB2E4."
   itemType: 1
   equipmentPart: 3
   tier: 6

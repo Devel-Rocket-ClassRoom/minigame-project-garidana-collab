@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Chest2
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: body_second
-  displayName: Knight's Chestplate
-  description: Chest plate that Knights wear
+  displayName: "\uAE30\uC0AC\uC758 \uD749\uAC11"
+  description: "\uAE30\uC0AC\uB4E4\uC758 \uAC00\uC2B4\uC744 \uBCF4\uD638\uD558\uB294
+    \uCCAD\uB3D9\uC73C\uB85C \uB9CC\uB4E0 \uBC29\uC5B4\uAD6C\uC774\uB2E4."
   itemType: 1
   equipmentPart: 4
   tier: 2

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Chest4
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: chest_fourth
-  displayName: Meister's Chestplate
-  description: Perfectly made Chestplate
+  displayName: "\uB2EC\uC778\uC758 \uD749\uAC11"
+  description: "\uBA85\uC7A5 \"\uC784\uC7A5\uBE44\"\uC528\uAC00 \uB9CC\uB4E0 \uCD5C\uACE0\uC758
+    \uAC00\uC2B4 \uBC29\uC5B4\uAD6C\uC774\uB2E4."
   itemType: 1
   equipmentPart: 4
   tier: 4

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Leg1
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: leg_first
-  displayName: Basic Leggings
-  description: Basic leggings. Normal.
+  displayName: "\uBAA8\uD5D8\uAC00\uC758 \uBC14\uC9C0 "
+  description: "\uB0C4\uC0C8 \uB0A0\uAC83\uAC19\uC740 \uD558\uC758\uC774\uB2E4. \uC6B0\uC6E9."
   itemType: 1
   equipmentPart: 5
   tier: 1

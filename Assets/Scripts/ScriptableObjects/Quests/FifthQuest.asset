@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: FifthQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questId: fifth
-  questTitle: 
-  description: 
+  questTitle: "\uD0C0\uB77D\uD55C \uC655 \uCC98\uCE58"
+  chapter: 5
+  description: '
+
+'
   objectiveType: 0
   targetId: 
   requiredAmount: 1

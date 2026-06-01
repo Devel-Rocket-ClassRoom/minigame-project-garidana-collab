@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Sword1
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: sword_first
-  displayName: Basic Sword
-  description: Sword of a novice warrior
+  displayName: "\uBB34\uB518 \uAC80"
+  description: "\uB0A0\uC774 \uBB34\uB518 \uAC80\uC774\uB2E4. \uD50C\uB77C\uC2A4\uD2F1\uACFC
+    \uBCC4\uBC18 \uCC28\uC774\uAC00 \uC5C6\uC5B4\uBCF4\uC778\uB2E4."
   itemType: 1
   equipmentPart: 1
   tier: 1

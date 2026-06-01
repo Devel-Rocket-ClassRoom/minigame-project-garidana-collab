@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Shield1
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: shield_first
-  displayName: Basic Shield
-  description: Shield that is not really good
+  displayName: "\uB098\uBB34 \uBC29\uD328"
+  description: "\uB098\uBB34\uB85C \uB9CC\uB4E0 \uBC29\uD328\uC774\uB2E4. \uC788\uC73C\uB098
+    \uB9C8\uB098 \uD55C\uB4EF."
   itemType: 1
   equipmentPart: 2
   tier: 1

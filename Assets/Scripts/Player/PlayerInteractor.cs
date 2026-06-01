@@ -23,6 +23,8 @@ public class PlayerInteractor : MonoBehaviour
     private WaypointInteractable _activeWaypointSelectionTarget;
     private List<WaypointNode> _activeWaypointDestinations = new();
 
+    public float InteractRadius => _interactRadius;
+
     private void Awake()
     {
         if (_inputReader == null)
@@ -72,6 +74,12 @@ public class PlayerInteractor : MonoBehaviour
             return;
         }
 
+        if (IsBlockingInteractionUiOpen())
+        {
+            ClearInteraction();
+            return;
+        }
+
         RefreshCurrentTarget();
         HandleWaypointSelectionInput();
         RefreshInteractionUi();
@@ -80,6 +88,7 @@ public class PlayerInteractor : MonoBehaviour
     private void TryInteract()
     {
         if (_playerStats != null && _playerStats.IsDead) return;
+        if (IsBlockingInteractionUiOpen()) return;
 
         if (_activeWaypointSelectionTarget != null)
         {
@@ -239,6 +248,14 @@ public class PlayerInteractor : MonoBehaviour
     {
         _activeWaypointSelectionTarget = null;
         _activeWaypointDestinations.Clear();
+    }
+
+    private bool IsBlockingInteractionUiOpen()
+    {
+        return InventoryUi.IsAnyOpen()
+            || ShopUi.BlocksGlobalShortcuts
+            || OptionMenuUi.IsAnyOpen()
+            || QuestUi.IsAnyOpen();
     }
 
     private int GetSelectionIndex(Keyboard keyboard)

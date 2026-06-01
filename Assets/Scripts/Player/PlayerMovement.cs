@@ -42,8 +42,43 @@ public class PlayerMovement : MonoBehaviour
     private float _dashTimeRemaining;
     private float _lastDashTime = -100f;
     private Vector3 _dashDirection;
+#if UNITY_EDITOR
+    private bool _debugMovementOverrideEnabled;
+    private float _debugMoveSpeed;
+    private float _debugDashDistance;
+#endif
 
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
+
+    private float MoveSpeed
+    {
+        get
+        {
+#if UNITY_EDITOR
+            if (_debugMovementOverrideEnabled)
+            {
+                return _debugMoveSpeed;
+            }
+#endif
+
+            return _moveSpeed;
+        }
+    }
+
+    private float DashDistance
+    {
+        get
+        {
+#if UNITY_EDITOR
+            if (_debugMovementOverrideEnabled)
+            {
+                return _debugDashDistance;
+            }
+#endif
+
+            return _dashDistance;
+        }
+    }
 
     private void Awake()
     {
@@ -121,7 +156,7 @@ public class PlayerMovement : MonoBehaviour
         if (_isDashing)
         {
             // Dash uses a constant high velocity for its duration
-            float dashSpeed = _dashDistance / _dashDuration;
+            float dashSpeed = DashDistance / _dashDuration;
             Vector3 nextPosition = _playerRigidbody.position + _dashDirection * dashSpeed * Time.fixedDeltaTime;
             _playerRigidbody.MovePosition(nextPosition);
 
@@ -134,7 +169,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             Vector3 nextPosition =
-                _playerRigidbody.position + _playerDirection * _moveSpeed * Time.fixedDeltaTime;
+                _playerRigidbody.position + _playerDirection * MoveSpeed * Time.fixedDeltaTime;
 
             _playerRigidbody.MovePosition(nextPosition);
         }
@@ -179,4 +214,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public bool IsDashing => _isDashing;
+
+#if UNITY_EDITOR
+    public void SetDebugMovementOverride(bool enabled, float moveSpeed, float dashDistance)
+    {
+        _debugMovementOverrideEnabled = enabled;
+        _debugMoveSpeed = moveSpeed;
+        _debugDashDistance = dashDistance;
+    }
+#endif
 }

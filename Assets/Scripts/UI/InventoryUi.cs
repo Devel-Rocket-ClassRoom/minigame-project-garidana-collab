@@ -64,6 +64,8 @@ public class InventoryUi : MonoBehaviour
     private readonly HashSet<Transform> _preparedRows = new HashSet<Transform>();
     private bool _isOpen = false;
 
+    public bool IsOpen => _isOpen;
+
     private void Awake()
     {
         if (_inventory == null)
@@ -99,6 +101,11 @@ public class InventoryUi : MonoBehaviour
 
     public void TogglePanel()
     {
+        if (!_isOpen && (ShopUi.BlocksGlobalShortcuts || OptionMenuUi.IsAnyOpen() || QuestUi.IsAnyOpen()))
+        {
+            return;
+        }
+
         SetPanelActive(!_isOpen);
     }
 
@@ -484,5 +491,19 @@ public class InventoryUi : MonoBehaviour
         }
 
         return null;
+    }
+
+    public static bool IsAnyOpen()
+    {
+        InventoryUi[] inventoryUis = FindObjectsByType<InventoryUi>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < inventoryUis.Length; i++)
+        {
+            if (inventoryUis[i] != null && inventoryUis[i]._isOpen)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

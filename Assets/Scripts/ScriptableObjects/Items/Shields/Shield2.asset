@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Shield2
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemId: shield_second
-  displayName: Useful Shield
-  description: Shield that is practical
+  displayName: "\uC4F8\uB9CC\uD55C \uBC29\uD328"
+  description: "\uACF5\uACA9\uC744 \uB9C9\uC744 \uC218 \uC788\uB294 \uBC29\uD328\uC774\uB2E4."
   itemType: 1
   equipmentPart: 2
   tier: 2

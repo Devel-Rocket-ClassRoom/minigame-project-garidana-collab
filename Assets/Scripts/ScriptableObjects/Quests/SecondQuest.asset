@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: SecondQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questId: second
-  questTitle: Eliminate 15 Stings
-  description: Eliminate 5 Stings and return to the magician
+  questTitle: "\uC5EC\uC655\uBC8C 15\uB9C8\uB9AC \uCC98\uCE58"
+  chapter: 2
+  description: "\uB9C8\uC744\uC758 \uC704\uD611\uC774 \uB418\uB294 \uB9C8\uB825\uC774
+    \uAE43\uB4E0 \uC5EC\uC655\uBC8C\uC744 \uCC98\uCE58\uD574\uC8FC\uC138\uC694."
   objectiveType: 0
   targetId: sting
   requiredAmount: 1
   prerequisiteQuest: {fileID: 11400000, guid: b898781c2a50e474dbe5382be9a45660, type: 2}
   nextQuest: {fileID: 11400000, guid: 20a599f70f3ec3c478b4a2de1aadf529, type: 2}
   reward:
-    gold: 200
+    gold: 500
     level: 5
     exp: 0
