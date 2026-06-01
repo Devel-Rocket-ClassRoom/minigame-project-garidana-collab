@@ -245,13 +245,23 @@ public class InventoryUi : MonoBehaviour
 
             if (completedQuests != null && i < completedQuests.Count && completedQuests[i] != null)
             {
-                text.text = completedQuests[i].QuestTitle;
+                text.text = BuildCompletedQuestText(completedQuests[i]);
             }
             else
             {
                 text.text = "-";
             }
         }
+    }
+
+    private static string BuildCompletedQuestText(QuestData quest)
+    {
+        if (quest == null)
+        {
+            return "-";
+        }
+
+        return $"챕터 {quest.Chapter} 완료";
     }
 
     private void OnSlotClicked(ItemData data)

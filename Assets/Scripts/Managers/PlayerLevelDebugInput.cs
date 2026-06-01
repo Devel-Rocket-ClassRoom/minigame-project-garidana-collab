@@ -5,6 +5,7 @@ public class PlayerLevelDebugInput : MonoBehaviour
     [SerializeField] private PlayerStats _playerStats;
     [SerializeField] private PlayerMovement _playerMovement;
     [SerializeField] private KeyCode _levelUpKey = KeyCode.L;
+    [SerializeField] private KeyCode _forceDeathKey = KeyCode.R;
     [SerializeField] private KeyCode _godModeKey = KeyCode.G;
     [SerializeField] private KeyCode _completeQuestKey = KeyCode.K;
     [SerializeField] private float _godModeMoveSpeed = 10f;
@@ -32,6 +33,12 @@ public class PlayerLevelDebugInput : MonoBehaviour
         if (_playerStats != null && Input.GetKeyDown(_levelUpKey))
         {
             _playerStats.AddLevel(1);
+        }
+
+        if (_playerStats != null && Input.GetKeyDown(_forceDeathKey))
+        {
+            _playerStats.TriggerDebugDeath();
+            Debug.Log("Player death triggered by debug input.");
         }
 
         if (_playerStats != null && Input.GetKeyDown(_godModeKey))
