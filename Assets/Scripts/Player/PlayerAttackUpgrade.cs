@@ -99,7 +99,7 @@ public class PlayerAttackUpgrade : MonoBehaviour
     [SerializeField]
     private AttackStageData[] _attackStages =
     {
-        new AttackStageData("기본 공격", 1, 1f, 1.1f, 0.9f, Color.white, 1f),
+        new AttackStageData("기본 검기", 1, 1f, 1.1f, 0.9f, Color.white, 1f),
         new AttackStageData("힘이 실린 검기", 10, 1.2f, 1.25f, 1f, Color.blue, 1.1f),
         new AttackStageData("마력이 깃든 검기", 20, 1.45f, 1.4f, 1.1f, new Color(0.55f, 0.2f, 1f), 1.2f),
         new AttackStageData("어둠에 잠식된 검기", 30, 1.75f, 1.6f, 1.2f, new Color(1f, 0.78f, 0.15f), 1.35f),

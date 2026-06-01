@@ -53,6 +53,7 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
     public string NpcName => npcName;
     public Sprite NpcPortrait => npcPortrait;
     public string AvailableDialogue => availableDialogue;
+    public QuestData QuestData => questData;
     public Transform Transform => transform;
 
     private void Awake()
