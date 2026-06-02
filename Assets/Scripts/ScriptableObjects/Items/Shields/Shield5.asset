@@ -17,7 +17,7 @@ MonoBehaviour:
   description: "\uCC38\uC73C\uB85C \uAC70\uB300\uD55C \uBC29\uD328\uC774\uB2E4."
   itemType: 1
   equipmentPart: 2
-  tier: 1
+  tier: 5
   attackBonus: 0
   maxHealthBonus: 20
   price: 0

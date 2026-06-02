@@ -81,6 +81,13 @@ public class BaseMonster : MonoBehaviour, IDamageable
         agent.angularSpeed = turnSpeed;
 
         patrolStartPos = transform.position;
+
+        if (agent != null && !agent.isOnNavMesh)
+        {
+            Debug.LogError(
+                $"[NavMesh Missing] {name} is not on NavMesh. position={transform.position}",
+        this);
+        }
     }
 
     private void Update()
