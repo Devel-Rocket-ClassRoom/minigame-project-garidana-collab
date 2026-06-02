@@ -4,6 +4,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MonsterData", menuName = "Scriptable Objects/MonsterData")]
 public class MonsterData : ScriptableObject
 {
+    [Header("Display")]
+    public string monsterName;
+
     [Header("Stats")]
     public float maxHp;
     public float attackDamage;
