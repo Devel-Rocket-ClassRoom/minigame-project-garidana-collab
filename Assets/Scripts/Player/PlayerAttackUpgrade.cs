@@ -36,6 +36,9 @@ public class AttackStageData
     [SerializeField]
     private float _effectScaleMultiplier = 1f;
 
+    [SerializeField]
+    private ComboSlashEffectPose[] _comboEffectPoses = ComboSlashEffectPose.CreateDefaultSet();
+
     public AttackStageData()
     {
     }
@@ -71,6 +74,17 @@ public class AttackStageData
     public Color HitEffectColor => _hitEffectColor;
     public float HitEffectScaleMultiplier => Mathf.Max(0.1f, _hitEffectScaleMultiplier);
     public float EffectScaleMultiplier => Mathf.Max(0.1f, _effectScaleMultiplier);
+
+    public ComboSlashEffectPose GetComboEffectPose(int comboStep)
+    {
+        int index = comboStep - 1;
+        if (_comboEffectPoses == null || index < 0 || index >= _comboEffectPoses.Length || _comboEffectPoses[index] == null)
+        {
+            return ComboSlashEffectPose.GetDefaultPose(comboStep);
+        }
+
+        return _comboEffectPoses[index];
+    }
 }
 
 [System.Serializable]
@@ -104,6 +118,28 @@ public class ComboSlashEffectPose
     public Vector3 LocalOffset => _localOffset;
     public Vector3 LocalEulerAngles => _localEulerAngles;
     public float ScaleMultiplier => Mathf.Max(0.1f, _scaleMultiplier);
+
+    public static ComboSlashEffectPose[] CreateDefaultSet()
+    {
+        return new[]
+        {
+            new ComboSlashEffectPose("Attack 1", new Vector3(0.15f, 0.6f, 0.1f), new Vector3(20f, 180f, 180f), 1f),
+            new ComboSlashEffectPose("Attack 2", new Vector3(-0.05f, 0.5f, 0.1f), new Vector3(130f, 10f, 45f), 1.05f),
+            new ComboSlashEffectPose("Attack 3", new Vector3(0f, 1.0f, 0.1f), new Vector3(150f, 0f, 90f), 1.2f)
+        };
+    }
+
+    public static ComboSlashEffectPose GetDefaultPose(int comboStep)
+    {
+        ComboSlashEffectPose[] defaults = CreateDefaultSet();
+        int index = comboStep - 1;
+        if (index < 0 || index >= defaults.Length)
+        {
+            return null;
+        }
+
+        return defaults[index];
+    }
 }
 
 [RequireComponent(typeof(PlayerStats))]
@@ -121,14 +157,6 @@ public class PlayerAttackUpgrade : MonoBehaviour
 
     [SerializeField]
     private Transform _effectSpawnPoint;
-
-    [SerializeField]
-    private ComboSlashEffectPose[] _comboEffectPoses =
-    {
-        new ComboSlashEffectPose("Attack 1", new Vector3(0.15f, 1.0f, 0.75f), new Vector3(18f, -10f, -55f), 1f),
-        new ComboSlashEffectPose("Attack 2", new Vector3(-0.05f, 0.95f, 0.8f), new Vector3(18f, 10f, 55f), 1.05f),
-        new ComboSlashEffectPose("Attack 3", new Vector3(0f, 1.0f, 0.9f), new Vector3(8f, 0f, 90f), 1.2f)
-    };
 
     private PlayerStats _playerStats;
     private AttackStageData _currentStage;
@@ -194,7 +222,7 @@ public class PlayerAttackUpgrade : MonoBehaviour
         }
 
         Transform spawnPoint = _effectSpawnPoint != null ? _effectSpawnPoint : (attackRoot != null ? attackRoot : transform);
-        ComboSlashEffectPose pose = GetComboEffectPose(comboStep);
+        ComboSlashEffectPose pose = _currentStage.GetComboEffectPose(comboStep);
         Quaternion rotation = spawnPoint.rotation;
         Vector3 position = spawnPoint.position;
 
@@ -217,16 +245,5 @@ public class PlayerAttackUpgrade : MonoBehaviour
 
         float lifetime = main.duration + main.startLifetime.constantMax;
         Destroy(effect.gameObject, lifetime);
-    }
-
-    private ComboSlashEffectPose GetComboEffectPose(int comboStep)
-    {
-        int index = comboStep - 1;
-        if (_comboEffectPoses == null || index < 0 || index >= _comboEffectPoses.Length)
-        {
-            return null;
-        }
-
-        return _comboEffectPoses[index];
     }
 }
