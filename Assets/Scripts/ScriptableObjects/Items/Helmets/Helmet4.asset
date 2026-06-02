@@ -21,7 +21,7 @@ MonoBehaviour:
   tier: 4
   attackBonus: 0
   maxHealthBonus: 15
-  price: 150
+  price: 300
   icon: {fileID: 21300000, guid: 82bbd708135a7814e9b94f043733bf3a, type: 3}
   worldPrefab: {fileID: 0}
   equipObjectName: Head_4
