@@ -12,6 +12,7 @@ public class MonsterHpBar : MonoBehaviour
 
     private Transform _cam;
     private BaseMonster _monster;
+    private BossMonster _bossMonster;
 
     private void Start()
     {
@@ -21,10 +22,18 @@ public class MonsterHpBar : MonoBehaviour
         }
 
         _monster = GetComponentInParent<BaseMonster>();
+        _bossMonster = GetComponentInParent<BossMonster>();
 
         if (_monster != null)
         {
             _monster.OnHpChanged += UpdateBar;
+
+            UpdateBar(1f);
+            UpdateName();
+        }
+        else if (_bossMonster != null)
+        {
+            _bossMonster.OnHpChanged += UpdateBar;
 
             UpdateBar(1f);
             UpdateName();
@@ -34,7 +43,7 @@ public class MonsterHpBar : MonoBehaviour
 
     private void Update()
     {
-        if (_monster != null && _monster.IsDead)
+        if ((_monster != null && _monster.IsDead) || (_bossMonster != null && _bossMonster.IsDead))
         {
             gameObject.SetActive(false);
         }
@@ -62,15 +71,26 @@ public class MonsterHpBar : MonoBehaviour
             return;
         }
 
-        if (_monster == null || _monster.data == null)
+        MonsterData data = null;
+
+        if (_monster != null)
+        {
+            data = _monster.data;
+        }
+        else if (_bossMonster != null)
+        {
+            data = _bossMonster.data;
+        }
+
+        if (data == null)
         {
             nameText.text = string.Empty;
             return;
         }
 
-        nameText.text = string.IsNullOrWhiteSpace(_monster.data.monsterName)
-            ? _monster.data.name
-            : _monster.data.monsterName;
+        nameText.text = string.IsNullOrWhiteSpace(data.monsterName)
+            ? data.name
+            : data.monsterName;
     }
 
     private void OnDestroy()
@@ -78,6 +98,11 @@ public class MonsterHpBar : MonoBehaviour
         if (_monster != null)
         {
             _monster.OnHpChanged -= UpdateBar;
+        }
+
+        if (_bossMonster != null)
+        {
+            _bossMonster.OnHpChanged -= UpdateBar;
         }
     }
 
