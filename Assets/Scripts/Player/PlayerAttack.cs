@@ -257,7 +257,20 @@ public class PlayerAttack : MonoBehaviour
             Debug.Log(
                 $"Player hit damageable target. Target: {target.name}, ComboStep: {comboStep}, AttackStage: {GetAttackStageName()}, AttackPower: {GetAttackPower()}, Damage: {damage}"
             );
-            damageable.TakeDamage(damage);
+            Vector3 hitPoint = target.ClosestPoint(hitCenter);
+            Vector3 hitDirection = target.transform.position - transform.position;
+            hitDirection.y = 0f;
+            if (hitDirection.sqrMagnitude < 0.001f)
+            {
+                hitDirection = transform.forward;
+            }
+
+            damageable.TakeHit(new DamageHitInfo(
+                damage,
+                hitPoint,
+                hitDirection.normalized,
+                _attackUpgrade != null ? _attackUpgrade.CurrentStage : null
+            ));
             dealtDamage = true;
         }
 

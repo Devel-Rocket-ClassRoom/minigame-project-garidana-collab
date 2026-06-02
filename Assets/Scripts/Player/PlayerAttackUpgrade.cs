@@ -25,6 +25,15 @@ public class AttackStageData
     private ParticleSystem _attackEffectPrefab;
 
     [SerializeField]
+    private ParticleSystem _hitEffectPrefab;
+
+    [SerializeField]
+    private Color _hitEffectColor = Color.white;
+
+    [SerializeField]
+    private float _hitEffectScaleMultiplier = 1f;
+
+    [SerializeField]
     private float _effectScaleMultiplier = 1f;
 
     public AttackStageData()
@@ -47,6 +56,7 @@ public class AttackStageData
         _hitRange = hitRange;
         _hitRadius = hitRadius;
         _effectColor = effectColor;
+        _hitEffectColor = effectColor;
         _effectScaleMultiplier = effectScaleMultiplier;
     }
 
@@ -57,6 +67,9 @@ public class AttackStageData
     public float HitRadius => Mathf.Max(0f, _hitRadius);
     public Color EffectColor => _effectColor;
     public ParticleSystem AttackEffectPrefab => _attackEffectPrefab;
+    public ParticleSystem HitEffectPrefab => _hitEffectPrefab;
+    public Color HitEffectColor => _hitEffectColor;
+    public float HitEffectScaleMultiplier => Mathf.Max(0.1f, _hitEffectScaleMultiplier);
     public float EffectScaleMultiplier => Mathf.Max(0.1f, _effectScaleMultiplier);
 }
 
