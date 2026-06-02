@@ -27,6 +27,13 @@ public class BossMonster : MonoBehaviour, IDamageable
     [SerializeField] private float xAttackAngle = 90f;
     [SerializeField] private float jumpAttackRadius = 4f;
 
+    [Header("Phase Two")]
+    [SerializeField] private float phaseTwoAttackMultiplier = 1.5f;
+    [SerializeField] private float phaseTwoRangeMultiplier = 1.2f;
+    [SerializeField] private float phaseTwoJumpRadiusMultiplier = 1.25f;
+    [SerializeField] private float phaseTwoPatternDelayMultiplier = 0.75f;
+    [SerializeField] private float phaseTwoXAttackAngleBonus = 15f;
+
     [Header("Summon")]
     [SerializeField] private GameObject[] minionPrefabs;
     [SerializeField] private Transform[] summonPoints;
@@ -51,8 +58,9 @@ public class BossMonster : MonoBehaviour, IDamageable
     private bool patternRunning;
     private bool phaseTwoStarted;
     private bool summonReserved;
-
-    private int attackPatternIndex;
+    private bool spawnStarted;
+    private bool hasLastAttackPattern;
+    private BossAttackType lastAttackPattern;
 
     public bool IsDead => isDead;
 
@@ -60,7 +68,23 @@ public class BossMonster : MonoBehaviour, IDamageable
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        player = GameObject.FindWithTag("Player").transform;
+
+        if (data == null)
+        {
+            Debug.LogError($"{name} has no MonsterData assigned.", this);
+            enabled = false;
+            return;
+        }
+
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        if (playerObject == null)
+        {
+            Debug.LogError($"{name} could not find Player by tag.", this);
+            enabled = false;
+            return;
+        }
+
+        player = playerObject.transform;
 
         currentHp = data.maxHp;
 
@@ -69,11 +93,6 @@ public class BossMonster : MonoBehaviour, IDamageable
             agent.speed = data.moveSpeed;
             agent.angularSpeed = lookAtPlayerSpeed;
         }
-    }
-
-    private void Start()
-    {
-        animator.SetTrigger(ParamSpawn);
     }
 
     private void Update()
@@ -111,6 +130,27 @@ public class BossMonster : MonoBehaviour, IDamageable
         );
     }
 
+    public void BeginSpawn()
+    {
+        if (isDead || spawnStarted)
+        {
+            return;
+        }
+
+        spawnStarted = true;
+        combatStarted = false;
+        patternRunning = false;
+
+        if (agent != null)
+        {
+            agent.ResetPath();
+            agent.isStopped = true;
+        }
+
+        animator.SetBool(ParamMove, false);
+        animator.SetTrigger(ParamSpawn);
+    }
+
     private IEnumerator PatternRoutine()
     {
         patternRunning = true;
@@ -123,7 +163,7 @@ public class BossMonster : MonoBehaviour, IDamageable
 
         animator.SetBool(ParamMove, false);
 
-        yield return new WaitForSeconds(patternDelay);
+        yield return new WaitForSeconds(CurrentPatternDelay);
 
         if (summonReserved)
         {
@@ -155,15 +195,43 @@ public class BossMonster : MonoBehaviour, IDamageable
 
     private BossAttackType GetNextAttackPattern()
     {
-        BossAttackType pattern = attackPatternIndex switch
+        if (player == null)
         {
-            0 => BossAttackType.GroundAttack,
-            1 => BossAttackType.XAttack,
-            _ => BossAttackType.JumpAttack
-        };
+            return BossAttackType.GroundAttack;
+        }
 
-        attackPatternIndex = (attackPatternIndex + 1) % 3;
-        return pattern;
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance <= CurrentGroundAttackRange)
+        {
+            return ChoosePattern(BossAttackType.GroundAttack, BossAttackType.XAttack);
+        }
+
+        if (distance <= CurrentXAttackRange)
+        {
+            return ChoosePattern(BossAttackType.XAttack, BossAttackType.JumpAttack);
+        }
+
+        return ChoosePattern(BossAttackType.JumpAttack);
+    }
+
+    private BossAttackType ChoosePattern(BossAttackType primary, BossAttackType? secondary = null)
+    {
+        BossAttackType selected = primary;
+
+        if (secondary.HasValue)
+        {
+            selected = Random.value < 0.5f ? primary : secondary.Value;
+
+            if (hasLastAttackPattern && selected == lastAttackPattern)
+            {
+                selected = selected == primary ? secondary.Value : primary;
+            }
+        }
+
+        lastAttackPattern = selected;
+        hasLastAttackPattern = true;
+        return selected;
     }
 
     private IEnumerator GroundAttackPattern()
@@ -199,6 +267,11 @@ public class BossMonster : MonoBehaviour, IDamageable
     public void OnSpawnFinished()
     {
         combatStarted = true;
+
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = false;
+        }
     }
 
     public void OnGroundAttackHit()
@@ -210,7 +283,7 @@ public class BossMonster : MonoBehaviour, IDamageable
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distance <= groundAttackRange)
+        if (distance <= CurrentGroundAttackRange)
         {
             player.GetComponent<PlayerStats>()?.TakeDamage(data.attackDamage * attackMultiplier);
         }
@@ -229,7 +302,7 @@ public class BossMonster : MonoBehaviour, IDamageable
         float distance = toPlayer.magnitude;
         float angle = Vector3.Angle(transform.forward, toPlayer.normalized);
 
-        if (distance <= xAttackRange && angle <= xAttackAngle * 0.5f)
+        if (distance <= CurrentXAttackRange && angle <= CurrentXAttackAngle * 0.5f)
         {
             player.GetComponent<PlayerStats>()?.TakeDamage(data.attackDamage * attackMultiplier);
         }
@@ -242,13 +315,14 @@ public class BossMonster : MonoBehaviour, IDamageable
             return;
         }
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, jumpAttackRadius);
+        Collider[] hits = Physics.OverlapSphere(transform.position, CurrentJumpAttackRadius);
 
         foreach (Collider hit in hits)
         {
-            if (hit.CompareTag("Player"))
+            PlayerStats playerStats = hit.GetComponentInParent<PlayerStats>();
+            if (playerStats != null)
             {
-                hit.GetComponent<PlayerStats>()?.TakeDamage(data.attackDamage * attackMultiplier);
+                playerStats.TakeDamage(data.attackDamage * attackMultiplier);
                 break;
             }
         }
@@ -299,9 +373,7 @@ public class BossMonster : MonoBehaviour, IDamageable
 
         if (!phaseTwoStarted && currentHp <= data.maxHp * 0.5f)
         {
-            phaseTwoStarted = true;
-            summonReserved = true;
-            attackMultiplier = 1.5f;
+            EnterPhaseTwo();
         }
 
         if (currentHp <= 0)
@@ -359,6 +431,7 @@ public class BossMonster : MonoBehaviour, IDamageable
     {
         isDead = true;
         combatStarted = false;
+        patternRunning = false;
 
         if (agent != null)
         {
@@ -387,9 +460,28 @@ public class BossMonster : MonoBehaviour, IDamageable
         int gold = Random.Range(data.goldMin, data.goldMax + 1);
 
         PlayerStats playerStats = player.GetComponent<PlayerStats>();
+        if (playerStats == null)
+        {
+            return;
+        }
+
         playerStats.AddGold(gold);
         playerStats.AddExp(data.expReward);
     }
+
+    private void EnterPhaseTwo()
+    {
+        phaseTwoStarted = true;
+        summonReserved = true;
+        attackMultiplier = phaseTwoAttackMultiplier;
+    }
+
+    private float CurrentGroundAttackRange => groundAttackRange * CurrentRangeMultiplier;
+    private float CurrentXAttackRange => xAttackRange * CurrentRangeMultiplier;
+    private float CurrentXAttackAngle => xAttackAngle + (phaseTwoStarted ? phaseTwoXAttackAngleBonus : 0f);
+    private float CurrentJumpAttackRadius => jumpAttackRadius * (phaseTwoStarted ? phaseTwoJumpRadiusMultiplier : 1f);
+    private float CurrentPatternDelay => patternDelay * (phaseTwoStarted ? phaseTwoPatternDelayMultiplier : 1f);
+    private float CurrentRangeMultiplier => phaseTwoStarted ? phaseTwoRangeMultiplier : 1f;
 }
 
 public enum BossAttackType
