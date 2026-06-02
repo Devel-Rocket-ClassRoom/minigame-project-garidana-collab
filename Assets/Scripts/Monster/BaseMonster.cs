@@ -52,6 +52,19 @@ public class BaseMonster : MonoBehaviour, IDamageable
     [SerializeField]
     private Transform floatingTextPoint;
 
+    [Header("Hit Effect")]
+    [SerializeField]
+    private ParticleSystem hitEffectPrefab;
+
+    [SerializeField]
+    private Transform hitEffectPoint;
+
+    [SerializeField]
+    private Color hitEffectColor = Color.white;
+
+    [SerializeField]
+    private float hitEffectScaleMultiplier = 1f;
+
     private bool isKnockbacking;
     private Coroutine knockbackCoroutine;
 
@@ -162,8 +175,14 @@ public class BaseMonster : MonoBehaviour, IDamageable
     // IDamageable에서 상속받은 피격 함수
     public void TakeDamage(float damage)
     {
+        TakeHit(DamageHitInfo.FromDamage(damage));
+    }
+
+    public void TakeHit(DamageHitInfo hitInfo)
+    {
         if (isDead) return;
 
+        float damage = hitInfo.Damage;
         currentHp -= damage;
 
         ShowFloatingText(
@@ -171,6 +190,8 @@ public class BaseMonster : MonoBehaviour, IDamageable
             Color.white,
             Vector3.zero
         );
+
+        PlayHitEffect(hitInfo);
 
         animator.SetTrigger(ParamTakeDamage);
 
@@ -183,6 +204,51 @@ public class BaseMonster : MonoBehaviour, IDamageable
         }
 
         StartKnockback();
+    }
+
+    private void PlayHitEffect(DamageHitInfo hitInfo)
+    {
+        ParticleSystem effectPrefab = hitInfo.AttackStage != null && hitInfo.AttackStage.HitEffectPrefab != null
+            ? hitInfo.AttackStage.HitEffectPrefab
+            : hitEffectPrefab;
+
+        if (effectPrefab == null)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = hitInfo.HasHitPoint
+            ? hitInfo.HitPoint
+            : hitEffectPoint != null
+                ? hitEffectPoint.position
+                : transform.position + Vector3.up;
+
+        Quaternion spawnRotation = hitInfo.HitDirection.sqrMagnitude > 0.001f
+            ? Quaternion.LookRotation(hitInfo.HitDirection.normalized)
+            : transform.rotation;
+
+        ParticleSystem effect = Instantiate(
+            effectPrefab,
+            spawnPosition,
+            spawnRotation
+        );
+
+        ParticleSystem.MainModule main = effect.main;
+        main.startColor = hitInfo.AttackStage != null
+            ? hitInfo.AttackStage.HitEffectColor
+            : hitEffectColor;
+
+        float scaleMultiplier = hitEffectScaleMultiplier;
+        if (hitInfo.AttackStage != null)
+        {
+            scaleMultiplier *= hitInfo.AttackStage.HitEffectScaleMultiplier;
+        }
+
+        effect.transform.localScale *= Mathf.Max(0.1f, scaleMultiplier);
+        effect.Play();
+
+        float lifetime = main.duration + main.startLifetime.constantMax;
+        Destroy(effect.gameObject, Mathf.Max(0.1f, lifetime));
     }
 
     private void StartKnockback()

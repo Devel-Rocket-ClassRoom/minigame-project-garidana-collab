@@ -147,6 +147,11 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
     public void TakeDamage(float damage)
     {
+        TakeHit(DamageHitInfo.FromDamage(damage));
+    }
+
+    public void TakeHit(DamageHitInfo hitInfo)
+    {
         if (_isDead) return;
 
 #if UNITY_EDITOR
@@ -161,6 +166,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
             return;
         }
         _lastDamagedTime = Time.time;
+        float damage = hitInfo.Damage;
         _currentHealth = Mathf.Max(0, _currentHealth - damage);
 
         DamageTaken?.Invoke(Mathf.RoundToInt(damage));
