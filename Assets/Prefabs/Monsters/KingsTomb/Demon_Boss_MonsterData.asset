@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d79af6fa1e5bd6a4e848dd5b9a848f9a, type: 3}
   m_Name: Demon_Boss_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
+  monsterName: "\uBD88\uC54C (Bul' Al)"
   maxHp: 800
   attackDamage: 100
   moveSpeed: 5

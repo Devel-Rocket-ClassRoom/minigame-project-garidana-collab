@@ -183,11 +183,7 @@ public class EquipmentManager : MonoBehaviour
     {
         if (_playerStats == null || data == null) return;
         if (data.attackBonus    != 0) _playerStats.IncreaseAttackPower(-data.attackBonus);
-        if (data.maxHealthBonus != 0)
-        {
-            float safeRemove = Mathf.Min(data.maxHealthBonus, _playerStats.CurrentHealth - 1f);
-            _playerStats.IncreaseMaxHealth(-safeRemove);
-        }
+        if (data.maxHealthBonus != 0) _playerStats.IncreaseMaxHealth(-data.maxHealthBonus);
     }
 
     private void SetModelActive(string equipName, Transform mountParent, bool active)

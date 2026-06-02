@@ -141,8 +141,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
     public void IncreaseMaxHealth(float amount)
     {
-        _maxHealth += amount;
-       //_currentHealth += amount;
+        _maxHealth = Mathf.Max(1f, _maxHealth + amount);
+        _currentHealth = Mathf.Min(_currentHealth, _maxHealth);
     }
 
     public void TakeDamage(float damage)
