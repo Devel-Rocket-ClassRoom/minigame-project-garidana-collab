@@ -156,6 +156,61 @@ public class QuestManager : MonoBehaviour
             && currentQuest.TargetId == targetId;
     }
 
+    public string[] GetCompletedQuestIds()
+    {
+        string[] ids = new string[completedQuests.Count];
+        for (int i = 0; i < completedQuests.Count; i++)
+        {
+            ids[i] = completedQuests[i] != null ? completedQuests[i].QuestId : string.Empty;
+        }
+
+        return ids;
+    }
+
+    public void RestoreState(QuestData activeQuest, int progressAmount, IReadOnlyList<QuestData> completedQuestList)
+    {
+        completedQuestIds.Clear();
+        completedQuests.Clear();
+
+        if (completedQuestList != null)
+        {
+            for (int i = 0; i < completedQuestList.Count; i++)
+            {
+                QuestData completedQuest = completedQuestList[i];
+                if (completedQuest == null || string.IsNullOrWhiteSpace(completedQuest.QuestId))
+                {
+                    continue;
+                }
+
+                if (completedQuestIds.Add(completedQuest.QuestId))
+                {
+                    completedQuests.Add(completedQuest);
+                }
+            }
+        }
+
+        currentQuest = activeQuest;
+        currentAmount = currentQuest != null
+            ? Mathf.Clamp(progressAmount, 0, currentQuest.RequiredAmount)
+            : 0;
+
+        if (currentQuest != null)
+        {
+            QuestAccepted?.Invoke(currentQuest);
+            QuestProgressChanged?.Invoke(currentQuest, currentAmount, currentQuest.RequiredAmount);
+
+            if (IsCurrentQuestComplete())
+            {
+                QuestReadyToComplete?.Invoke(currentQuest);
+            }
+        }
+
+        for (int i = 0; i < completedQuests.Count; i++)
+        {
+            QuestCompleted?.Invoke(completedQuests[i]);
+        }
+    }
+
     private void ReportProgress(QuestObjectiveType objectiveType, string targetId, int amount)
     {
         if (!IsCurrentQuestTarget(objectiveType, targetId) || amount <= 0)

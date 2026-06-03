@@ -95,6 +95,14 @@ public class QuestUi : MonoBehaviour
             return;
         }
 
+        if (keyboard != null
+            && ((keyboard.enterKey != null && keyboard.enterKey.wasPressedThisFrame)
+            || (keyboard.numpadEnterKey != null && keyboard.numpadEnterKey.wasPressedThisFrame)))
+        {
+            AcceptCurrentQuest();
+            return;
+        }
+
         if (IsInteractorOutOfRange())
         {
             Close();
@@ -179,7 +187,7 @@ public class QuestUi : MonoBehaviour
             acceptButton.interactable = canAccept || canComplete;
         }
 
-        SetText(acceptButtonText, canComplete ? "완료" : "수락");
+        SetText(acceptButtonText, canComplete ? "[Enter] 완료" : "[Enter] 수락");
     }
 
     private bool IsOpen()

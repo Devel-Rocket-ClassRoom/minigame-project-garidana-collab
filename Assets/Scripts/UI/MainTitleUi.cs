@@ -6,6 +6,7 @@ public class MainTitleUi : MonoBehaviour
     [SerializeField] private Button _startButton;
     [SerializeField] private Button _quitButton;
     [SerializeField] private Button _donationButton;
+    [SerializeField] private Button _deleteSaveButton;
 
 
 
@@ -14,6 +15,12 @@ public class MainTitleUi : MonoBehaviour
         _startButton.onClick.AddListener(OnStartGame);
         _quitButton.onClick.AddListener(OnQuit);
         _donationButton.onClick.AddListener(OnClickSiteButton);
+        if (_deleteSaveButton != null)
+        {
+            _deleteSaveButton.onClick.AddListener(OnDeleteSave);
+        }
+
+        RefreshDeleteSaveButton();
     }
 
     private void OnStartGame()
@@ -23,7 +30,7 @@ public class MainTitleUi : MonoBehaviour
 
     private void OnClickSiteButton()
     {
-        Application.OpenURL("https://www.notion.so/rockdo4/Donation-367ff6a084d180318b7ff93701cbaf9c?source=copy_link");
+        Application.OpenURL("https://www.notion.so/Donation-3749e10e86f78020908afe430ac49e2a?source=copy_link");
     }
 
     private void OnQuit()
@@ -32,6 +39,27 @@ public class MainTitleUi : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    private void OnDeleteSave()
+    {
+        if (SaveManager.Instance == null)
+        {
+            return;
+        }
+
+        SaveManager.Instance.DeleteSaveFile();
+        RefreshDeleteSaveButton();
+    }
+
+    private void RefreshDeleteSaveButton()
+    {
+        if (_deleteSaveButton == null)
+        {
+            return;
+        }
+
+        _deleteSaveButton.interactable = SaveManager.Instance != null && SaveManager.Instance.HasSaveData();
     }
 
 }

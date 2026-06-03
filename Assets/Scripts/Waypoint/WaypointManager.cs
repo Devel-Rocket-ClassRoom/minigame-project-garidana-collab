@@ -17,6 +17,7 @@ public class WaypointManager : MonoBehaviour
     private string _lastActivatedWaypointId;
 
     public string LastActivatedWaypointId => _lastActivatedWaypointId;
+    public IReadOnlyCollection<string> UnlockedWaypointIds => _unlockedWaypointIds;
 
     private void Awake()
     {
@@ -93,6 +94,7 @@ public class WaypointManager : MonoBehaviour
         }
 
         _lastActivatedWaypointId = waypointId;
+        SaveManager.Instance?.SaveGame();
     }
 
     public WaypointNode GetLastActivatedWaypoint()
@@ -246,5 +248,27 @@ public class WaypointManager : MonoBehaviour
         {
             waypoint.SetPortalActive(IsUnlocked(waypoint.WaypointId));
         }
+    }
+
+    public void RestoreState(IEnumerable<string> unlockedWaypointIds, string lastActivatedWaypointId)
+    {
+        _unlockedWaypointIds.Clear();
+
+        if (unlockedWaypointIds != null)
+        {
+            foreach (string waypointId in unlockedWaypointIds)
+            {
+                if (!string.IsNullOrWhiteSpace(waypointId) && _waypointMap.ContainsKey(waypointId))
+                {
+                    _unlockedWaypointIds.Add(waypointId);
+                }
+            }
+        }
+
+        _lastActivatedWaypointId = !string.IsNullOrWhiteSpace(lastActivatedWaypointId) && _waypointMap.ContainsKey(lastActivatedWaypointId)
+            ? lastActivatedWaypointId
+            : null;
+
+        SyncWaypointVisuals();
     }
 }
