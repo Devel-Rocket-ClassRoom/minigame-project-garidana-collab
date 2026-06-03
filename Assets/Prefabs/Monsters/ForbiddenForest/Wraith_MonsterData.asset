@@ -17,10 +17,10 @@ MonoBehaviour:
   attackDamage: 70
   moveSpeed: 5
   detectionRange: 15
-  attackRange: 5
+  attackRange: 6
   attackCooldown: 1
   goldMin: 100
-  goldMax: 200
-  expReward: 30
+  goldMax: 300
+  expReward: 60
   questTargetId: 
   questDrops: []

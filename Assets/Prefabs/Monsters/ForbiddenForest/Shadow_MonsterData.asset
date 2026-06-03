@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Shadow_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uC250\uB3C4\uC6B0"
-  maxHp: 300
-  attackDamage: 30
+  maxHp: 370
+  attackDamage: 50
   moveSpeed: 5
   detectionRange: 8
   attackRange: 2
-  attackCooldown: 0.5
+  attackCooldown: 1
   goldMin: 150
   goldMax: 200
   expReward: 70

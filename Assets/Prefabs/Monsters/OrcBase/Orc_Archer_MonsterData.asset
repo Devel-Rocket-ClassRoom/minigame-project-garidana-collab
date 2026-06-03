@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Orc_Archer_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uC624\uD06C \uB3C4\uC801"
-  maxHp: 300
-  attackDamage: 30
+  maxHp: 450
+  attackDamage: 40
   moveSpeed: 8
   detectionRange: 13
   attackRange: 3

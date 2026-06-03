@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Nightmare_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uB098\uC774\uD2B8\uBA54\uC5B4"
-  maxHp: 200
+  maxHp: 250
   attackDamage: 30
   moveSpeed: 5
   detectionRange: 8

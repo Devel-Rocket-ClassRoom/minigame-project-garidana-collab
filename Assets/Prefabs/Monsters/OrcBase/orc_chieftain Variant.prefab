@@ -360,10 +360,14 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: b7765c58396b966408951f3153501667, type: 2}
   patrolDistance: 3
   turnSpeed: 720
-  knockbackDistance: 0.35
-  knockbackDuration: 0.8
+  knockbackDistance: 0.1
+  knockbackDuration: 0.5
   floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
   floatingTextPoint: {fileID: 0}
+  hitEffectPrefab: {fileID: 0}
+  hitEffectPoint: {fileID: 0}
+  hitEffectColor: {r: 1, g: 1, b: 1, a: 1}
+  hitEffectScaleMultiplier: 1
 --- !u!136 &7054136813110983236
 CapsuleCollider:
   m_ObjectHideFlags: 0

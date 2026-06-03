@@ -19,7 +19,7 @@ MonoBehaviour:
   detectionRange: 13
   attackRange: 2
   attackCooldown: 2
-  goldMin: 100
+  goldMin: 150
   goldMax: 200
   expReward: 50
   questTargetId: orc
