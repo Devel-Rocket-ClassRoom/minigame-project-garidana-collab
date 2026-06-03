@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: QueenWorm_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uC5EC\uC655 \uC9C0\uB801\uC774"
-  maxHp: 350
+  maxHp: 500
   attackDamage: 50
   moveSpeed: 8
   detectionRange: 8
@@ -21,6 +21,6 @@ MonoBehaviour:
   attackCooldown: 1
   goldMin: 100
   goldMax: 200
-  expReward: 30
+  expReward: 50
   questTargetId: 
   questDrops: []

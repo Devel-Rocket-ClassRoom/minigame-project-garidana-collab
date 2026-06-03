@@ -20,7 +20,7 @@ MonoBehaviour:
   attackRange: 2
   attackCooldown: 1
   goldMin: 50
-  goldMax: 100
-  expReward: 40
+  goldMax: 70
+  expReward: 30
   questTargetId: shade
   questDrops: []
