@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -101,7 +102,12 @@ public class InventoryUi : MonoBehaviour
 
     public void TogglePanel()
     {
-        if (!_isOpen && (ShopUi.BlocksGlobalShortcuts || OptionMenuUi.IsAnyOpen() || QuestUi.IsAnyOpen()))
+        if (!_isOpen && (_playerStats != null && _playerStats.IsDead))
+        {
+            return;
+        }
+
+        if (!_isOpen && (GameOverUi.IsAnyOpen() || ShopUi.BlocksGlobalShortcuts || OptionMenuUi.IsAnyOpen() || QuestUi.IsAnyOpen()))
         {
             return;
         }
@@ -222,6 +228,11 @@ public class InventoryUi : MonoBehaviour
                 partItems.Insert(0, equippedItem);
             }
         }
+
+        for (int i = 0; i < InventoryRowOrder.Length; i++)
+        {
+            SortOwnedEquipmentList(GetOwnedEquipmentList(InventoryRowOrder[i]));
+        }
     }
 
     private void RefreshCompletedQuestTexts()
@@ -262,6 +273,33 @@ public class InventoryUi : MonoBehaviour
         }
 
         return $"챕터 {quest.Chapter} 완료";
+    }
+
+    private static void SortOwnedEquipmentList(List<ItemData> items)
+    {
+        if (items == null || items.Count <= 1)
+        {
+            return;
+        }
+
+        items.Sort((a, b) =>
+        {
+            if (ReferenceEquals(a, b))
+            {
+                return 0;
+            }
+
+            if (a == null) return 1;
+            if (b == null) return -1;
+
+            int tierCompare = a.tier.CompareTo(b.tier);
+            if (tierCompare != 0)
+            {
+                return tierCompare;
+            }
+
+            return string.Compare(a.displayName, b.displayName, StringComparison.Ordinal);
+        });
     }
 
     private void OnSlotClicked(ItemData data)

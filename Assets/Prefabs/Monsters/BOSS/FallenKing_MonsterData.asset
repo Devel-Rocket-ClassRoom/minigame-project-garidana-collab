@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FallenKing_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uD0C0\uB77D\uD55C \uC655"
-  maxHp: 2000
+  maxHp: 8000
   attackDamage: 150
   moveSpeed: 5
   detectionRange: 13
@@ -22,5 +22,5 @@ MonoBehaviour:
   goldMin: 6000
   goldMax: 10000
   expReward: 0
-  questTargetId: 
+  questTargetId: king
   questDrops: []

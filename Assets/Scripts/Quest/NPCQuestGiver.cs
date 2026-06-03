@@ -12,6 +12,10 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
     [SerializeField]
     private string availableDialogue = "부탁하고 싶은 일이 있습니다.";
 
+    [TextArea]
+    [SerializeField]
+    private string completionDialogue = "고생하셨습니다. 약속한 보상을 드리겠습니다.";
+
     [SerializeField]
     private QuestData questData;
 
@@ -53,6 +57,7 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
     public string NpcName => npcName;
     public Sprite NpcPortrait => npcPortrait;
     public string AvailableDialogue => availableDialogue;
+    public string CompletionDialogue => completionDialogue;
     public QuestData QuestData => questData;
     public Transform Transform => transform;
 
@@ -99,8 +104,17 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
 
         if (questManager.CanComplete(questData))
         {
-            questManager.CompleteQuest(questData);
-            RefreshIcon();
+            if (questUi != null)
+            {
+                PlayerInteractor playerInteractor = interactor.GetComponent<PlayerInteractor>();
+                float closeDistance = playerInteractor != null ? playerInteractor.InteractRadius : 2f;
+                questUi.Open(this, questData, interactor.transform, closeDistance);
+            }
+            else
+            {
+                questManager.CompleteQuest(questData);
+            }
+
             return;
         }
 
@@ -142,6 +156,11 @@ public class NPCQuestGiver : MonoBehaviour, IInteractable
         }
 
         return QuestManager.Instance.GetQuestState(questData);
+    }
+
+    public string GetDialogueForCurrentState()
+    {
+        return GetState() == QuestState.ReadyToComplete ? completionDialogue : availableDialogue;
     }
 
     private void SubscribeQuestEvents()

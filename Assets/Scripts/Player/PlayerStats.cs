@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerStats : MonoBehaviour, IDamageable
 {
+    private const int MaxLevel = 50;
+
     [SerializeField]
     private float _maxHealth = 100;
 
@@ -38,6 +40,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
     private float _currentHealth;
     private Animator _animator;
     private bool _isDead = false;
+    private float _baseMaxHealth;
+    private float _baseAttackPower;
 #if UNITY_EDITOR
     private bool _debugGodMode;
     private bool _debugAttackPowerOverrideEnabled;
@@ -85,6 +89,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
     private void Awake()
     {
+        _baseMaxHealth = _maxHealth;
+        _baseAttackPower = _attackPower;
         _currentHealth = _maxHealth;
         _currentStamina = _maxStamina;
         _animator = GetComponent<Animator>();
@@ -143,6 +149,16 @@ public class PlayerStats : MonoBehaviour, IDamageable
     {
         _maxHealth = Mathf.Max(1f, _maxHealth + amount);
         _currentHealth = Mathf.Min(_currentHealth, _maxHealth);
+    }
+
+    public void RestoreFullHealth()
+    {
+        if (_isDead)
+        {
+            return;
+        }
+
+        _currentHealth = _maxHealth;
     }
 
     public void TakeDamage(float damage)
@@ -221,7 +237,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
     public void AddExp (int amount)
     {
-        if (_level >= 50)
+        if (_level >= MaxLevel)
         {
             return;
         }
@@ -230,7 +246,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
         ExpGained?.Invoke(amount);
         Debug.Log($"경험치 +{amount}, 현재 경험치: {_currentExp}/{_expToLevelUp}");
         
-        while (_currentExp >= _expToLevelUp && _level < 50)
+        while (_currentExp >= _expToLevelUp && _level < MaxLevel)
         {
             _currentExp -= _expToLevelUp;
             LevelUp();
@@ -241,7 +257,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
     {
         for (int i = 0; i < amount; i++)
         {
-            if (_level >= 50) return;
+            if (_level >= MaxLevel) return;
             LevelUp();
         }
     }
@@ -252,7 +268,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
         _expToLevelUp += 20;
         IncreaseAttackPower(1f);
         IncreaseMaxHealth(5f);
-        _currentHealth = _maxHealth;
+        RestoreFullHealth();
 
         LevelChanged?.Invoke(_level);
         Debug.Log($"레벨업! 현재 레벨: {_level}, 현재 공격력: {_attackPower}");
@@ -347,5 +363,26 @@ public class PlayerStats : MonoBehaviour, IDamageable
             rigidbody.angularVelocity = Vector3.zero;
             rigidbody.position = position;
         }
+    }
+
+    public void RestoreProgress(int level, int currentExp, int gold)
+    {
+        _level = Mathf.Clamp(level, 1, MaxLevel);
+        _gold = Mathf.Max(0, gold);
+        _attackPower = _baseAttackPower + (_level - 1);
+        _maxHealth = _baseMaxHealth + ((_level - 1) * 5f);
+        _expToLevelUp = 100 + ((_level - 1) * 20);
+        _currentExp = Mathf.Clamp(currentExp, 0, Mathf.Max(0, _expToLevelUp - 1));
+        _currentHealth = _maxHealth;
+        _currentStamina = _maxStamina;
+        _isDead = false;
+        _lastDamagedTime = -999f;
+        _lastStaminaUsedTime = -999f;
+    }
+
+    public void SetCurrentHealth(float health)
+    {
+        _currentHealth = Mathf.Clamp(health, 0f, _maxHealth);
+        _isDead = _currentHealth <= 0f;
     }
 }

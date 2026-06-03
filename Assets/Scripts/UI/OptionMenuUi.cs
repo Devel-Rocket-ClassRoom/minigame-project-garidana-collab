@@ -10,6 +10,8 @@ public class OptionMenuUi : MonoBehaviour
     private Button resumeButton;
     [SerializeField]
     private Button quitButton;
+    [SerializeField]
+    private Button titleButton;
 
 
     private void Awake()
@@ -18,13 +20,14 @@ public class OptionMenuUi : MonoBehaviour
 
         resumeButton.onClick.AddListener(CloseMenu);
         quitButton.onClick.AddListener(QuitGame);
+        titleButton.onClick.AddListener(OnToTitle);
     }
 
     private void Update()
     {
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            if (ShopUi.BlocksGlobalShortcuts || InventoryUi.IsAnyOpen() || QuestUi.IsAnyOpen())
+            if (GameOverUi.IsAnyOpen() || ShopUi.BlocksGlobalShortcuts || InventoryUi.IsAnyOpen() || QuestUi.IsAnyOpen())
             {
                 return;
             }
@@ -63,6 +66,12 @@ public class OptionMenuUi : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    private void OnToTitle()
+    {
+        PauseManager.Resume();
+        SceneLoader.Instance.LoadScene(SceneLoader.GameScene.MainTitle);
     }
 
     public static bool IsAnyOpen()

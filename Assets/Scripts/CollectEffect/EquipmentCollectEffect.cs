@@ -111,6 +111,9 @@ public class EquipmentCollectEffect : MonoBehaviour
         {
             Debug.Log($"[EquipmentCollect] 인벤토리에 추가하지 못했습니다: {_itemData.displayName}");
         }
+        else
+        {
+        }
 
         Destroy(gameObject);
     }

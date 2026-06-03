@@ -13,15 +13,24 @@ MonoBehaviour:
   m_Name: FourthQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   questId: fourth
-  questTitle: Annihilate Orcs
+  questTitle: "\uC624\uD06C \uAD70\uB2E8 \uC12C\uBA78"
   chapter: 4
-  description: Eliminate all Orcs
+  description: "...\n( \uD0C0\uB77D\uD55C \uC655\uC758 \uD53C\uC870\uBB3C\uB4E4\uC774
+    \uCC9C\uD638\uB9C8\uC744\uC744 \uC2B5\uACA9\uD558\uB824 \uD55C\uB2E4. \uC9C0\uAE08
+    \uC774\uB188\uB4E4\uC744 \uB9C9\uC9C0 \uC54A\uC73C\uBA74 \uC774 \uB300\uB959\uC758
+    \uC778\uAC04\uB4E4\uC740 \uBA78\uB9DD\uD558\uAC8C \uB420\uAC70\uB2E4. \uB108\uB098
+    \uB098\uB098 \uADF8\uAC78 \uC6D0\uD558\uC9C4 \uC54A\uACA0\uC9C0. \uC655\uC871\uC758
+    \uD6C4\uC190\uC740 \uBB34\uB2A5\uB825\uD558\uACE0 \uADC0\uC871\uB4E4\uC740 \uD0C0\uB77D\uD588\uC73C\uB2C8
+    \uC6B0\uB9AC\uAC00 \uB098\uC11C\uC57C\uB9CC\uD55C\uB2E4.)"
+  completionText: "...... (\uC774\uAC78 \uD574\uB0B4\uB2E4\uB2C8... \uADF8\uB7FC
+    \uB0A8\uCABD\uC73C\uB85C \uB0B4\uB824\uAC00\uC11C \uC774 \uB300\uB959\uC744 \uAD6C\uD558\uC790
+    \uAE40\uACBD\uC77C.)"
   objectiveType: 0
   targetId: orc
-  requiredAmount: 10
+  requiredAmount: 60
   prerequisiteQuest: {fileID: 11400000, guid: 20a599f70f3ec3c478b4a2de1aadf529, type: 2}
   nextQuest: {fileID: 11400000, guid: 833a260954497eb40884f8c3920e0d4d, type: 2}
   reward:
-    gold: 1000
+    gold: 2000
     level: 5
     exp: 0

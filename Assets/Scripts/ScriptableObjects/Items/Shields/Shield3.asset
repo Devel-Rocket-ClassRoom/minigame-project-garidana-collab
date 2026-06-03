@@ -20,7 +20,7 @@ MonoBehaviour:
   tier: 3
   attackBonus: 0
   maxHealthBonus: 10
-  price: 150
+  price: 700
   icon: {fileID: 21300000, guid: 792f20870d8be5143bbfeae5a6826986, type: 3}
   worldPrefab: {fileID: 1233553755111812314, guid: 1b435e7cae7e64df6a1fa48deab79254, type: 3}
   equipObjectName: shield_3
