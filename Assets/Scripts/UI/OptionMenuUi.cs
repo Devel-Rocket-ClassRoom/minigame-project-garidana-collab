@@ -24,7 +24,7 @@ public class OptionMenuUi : MonoBehaviour
     {
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            if (ShopUi.BlocksGlobalShortcuts || InventoryUi.IsAnyOpen() || QuestUi.IsAnyOpen())
+            if (GameOverUi.IsAnyOpen() || ShopUi.BlocksGlobalShortcuts || InventoryUi.IsAnyOpen() || QuestUi.IsAnyOpen())
             {
                 return;
             }

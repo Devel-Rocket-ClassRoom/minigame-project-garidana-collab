@@ -41,6 +41,11 @@ public class QuestData : ScriptableObject
     [SerializeField]
     private string description;
 
+    [Header("Completion")]
+    [TextArea]
+    [SerializeField]
+    private string completionText = "-퀘스트 완료-";
+
     [Header("Objective")]
     [SerializeField]
     private QuestObjectiveType objectiveType;
@@ -66,6 +71,7 @@ public class QuestData : ScriptableObject
     public string QuestTitle => questTitle;
     public int Chapter => chapter;
     public string Description => description;
+    public string CompletionText => string.IsNullOrWhiteSpace(completionText) ? "-퀘스트 완료-" : completionText;
     public QuestObjectiveType ObjectiveType => objectiveType;
     public string TargetId => targetId;
     public int RequiredAmount => requiredAmount;

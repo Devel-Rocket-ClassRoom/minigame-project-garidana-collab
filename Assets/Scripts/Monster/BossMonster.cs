@@ -49,6 +49,7 @@ public class BossMonster : MonoBehaviour, IDamageable
     private NavMeshAgent agent;
     private Animator animator;
     private Transform player;
+    private PlayerStats playerStats;
 
     private float currentHp;
     private float attackMultiplier = 1f;
@@ -85,6 +86,7 @@ public class BossMonster : MonoBehaviour, IDamageable
         }
 
         player = playerObject.transform;
+        playerStats = player.GetComponent<PlayerStats>();
 
         currentHp = data.maxHp;
 
@@ -97,7 +99,7 @@ public class BossMonster : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        if (isDead || !combatStarted || patternRunning)
+        if (isDead || !combatStarted || patternRunning || (playerStats != null && playerStats.IsDead))
         {
             return;
         }
@@ -276,7 +278,7 @@ public class BossMonster : MonoBehaviour, IDamageable
 
     public void OnGroundAttackHit()
     {
-        if (isDead || player == null)
+        if (isDead || player == null || (playerStats != null && playerStats.IsDead))
         {
             return;
         }
@@ -285,13 +287,13 @@ public class BossMonster : MonoBehaviour, IDamageable
 
         if (distance <= CurrentGroundAttackRange)
         {
-            player.GetComponent<PlayerStats>()?.TakeDamage(data.attackDamage * attackMultiplier);
+            playerStats?.TakeDamage(data.attackDamage * attackMultiplier);
         }
     }
 
     public void OnXAttackHit()
     {
-        if (isDead || player == null)
+        if (isDead || player == null || (playerStats != null && playerStats.IsDead))
         {
             return;
         }
@@ -304,13 +306,13 @@ public class BossMonster : MonoBehaviour, IDamageable
 
         if (distance <= CurrentXAttackRange && angle <= CurrentXAttackAngle * 0.5f)
         {
-            player.GetComponent<PlayerStats>()?.TakeDamage(data.attackDamage * attackMultiplier);
+            playerStats?.TakeDamage(data.attackDamage * attackMultiplier);
         }
     }
 
     public void OnJumpAttackLand()
     {
-        if (isDead)
+        if (isDead || (playerStats != null && playerStats.IsDead))
         {
             return;
         }
@@ -320,7 +322,7 @@ public class BossMonster : MonoBehaviour, IDamageable
         foreach (Collider hit in hits)
         {
             PlayerStats playerStats = hit.GetComponentInParent<PlayerStats>();
-            if (playerStats != null)
+            if (playerStats != null && !playerStats.IsDead)
             {
                 playerStats.TakeDamage(data.attackDamage * attackMultiplier);
                 break;
@@ -444,6 +446,7 @@ public class BossMonster : MonoBehaviour, IDamageable
         {
             collider.enabled = false;
         }
+
 
         if (!string.IsNullOrEmpty(data.questTargetId))
         {
