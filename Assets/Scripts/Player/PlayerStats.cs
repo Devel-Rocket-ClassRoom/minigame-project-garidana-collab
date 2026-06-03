@@ -378,6 +378,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
         _isDead = false;
         _lastDamagedTime = -999f;
         _lastStaminaUsedTime = -999f;
+        LevelChanged?.Invoke(_level);
     }
 
     public void SetCurrentHealth(float health)

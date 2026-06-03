@@ -84,6 +84,9 @@ public static class PersistenceIdUtility
 public class SaveManager : MonoBehaviour
 {
     private const string SaveFileName = "savegame.json";
+#if UNITY_EDITOR
+    private const bool LoadSaveInEditor = true;
+#endif
 
     public static SaveManager Instance { get; private set; }
 
@@ -172,6 +175,14 @@ public class SaveManager : MonoBehaviour
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+#if UNITY_EDITOR
+        if (!LoadSaveInEditor)
+        {
+            Debug.Log("[Save] 에디터 설정으로 세이브 로드를 건너뜁니다.");
+            return;
+        }
+#endif
+
         if (_saveData == null || scene.name != "SampleScene")
         {
             return;
