@@ -109,6 +109,10 @@ public class PlayerAttack : MonoBehaviour
     {
         if (_playerStats != null && _playerStats.IsDead)
         {
+            _isAttacking = false;
+            _comboQueued = false;
+            _hasPendingHit = false;
+            _hitAppliedThisAttack = false;
             _playerInput.UseAttackInput();
             return;
         }
@@ -355,6 +359,11 @@ public class PlayerAttack : MonoBehaviour
     // Animation Event에서 호출하여 실제 검 궤적과 이펙트 타이밍을 맞춥니다.
     public void OnAttackEffectEvent()
     {
+        if (_playerStats != null && _playerStats.IsDead)
+        {
+            return;
+        }
+
         if (!_isAttacking || _attackUpgrade == null)
         {
             return;
@@ -366,6 +375,11 @@ public class PlayerAttack : MonoBehaviour
     // Animation Event에서 호출하여 검이 실제로 닿는 프레임에 데미지를 적용합니다.
     public void OnAttackHitEvent()
     {
+        if (_playerStats != null && _playerStats.IsDead)
+        {
+            return;
+        }
+
         if (!_isAttacking || _comboStep <= 0)
         {
             return;

@@ -6,12 +6,12 @@ public class NPCInteractable : MonoBehaviour, IInteractable
     private string _npcName = "마을 치유사";
 
     [SerializeField]
-    private string _interactionPrompt = "체력 회복 충전 200 G";
+    private string _interactionPrompt = "200골드로 체력 회복 충전";
 
     [SerializeField]    
-    private int _refillCost = 100;
+    private int _refillCost = 200;
 
-    public string InteractionPrompt => _interactionPrompt;
+    public string InteractionPrompt => $"{_refillCost}골드로 체력 회복 충전";
 
 
     public Transform Transform => transform;
@@ -39,6 +39,7 @@ public class NPCInteractable : MonoBehaviour, IInteractable
         }
 
         playerHealing.RefillHealItems();
+        playerStats.RestoreFullHealth();
         Debug.Log($"회복 물약을 모두 충전했습니다. 사용 골드: {_refillCost}");
     }
 }

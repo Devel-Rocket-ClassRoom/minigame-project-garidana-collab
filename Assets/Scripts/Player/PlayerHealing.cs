@@ -19,6 +19,9 @@ public class PlayerHealing : MonoBehaviour
     private float _healAmount = 20f;
 
     [SerializeField]
+    private float _healAmountPer10Levels = 10f;
+
+    [SerializeField]
     private float _healCooldown = 1f;
 
     private float _lastUseTime = -999f;
@@ -26,6 +29,8 @@ public class PlayerHealing : MonoBehaviour
     public event Action<int> PotionHealed;
 
     public int HealItemCount => _healItemCount;
+    public int MaxHealItemCount => GetCurrentMaxHealItemCount();
+    public float CurrentHealAmount => GetCurrentHealAmount();
     public bool IsHealOnCooldown => Time.time < _lastUseTime + _healCooldown;
     public float HealCooldownProgress
     {
@@ -62,6 +67,12 @@ public class PlayerHealing : MonoBehaviour
             return;
         }
 
+        if (playerStats != null && playerStats.IsDead)
+        {
+            playerInput.UseHealInput();
+            return;
+        }
+
         if (!playerInput.HealRequested)
         {
             return;
@@ -88,20 +99,44 @@ public class PlayerHealing : MonoBehaviour
             return false;
         }
 
-        if (!playerStats.Heal(_healAmount))
+        float healAmount = GetCurrentHealAmount();
+
+        if (!playerStats.Heal(healAmount))
         {
             return false;
         }
         
         _healItemCount--;
         _lastUseTime = Time.time;
-        PotionHealed?.Invoke(Mathf.RoundToInt(_healAmount));
+        PotionHealed?.Invoke(Mathf.RoundToInt(healAmount));
         return true;
     }
 
     // NPC 테스트용 물약 충전
     public void RefillHealItems()
     {
-        _healItemCount = _maxHealItemCount;
+        _healItemCount = GetCurrentMaxHealItemCount();
+    }
+
+    private float GetCurrentHealAmount()
+    {
+        if (playerStats == null)
+        {
+            return _healAmount;
+        }
+
+        int levelBonusSteps = Mathf.Max(0, playerStats.Level / 10);
+        return _healAmount + (levelBonusSteps * _healAmountPer10Levels);
+    }
+
+    private int GetCurrentMaxHealItemCount()
+    {
+        if (playerStats == null)
+        {
+            return _maxHealItemCount;
+        }
+
+        int levelBonusSteps = Mathf.Max(0, playerStats.Level / 10);
+        return _maxHealItemCount + levelBonusSteps;
     }
 }

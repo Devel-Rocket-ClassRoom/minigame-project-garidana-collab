@@ -22,6 +22,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
     protected NavMeshAgent agent;
     protected Animator animator;
     protected Transform player;
+    private PlayerStats playerStats;
 
     private float currentHp;
     private bool isDead;
@@ -75,6 +76,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         player = GameObject.FindWithTag("Player").transform;
+        playerStats = player.GetComponent<PlayerStats>();
 
         currentHp = data.maxHp;
         agent.speed = data.moveSpeed;
@@ -93,6 +95,12 @@ public class BaseMonster : MonoBehaviour, IDamageable
     private void Update()
     {
         if (isDead || isKnockbacking) return;
+
+        if (playerStats != null && playerStats.IsDead)
+        {
+            ReturnToPatrolArea();
+            return;
+        }
 
         float dist = Vector3.Distance(transform.position, player.position);
 
@@ -123,13 +131,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
     // 배회 
     private void Patrol()
     {
-        if (!patrolInitialized)
-        {
-            patrolInitialized = true;
-            patrolStartPos = transform.position;
-            patrolTargetPos = patrolStartPos + transform.forward * patrolDistance;
-            nextPatrolTime = Time.time + Random.Range(1f, 10f);
-        }
+        InitializePatrolRoute();
 
         if (Time.time < nextPatrolTime)
         {
@@ -170,13 +172,48 @@ public class BaseMonster : MonoBehaviour, IDamageable
     public void OnAttackHit()
     {
         if (isDead || isKnockbacking) return;
+        if (playerStats != null && playerStats.IsDead) return;
 
         float dist = Vector3.Distance(transform.position, player.position);
 
         if (dist <= data.attackRange)
         {
-            player.GetComponent<PlayerStats>().TakeDamage(data.attackDamage);
+            playerStats.TakeDamage(data.attackDamage);
         }
+    }
+
+    private void ReturnToPatrolArea()
+    {
+        InitializePatrolRoute();
+
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+        {
+            animator.SetBool(ParamMove, false);
+            return;
+        }
+
+        agent.SetDestination(patrolStartPos);
+        animator.SetBool(ParamMove, true);
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            agent.ResetPath();
+            animator.SetBool(ParamMove, false);
+            patrolGoingForward = true;
+            nextPatrolTime = Time.time + Random.Range(1f, 10f);
+        }
+    }
+
+    private void InitializePatrolRoute()
+    {
+        if (patrolInitialized)
+        {
+            return;
+        }
+
+        patrolInitialized = true;
+        patrolTargetPos = patrolStartPos + transform.forward * patrolDistance;
+        nextPatrolTime = Time.time + Random.Range(1f, 10f);
     }
 
     // IDamageable에서 상속받은 피격 함수
@@ -334,6 +371,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
         {
             collider.enabled = false;
         }
+
 
         if (!string.IsNullOrEmpty(data.questTargetId))
         {

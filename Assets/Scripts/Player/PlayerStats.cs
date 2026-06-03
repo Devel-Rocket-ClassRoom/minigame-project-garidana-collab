@@ -145,6 +145,16 @@ public class PlayerStats : MonoBehaviour, IDamageable
         _currentHealth = Mathf.Min(_currentHealth, _maxHealth);
     }
 
+    public void RestoreFullHealth()
+    {
+        if (_isDead)
+        {
+            return;
+        }
+
+        _currentHealth = _maxHealth;
+    }
+
     public void TakeDamage(float damage)
     {
         TakeHit(DamageHitInfo.FromDamage(damage));
@@ -252,7 +262,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
         _expToLevelUp += 20;
         IncreaseAttackPower(1f);
         IncreaseMaxHealth(5f);
-        _currentHealth = _maxHealth;
+        RestoreFullHealth();
 
         LevelChanged?.Invoke(_level);
         Debug.Log($"레벨업! 현재 레벨: {_level}, 현재 공격력: {_attackPower}");
