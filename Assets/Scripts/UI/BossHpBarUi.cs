@@ -7,9 +7,16 @@ public class BossHpBarUi : MonoBehaviour
     [SerializeField] private GameObject root;
 
     private BossMonster boss;
+    private PlayerStats playerStats;
 
     private void Awake()
     {
+        playerStats = FindFirstObjectByType<PlayerStats>();
+        if (playerStats != null)
+        {
+            playerStats.Died += HandlePlayerDied;
+        }
+
         Hide();
     }
 
@@ -79,5 +86,15 @@ public class BossHpBarUi : MonoBehaviour
         {
             boss.OnHpChanged -= UpdateHp;
         }
+
+        if (playerStats != null)
+        {
+            playerStats.Died -= HandlePlayerDied;
+        }
+    }
+
+    private void HandlePlayerDied()
+    {
+        Hide();
     }
 }

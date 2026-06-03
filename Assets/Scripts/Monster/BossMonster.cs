@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,6 +8,7 @@ public class BossMonster : MonoBehaviour, IDamageable
     public MonsterData data;
 
     public event System.Action<float> OnHpChanged;
+    public event System.Action Died;
 
     private static readonly int ParamSpawn = Animator.StringToHash("Spawn");
     private static readonly int ParamMove = Animator.StringToHash("isMoving");
@@ -62,6 +64,7 @@ public class BossMonster : MonoBehaviour, IDamageable
     private bool spawnStarted;
     private bool hasLastAttackPattern;
     private BossAttackType lastAttackPattern;
+    private readonly List<GameObject> summonedMinions = new List<GameObject>();
 
     public bool IsDead => isDead;
 
@@ -349,7 +352,11 @@ public class BossMonster : MonoBehaviour, IDamageable
             GameObject prefab = minionPrefabs[Random.Range(0, minionPrefabs.Length)];
             Transform point = summonPoints[Random.Range(0, summonPoints.Length)];
 
-            Instantiate(prefab, point.position, point.rotation);
+            GameObject summonedMinion = Instantiate(prefab, point.position, point.rotation);
+            if (summonedMinion != null)
+            {
+                summonedMinions.Add(summonedMinion);
+            }
         }
     }
 
@@ -371,16 +378,17 @@ public class BossMonster : MonoBehaviour, IDamageable
 
         PlayHitEffect(hitInfo);
 
+        if (currentHp <= 0f)
+        {
+            Die();
+            return;
+        }
+
         animator.SetTrigger(ParamTakeDamage);
 
         if (!phaseTwoStarted && currentHp <= data.maxHp * 0.5f)
         {
             EnterPhaseTwo();
-        }
-
-        if (currentHp <= 0)
-        {
-            Die();
         }
     }
 
@@ -440,12 +448,16 @@ public class BossMonster : MonoBehaviour, IDamageable
             agent.enabled = false;
         }
 
+        animator.ResetTrigger(ParamTakeDamage);
         animator.SetTrigger(ParamDeath);
 
         foreach (Collider collider in GetComponentsInChildren<Collider>())
         {
             collider.enabled = false;
         }
+
+        CleanupSummonedMinions();
+        Died?.Invoke();
 
 
         if (!string.IsNullOrEmpty(data.questTargetId))
@@ -455,7 +467,8 @@ public class BossMonster : MonoBehaviour, IDamageable
 
         ProcessDrop();
 
-        Destroy(gameObject, 5f);
+        StartCoroutine(SinkAndDestroy());
+        // Destroy(gameObject, 5f);
     }
 
     private void ProcessDrop()
@@ -479,12 +492,51 @@ public class BossMonster : MonoBehaviour, IDamageable
         attackMultiplier = phaseTwoAttackMultiplier;
     }
 
+    private IEnumerator SinkAndDestroy()
+    {
+        yield return new WaitForSeconds(2f);
+
+        float sinkDuration = 3f;
+        float elapsed = 0f;
+
+        Vector3 startPosition = transform.position;
+        Vector3 endPosition = startPosition + Vector3.down * 2f;
+
+        while (elapsed < sinkDuration)
+        {
+            elapsed += Time.deltaTime;
+            transform.position = Vector3.Lerp(startPosition, endPosition, elapsed / sinkDuration);
+            yield return null;
+        }
+
+        Destroy(gameObject);
+    }
+
     private float CurrentGroundAttackRange => groundAttackRange * CurrentRangeMultiplier;
     private float CurrentXAttackRange => xAttackRange * CurrentRangeMultiplier;
     private float CurrentXAttackAngle => xAttackAngle + (phaseTwoStarted ? phaseTwoXAttackAngleBonus : 0f);
     private float CurrentJumpAttackRadius => jumpAttackRadius * (phaseTwoStarted ? phaseTwoJumpRadiusMultiplier : 1f);
     private float CurrentPatternDelay => patternDelay * (phaseTwoStarted ? phaseTwoPatternDelayMultiplier : 1f);
     private float CurrentRangeMultiplier => phaseTwoStarted ? phaseTwoRangeMultiplier : 1f;
+
+    private void OnDestroy()
+    {
+        CleanupSummonedMinions();
+    }
+
+    private void CleanupSummonedMinions()
+    {
+        for (int i = 0; i < summonedMinions.Count; i++)
+        {
+            GameObject summonedMinion = summonedMinions[i];
+            if (summonedMinion != null)
+            {
+                Destroy(summonedMinion);
+            }
+        }
+
+        summonedMinions.Clear();
+    }
 }
 
 public enum BossAttackType
