@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class MerchantInteractable : MonoBehaviour, IInteractable
 {
+    [SerializeField] private string _merchantId;
     [SerializeField] private string _merchantName = "임용수";
     [SerializeField] private string _interactionPrompt = "상점 열기";
     [SerializeField] private ShopUi _shopUi;
@@ -11,6 +12,9 @@ public class MerchantInteractable : MonoBehaviour, IInteractable
     public string InteractionPrompt => _interactionPrompt;
     public Transform Transform => transform;
     public IReadOnlyList<ItemData> Stock => _stock;
+    public string MerchantId => string.IsNullOrWhiteSpace(_merchantId)
+        ? PersistenceIdUtility.BuildHierarchyId(transform, "merchant")
+        : _merchantId;
 
     public bool RemoveStockItem(ItemData item)
     {
@@ -20,6 +24,24 @@ public class MerchantInteractable : MonoBehaviour, IInteractable
         }
 
         return _stock.Remove(item);
+    }
+
+    public void RestoreStock(IReadOnlyList<ItemData> items)
+    {
+        _stock = new List<ItemData>();
+
+        if (items == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i] != null)
+            {
+                _stock.Add(items[i]);
+            }
+        }
     }
 
     private void Awake()

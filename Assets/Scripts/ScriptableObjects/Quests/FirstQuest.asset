@@ -20,13 +20,17 @@ MonoBehaviour:
     \uBCC0\uD574\uC11C \uB9C8\uC744 \uC0AC\uB78C\uB4E4\uC774 \uACC4\uB780\uC744 \uBABB\uBA39\uACE0
     \uC788\uC5B4\uC694... \uACC4\uB780 20\uAC1C \uC815\uB3C4\uB9CC \uAD6C\uD574\uC8FC\uC2E4
     \uC218 \uC788\uB098\uC694 \uACBD\uC77C\uC528? "
-  completionText: "\uCC55\uD130 1 \uC644\uB8CC"
+  completionText: "\uB108\uBB34 \uAC10\uC0AC\uD574\uC694 \uACBD\uC77C\uC528. \uC5B4\uB5BB\uAC8C 
+    \uAC10\uC0AC\uB97C \uD45C\uD604\uD574\uC57C\uD560\uC9C0... \uC9C0\uAE08 \uC606\uC5D0
+    \uB9C8\uBC95\uC0AC \uB9C8\uC744\uC5D0\uC11C \uBB34\uC2A8 \uC77C\uC774 \uBC8C\uC5B4\uC84C\uB2E4\uACE0
+    \uD574\uC694 \uAC70\uAE30\uC11C \uC6A9\uC0AC\uB2D8\uC758 \uB3C4\uC6C0\uC774 \uD544\uC694
+    \uD560\uC9C0\uB3C4 \uBAB0\uB77C\uC694."
   objectiveType: 1
   targetId: egg
-  requiredAmount: 1
+  requiredAmount: 20
   prerequisiteQuest: {fileID: 0}
   nextQuest: {fileID: 11400000, guid: fa1948d9e427fb54abe6e550c07f070d, type: 2}
   reward:
-    gold: 200
+    gold: 400
     level: 5
     exp: 0

@@ -20,7 +20,7 @@ MonoBehaviour:
   tier: 3
   attackBonus: 20
   maxHealthBonus: 0
-  price: 150
+  price: 800
   icon: {fileID: 21300000, guid: 02a504cbb1170e9438f953f84e671690, type: 3}
   worldPrefab: {fileID: 7145595410180640036, guid: 45d3b4083b36e4378ba04ca9c5cec952, type: 3}
   equipObjectName: Sword_3

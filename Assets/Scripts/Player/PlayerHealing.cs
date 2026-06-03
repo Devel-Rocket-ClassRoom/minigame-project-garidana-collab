@@ -118,6 +118,12 @@ public class PlayerHealing : MonoBehaviour
         _healItemCount = GetCurrentMaxHealItemCount();
     }
 
+    public void SetHealItemCount(int count)
+    {
+        _healItemCount = Mathf.Clamp(count, 0, GetCurrentMaxHealItemCount());
+        _lastUseTime = -999f;
+    }
+
     private float GetCurrentHealAmount()
     {
         if (playerStats == null)
