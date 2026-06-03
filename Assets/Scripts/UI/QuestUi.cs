@@ -40,6 +40,9 @@ public class QuestUi : MonoBehaviour
     [SerializeField]
     private Button closeButton;
 
+    [SerializeField]
+    private TextMeshProUGUI acceptButtonText;
+
     private NPCQuestGiver currentQuestGiver;
     private QuestData currentQuest;
     private Transform currentInteractor;
@@ -47,6 +50,11 @@ public class QuestUi : MonoBehaviour
 
     private void Awake()
     {
+        if (acceptButtonText == null && acceptButton != null)
+        {
+            acceptButtonText = acceptButton.GetComponentInChildren<TextMeshProUGUI>(true);
+        }
+
         if (acceptButton != null)
         {
             acceptButton.onClick.AddListener(AcceptCurrentQuest);
@@ -84,6 +92,14 @@ public class QuestUi : MonoBehaviour
         if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
         {
             Close();
+            return;
+        }
+
+        if (keyboard != null
+            && ((keyboard.enterKey != null && keyboard.enterKey.wasPressedThisFrame)
+            || (keyboard.numpadEnterKey != null && keyboard.numpadEnterKey.wasPressedThisFrame)))
+        {
+            AcceptCurrentQuest();
             return;
         }
 
@@ -128,7 +144,17 @@ public class QuestUi : MonoBehaviour
 
     private void AcceptCurrentQuest()
     {
-        if (currentQuestGiver != null)
+        if (currentQuestGiver == null || currentQuest == null || QuestManager.Instance == null)
+        {
+            Close();
+            return;
+        }
+
+        if (QuestManager.Instance.CanComplete(currentQuest))
+        {
+            QuestManager.Instance.CompleteQuest(currentQuest);
+        }
+        else if (QuestManager.Instance.CanAccept(currentQuest))
         {
             currentQuestGiver.AcceptQuest();
         }
@@ -143,21 +169,25 @@ public class QuestUi : MonoBehaviour
             return;
         }
 
+        bool canComplete = QuestManager.Instance != null && QuestManager.Instance.CanComplete(currentQuest);
+        bool canAccept = QuestManager.Instance != null && QuestManager.Instance.CanAccept(currentQuest);
+
         SetText(npcNameText, currentQuestGiver != null ? currentQuestGiver.NpcName : string.Empty);
-        SetText(dialogueText, currentQuestGiver != null ? currentQuestGiver.AvailableDialogue : string.Empty);
+        SetText(dialogueText, currentQuestGiver != null ? currentQuestGiver.GetDialogueForCurrentState() : string.Empty);
         SetPortrait(currentQuestGiver != null ? currentQuestGiver.NpcPortrait : null);
 
         SetText(chapterText, BuildChapterText(currentQuest));
         SetText(titleText, currentQuest.QuestTitle);
-        SetText(descriptionText, currentQuest.Description);
+        SetText(descriptionText, canComplete ? currentQuest.CompletionText : currentQuest.Description);
         SetText(objectiveText, BuildObjectiveText(currentQuest));
         SetText(rewardText, BuildRewardText(currentQuest.Reward));
 
         if (acceptButton != null)
         {
-            acceptButton.interactable = QuestManager.Instance != null
-                && QuestManager.Instance.CanAccept(currentQuest);
+            acceptButton.interactable = canAccept || canComplete;
         }
+
+        SetText(acceptButtonText, canComplete ? "[Enter] 완료" : "[Enter] 수락");
     }
 
     private bool IsOpen()

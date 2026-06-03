@@ -34,6 +34,11 @@ public class EquipmentManager : MonoBehaviour
     public ItemData EquippedHelmet => _equippedHelmet;
     public ItemData EquippedChest  => _equippedChest;
     public ItemData EquippedLegs   => _equippedLegs;
+    public ItemData DefaultSword => _defaultSword;
+    public ItemData DefaultShield => _defaultShield;
+    public ItemData DefaultHelmet => _defaultHelmet;
+    public ItemData DefaultChest => _defaultChest;
+    public ItemData DefaultLegs => _defaultLegs;
 
     private void Awake()
     {
@@ -126,6 +131,15 @@ public class EquipmentManager : MonoBehaviour
             EquipmentPart.Legs => _equippedLegs,
             _ => null
         };
+    }
+
+    public void ClearAllEquippedItems()
+    {
+        Unequip(ref _equippedSword, EquipmentPart.Sword);
+        Unequip(ref _equippedShield, EquipmentPart.Shield);
+        Unequip(ref _equippedHelmet, EquipmentPart.Helmet);
+        Unequip(ref _equippedChest, EquipmentPart.Chest);
+        Unequip(ref _equippedLegs, EquipmentPart.Legs);
     }
 
     private void SwapEquip(ref ItemData slot, ItemData newItem, Transform mountParent)

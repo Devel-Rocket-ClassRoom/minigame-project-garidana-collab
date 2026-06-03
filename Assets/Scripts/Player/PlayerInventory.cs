@@ -45,4 +45,15 @@ public class PlayerInventory : MonoBehaviour
     }
 
     public bool HasItem(ItemData data) => _items.Contains(data);
+
+    public void ClearItems()
+    {
+        if (_items.Count == 0)
+        {
+            return;
+        }
+
+        _items.Clear();
+        InventoryChanged?.Invoke();
+    }
 }

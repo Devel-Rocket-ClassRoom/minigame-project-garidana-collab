@@ -778,6 +778,7 @@ MonoBehaviour:
   _maxHealItemCount: 5
   _healItemCount: 2
   _healAmount: 20
+  _healAmountPer10Levels: 10
   _healCooldown: 1
 --- !u!114 &7781871417143770860
 MonoBehaviour:

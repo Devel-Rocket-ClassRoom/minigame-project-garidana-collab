@@ -93,6 +93,9 @@ public class PlayerMovement : MonoBehaviour
         if (_playerStats != null && _playerStats.IsDead)
         {
             _playerDirection = Vector3.zero;
+            _isDashing = false;
+            _playerInput.UseDashInput();
+            UpdateAnimator();
             return;
         }
 

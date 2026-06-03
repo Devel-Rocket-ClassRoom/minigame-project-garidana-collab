@@ -57,7 +57,6 @@ public class GameOverUi : MonoBehaviour
     {
         gameOverPanel.SetActive(true);
         titleButton.interactable = false;
-        PauseManager.Pause();
 
         float remaining = respawnDelay;
 
@@ -93,12 +92,27 @@ public class GameOverUi : MonoBehaviour
             _respawnRoutine = null;
         }
 
-        PauseManager.Resume();
         playerStats.RespawnAt(respawnPosition);
 
         titleButton.interactable = false;
         respawnCountDownText.text = string.Empty;
         gameOverPanel.SetActive(false);
         _isShown = false;
+    }
+
+    public static bool IsAnyOpen()
+    {
+        GameOverUi[] gameOverUis = FindObjectsByType<GameOverUi>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < gameOverUis.Length; i++)
+        {
+            if (gameOverUis[i] != null
+                && gameOverUis[i].gameOverPanel != null
+                && gameOverUis[i].gameOverPanel.activeSelf)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

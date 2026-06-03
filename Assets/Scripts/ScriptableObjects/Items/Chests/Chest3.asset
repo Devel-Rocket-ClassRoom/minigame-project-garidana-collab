@@ -21,7 +21,7 @@ MonoBehaviour:
   tier: 3
   attackBonus: 0
   maxHealthBonus: 10
-  price: 350
+  price: 600
   icon: {fileID: 21300000, guid: d19ff095b630052488b8d0d1d0589dc7, type: 3}
   worldPrefab: {fileID: 0}
   equipObjectName: Body_3

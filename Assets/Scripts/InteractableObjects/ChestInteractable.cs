@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ChestInteractable : MonoBehaviour, IInteractable
 {
+    [SerializeField] private string _chestId;
     public GameObject lid;
     public GameObject body;
 
@@ -24,6 +25,11 @@ public class ChestInteractable : MonoBehaviour, IInteractable
 
     public string InteractionPrompt => _interactionPtompt;
     public Transform Transform => transform;
+    public string ChestId => string.IsNullOrWhiteSpace(_chestId)
+        ? PersistenceIdUtility.BuildHierarchyId(transform, "chest")
+        : _chestId;
+    public bool IsOpen => isOpen;
+    public ItemData[] RewardItems => _rewardItems;
 
     public bool CanInteract(GameObject interactor)
     {
@@ -126,5 +132,24 @@ public class ChestInteractable : MonoBehaviour, IInteractable
         }
 
         collectEffect.Initialize(itemData, player,inventory);
+    }
+
+    public void RestoreOpenedState(bool opened)
+    {
+        isOpen = opened;
+        isAnimating = false;
+
+        if (lid == null)
+        {
+            return;
+        }
+
+        if (opened)
+        {
+            lid.transform.localRotation = Quaternion.Euler(openAngle);
+            return;
+        }
+
+        lid.transform.localRotation = Quaternion.identity;
     }
 }
