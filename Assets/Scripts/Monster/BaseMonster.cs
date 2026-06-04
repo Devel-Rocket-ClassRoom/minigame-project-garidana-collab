@@ -235,6 +235,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
             Vector3.zero
         );
 
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.MonsterHit);
         PlayHitEffect(hitInfo);
 
         animator.SetTrigger(ParamTakeDamage);
@@ -362,6 +363,7 @@ public class BaseMonster : MonoBehaviour, IDamageable
         isDead = true;
         isKnockbacking = false;
         agent.enabled = false;
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.MonsterDeath);
         //animator.SetBool("isDead", true);
         animator.SetTrigger(ParamIsDead);
         animator.SetTrigger(ParamDeath);

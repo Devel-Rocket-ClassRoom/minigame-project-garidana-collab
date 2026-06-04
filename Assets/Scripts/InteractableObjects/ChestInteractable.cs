@@ -58,6 +58,7 @@ public class ChestInteractable : MonoBehaviour, IInteractable
     {
         if (isOpen || isAnimating)
             return;
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.ChestOpen);
         StartCoroutine(RotateLid());
     }
 

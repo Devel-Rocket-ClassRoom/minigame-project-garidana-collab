@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uBD88\uC54C (Bul' Al)"
   maxHp: 800
-  attackDamage: 100
+  attackDamage: 250
   moveSpeed: 5
   detectionRange: 8
   attackRange: 2
