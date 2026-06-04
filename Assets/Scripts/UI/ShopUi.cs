@@ -158,6 +158,7 @@ public class ShopUi : MonoBehaviour
         if (!_buyerStats.SpendGold(item.price))
         {
             Debug.Log($"[Shop] 골드가 부족합니다. 필요 골드: {item.price}, 현재 골드: {_buyerStats.Gold}");
+            SoundManager.Instance?.PlaySFX(SoundManager.SFXType.NoGold);
             SetMerchantDialogue("골드가 부족하군..");
             return;
         }
@@ -169,6 +170,7 @@ public class ShopUi : MonoBehaviour
                 _currentMerchant.RemoveStockItem(item);
             }
 
+            SoundManager.Instance?.PlaySFX(SoundManager.SFXType.GoldSpend);
             Debug.Log($"[Shop] 구매 완료: {item.displayName} ({item.price} G)");
             SetMerchantDialogue($"{item.displayName}을 구매했군.");
             Refresh();

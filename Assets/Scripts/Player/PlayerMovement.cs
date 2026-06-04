@@ -143,6 +143,7 @@ public class PlayerMovement : MonoBehaviour
         _isDashing = true;
         _dashTimeRemaining = _dashDuration;
         _lastDashTime = Time.time;
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.Dash);
         
         // Dash in movement direction if input exists, otherwise dash forward
         _dashDirection = _playerDirection != Vector3.zero ? _playerDirection : transform.forward;

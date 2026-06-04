@@ -21,6 +21,6 @@ MonoBehaviour:
   attackCooldown: 2
   goldMin: 150
   goldMax: 200
-  expReward: 50
+  expReward: 20
   questTargetId: orc
   questDrops: []
