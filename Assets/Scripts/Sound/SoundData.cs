@@ -5,7 +5,10 @@ public class SoundData : ScriptableObject
 {
     [Header("BGM")]
     public AudioClip bgmMainTitle;
-    public AudioClip bgmGameplay;
+    public AudioClip bgmTown;
+    public AudioClip bgmDesert;
+    public AudioClip bgmForest;
+    public AudioClip bgmTomb;
     public AudioClip bgmBoss;
 
     [Header("UI")]

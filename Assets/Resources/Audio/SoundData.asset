@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: SoundData
   m_EditorClassIdentifier: Assembly-CSharp::SoundData
   bgmMainTitle: {fileID: 8300000, guid: 5c63717d169d255469975c9c7806ccc1, type: 3}
-  bgmGameplay: {fileID: 0}
+  bgmTown: {fileID: 8300000, guid: 8180fcf486be24064aa44010f2bc9674, type: 3}
+  bgmDesert: {fileID: 0}
+  bgmForest: {fileID: 0}
+  bgmTomb: {fileID: 0}
   bgmBoss: {fileID: 0}
   buttonClick: {fileID: 8300000, guid: 5178cd83bcb582f4685155d7a049e2dc, type: 3}
   chestOpen: {fileID: 8300000, guid: 17cd2bcf67f7b4fc1928356ac433e374, type: 3}
