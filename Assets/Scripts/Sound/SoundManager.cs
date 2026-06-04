@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -16,6 +17,7 @@ public class SoundManager : MonoBehaviour
     private const string SFXVolumePref    = "Pref_SFXVolume";
 
     private const float DefaultVolume = 0.8f;
+    private const float DefaultBgmFadeDuration = 1f;
 
     // Resources/Audio/ 폴더 경로
     private const string AudioMixerPath = "Audio/AudioMixer";
@@ -23,8 +25,13 @@ public class SoundManager : MonoBehaviour
 
     private AudioMixer _audioMixer;
     private SoundData  _soundData;
-    private AudioSource _bgmSource;
+    private AudioSource _bgmSourceA;
+    private AudioSource _bgmSourceB;
+    private AudioSource _currentBgmSource;
+    private AudioSource _nextBgmSource;
     private AudioSource _sfxSource;
+    private Coroutine _bgmFadeCoroutine;
+    private BGMType? _currentBgmType;
 
     // Awake보다 먼저 할당되도록 static으로 보관
     private static AudioMixer _pendingMixer;
@@ -51,7 +58,10 @@ public class SoundManager : MonoBehaviour
     public enum BGMType
     {
         MainTitle,
-        Gameplay,
+        Town,
+        Desert,
+        Forest,
+        Tomb,
         Boss
     }
 
@@ -113,9 +123,10 @@ public class SoundManager : MonoBehaviour
 
     private void SetupAudioSources()
     {
-        _bgmSource           = gameObject.AddComponent<AudioSource>();
-        _bgmSource.loop      = true;
-        _bgmSource.playOnAwake = false;
+        _bgmSourceA = CreateBgmSource();
+        _bgmSourceB = CreateBgmSource();
+        _currentBgmSource = _bgmSourceA;
+        _nextBgmSource = _bgmSourceB;
 
         _sfxSource           = gameObject.AddComponent<AudioSource>();
         _sfxSource.loop      = false;
@@ -127,9 +138,23 @@ public class SoundManager : MonoBehaviour
             AudioMixerGroup[] bgmGroups = _audioMixer.FindMatchingGroups("BGM");
             AudioMixerGroup[] sfxGroups = _audioMixer.FindMatchingGroups("SFX");
 
-            if (bgmGroups.Length > 0) _bgmSource.outputAudioMixerGroup = bgmGroups[0];
+            if (bgmGroups.Length > 0)
+            {
+                _bgmSourceA.outputAudioMixerGroup = bgmGroups[0];
+                _bgmSourceB.outputAudioMixerGroup = bgmGroups[0];
+            }
+
             if (sfxGroups.Length > 0) _sfxSource.outputAudioMixerGroup = sfxGroups[0];
         }
+    }
+
+    private AudioSource CreateBgmSource()
+    {
+        AudioSource source = gameObject.AddComponent<AudioSource>();
+        source.loop = true;
+        source.playOnAwake = false;
+        source.volume = 0f;
+        return source;
     }
 
     // ──────────────────────────────────────────────
@@ -138,25 +163,111 @@ public class SoundManager : MonoBehaviour
 
     public void PlayBGM(BGMType type)
     {
+        PlayBGM(type, DefaultBgmFadeDuration);
+    }
+
+    public void PlayBGM(BGMType type, float fadeDuration)
+    {
         AudioClip clip = GetBGMClip(type);
         if (clip == null)
         {
             return;
         }
 
-        if (_bgmSource.clip == clip && _bgmSource.isPlaying)
+        if (_currentBgmType == type && _currentBgmSource.clip == clip && _currentBgmSource.isPlaying)
         {
             return;
         }
 
-        _bgmSource.clip = clip;
-        _bgmSource.Play();
+        if (_bgmFadeCoroutine != null)
+        {
+            StopCoroutine(_bgmFadeCoroutine);
+        }
+
+        _bgmFadeCoroutine = StartCoroutine(FadeToBGM(type, clip, Mathf.Max(0f, fadeDuration)));
     }
 
     public void StopBGM()
     {
-        _bgmSource.Stop();
-        _bgmSource.clip = null;
+        if (_bgmFadeCoroutine != null)
+        {
+            StopCoroutine(_bgmFadeCoroutine);
+            _bgmFadeCoroutine = null;
+        }
+
+        StopBgmSource(_bgmSourceA);
+        StopBgmSource(_bgmSourceB);
+        _currentBgmType = null;
+        _currentBgmSource = _bgmSourceA;
+        _nextBgmSource = _bgmSourceB;
+    }
+
+    private IEnumerator FadeToBGM(BGMType type, AudioClip clip, float fadeDuration)
+    {
+        AudioSource fromSource = _currentBgmSource;
+        AudioSource toSource = _nextBgmSource;
+
+        toSource.clip = clip;
+        toSource.volume = 0f;
+        toSource.Play();
+
+        if (fadeDuration <= 0f)
+        {
+            if (fromSource != null)
+            {
+                StopBgmSource(fromSource);
+            }
+
+            toSource.volume = 1f;
+            SwapBgmSources(type);
+            yield break;
+        }
+
+        float fromStartVolume = fromSource != null && fromSource.isPlaying ? fromSource.volume : 0f;
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / fadeDuration);
+
+            if (fromSource != null)
+            {
+                fromSource.volume = Mathf.Lerp(fromStartVolume, 0f, t);
+            }
+
+            toSource.volume = Mathf.Lerp(0f, 1f, t);
+            yield return null;
+        }
+
+        if (fromSource != null)
+        {
+            StopBgmSource(fromSource);
+        }
+
+        toSource.volume = 1f;
+        SwapBgmSources(type);
+    }
+
+    private void SwapBgmSources(BGMType type)
+    {
+        AudioSource previousSource = _currentBgmSource;
+        _currentBgmSource = _nextBgmSource;
+        _nextBgmSource = previousSource;
+        _currentBgmType = type;
+        _bgmFadeCoroutine = null;
+    }
+
+    private static void StopBgmSource(AudioSource source)
+    {
+        if (source == null)
+        {
+            return;
+        }
+
+        source.Stop();
+        source.clip = null;
+        source.volume = 0f;
     }
 
     private AudioClip GetBGMClip(BGMType type)
@@ -169,7 +280,10 @@ public class SoundManager : MonoBehaviour
         return type switch
         {
             BGMType.MainTitle => _soundData.bgmMainTitle,
-            BGMType.Gameplay  => _soundData.bgmGameplay,
+            BGMType.Town      => _soundData.bgmTown,
+            BGMType.Desert    => _soundData.bgmDesert,
+            BGMType.Forest    => _soundData.bgmForest,
+            BGMType.Tomb      => _soundData.bgmTomb,
             BGMType.Boss      => _soundData.bgmBoss,
             _                 => null
         };

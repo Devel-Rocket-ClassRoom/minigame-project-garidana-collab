@@ -12,6 +12,8 @@ public class MainTitleUi : MonoBehaviour
 
     private void Start()
     {
+        SoundManager.Instance?.PlayBGM(SoundManager.BGMType.MainTitle);
+
         _startButton.onClick.AddListener(OnStartGame);
         _quitButton.onClick.AddListener(OnQuit);
         _donationButton.onClick.AddListener(OnClickSiteButton);
