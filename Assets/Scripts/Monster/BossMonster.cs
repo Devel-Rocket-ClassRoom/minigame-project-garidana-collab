@@ -48,6 +48,18 @@ public class BossMonster : MonoBehaviour, IDamageable
     [SerializeField] private Color hitEffectColor = Color.white;
     [SerializeField] private float hitEffectScaleMultiplier = 1f;
 
+    [Header("Pattern Effect")]
+    [SerializeField] private ParticleSystem spawnEffectPrefab;
+    [SerializeField] private Transform spawnEffectPoint;
+    [SerializeField] private ParticleSystem groundAttackEffectPrefab;
+    [SerializeField] private Transform groundAttackEffectPoint;
+    [SerializeField] private ParticleSystem xAttackEffectPrefab;
+    [SerializeField] private Transform xAttackEffectPoint;
+    [SerializeField] private ParticleSystem jumpAttackEffectPrefab;
+    [SerializeField] private Transform jumpAttackEffectPoint;
+    [SerializeField] private ParticleSystem summonEffectPrefab;
+    [SerializeField] private Transform summonEffectPoint;
+
     private NavMeshAgent agent;
     private Animator animator;
     private Transform player;
@@ -154,6 +166,7 @@ public class BossMonster : MonoBehaviour, IDamageable
 
         animator.SetBool(ParamMove, false);
         animator.SetTrigger(ParamSpawn);
+        SpawnPatternEffect(spawnEffectPrefab, spawnEffectPoint);
     }
 
     private IEnumerator PatternRoutine()
@@ -286,6 +299,8 @@ public class BossMonster : MonoBehaviour, IDamageable
             return;
         }
 
+        SpawnPatternEffect(groundAttackEffectPrefab, groundAttackEffectPoint);
+
         float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance <= CurrentGroundAttackRange)
@@ -300,6 +315,8 @@ public class BossMonster : MonoBehaviour, IDamageable
         {
             return;
         }
+
+        SpawnPatternEffect(xAttackEffectPrefab, xAttackEffectPoint);
 
         Vector3 toPlayer = player.position - transform.position;
         toPlayer.y = 0f;
@@ -320,6 +337,8 @@ public class BossMonster : MonoBehaviour, IDamageable
             return;
         }
 
+        SpawnPatternEffect(jumpAttackEffectPrefab, jumpAttackEffectPoint);
+
         Collider[] hits = Physics.OverlapSphere(transform.position, CurrentJumpAttackRadius);
 
         foreach (Collider hit in hits)
@@ -335,6 +354,8 @@ public class BossMonster : MonoBehaviour, IDamageable
 
     public void OnSummonMinions()
     {
+        SpawnPatternEffect(summonEffectPrefab, summonEffectPoint);
+
         if (minionPrefabs == null || minionPrefabs.Length == 0)
         {
             return;
@@ -431,6 +452,29 @@ public class BossMonster : MonoBehaviour, IDamageable
         }
 
         effect.transform.localScale *= Mathf.Max(0.1f, scaleMultiplier);
+        effect.Play();
+
+        float lifetime = main.duration + main.startLifetime.constantMax;
+        Destroy(effect.gameObject, Mathf.Max(0.1f, lifetime));
+    }
+
+    private void SpawnPatternEffect(ParticleSystem effectPrefab, Transform effectPoint)
+    {
+        if (effectPrefab == null)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = effectPoint != null
+            ? effectPoint.position
+            : transform.position;
+
+        Quaternion spawnRotation = effectPoint != null
+            ? effectPoint.rotation
+            : transform.rotation;
+
+        ParticleSystem effect = Instantiate(effectPrefab, spawnPosition, spawnRotation);
+        ParticleSystem.MainModule main = effect.main;
         effect.Play();
 
         float lifetime = main.duration + main.startLifetime.constantMax;
