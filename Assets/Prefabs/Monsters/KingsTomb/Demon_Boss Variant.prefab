@@ -106,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1428166896415148, guid: 0f8f6508c82324cea8c1918c558258de, type: 3}
       propertyPath: m_Name
-      value: DemonBoss Variant
+      value: Demon_Boss Variant
       objectReference: {fileID: 0}
     - target: {fileID: 1428166896415148, guid: 0f8f6508c82324cea8c1918c558258de, type: 3}
       propertyPath: m_Layer
@@ -338,9 +338,13 @@ MonoBehaviour:
   patrolDistance: 3
   turnSpeed: 720
   knockbackDistance: 0.35
-  knockbackDuration: 0.8
+  knockbackDuration: 0.1
   floatingTextPrefab: {fileID: 1147159748014547061, guid: 04c05956e9b64e0428cd4770eddedf58, type: 3}
   floatingTextPoint: {fileID: 0}
+  hitEffectPrefab: {fileID: 0}
+  hitEffectPoint: {fileID: 0}
+  hitEffectColor: {r: 1, g: 1, b: 1, a: 1}
+  hitEffectScaleMultiplier: 1
 --- !u!136 &3508573307740428267
 CapsuleCollider:
   m_ObjectHideFlags: 0

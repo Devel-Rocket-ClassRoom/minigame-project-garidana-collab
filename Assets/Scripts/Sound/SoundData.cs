@@ -8,6 +8,7 @@ public class SoundData : ScriptableObject
     public AudioClip bgmTown;
     public AudioClip bgmDesert;
     public AudioClip bgmForest;
+    public AudioClip bgmOrcOutpost;
     public AudioClip bgmTomb;
     public AudioClip bgmBoss;
 

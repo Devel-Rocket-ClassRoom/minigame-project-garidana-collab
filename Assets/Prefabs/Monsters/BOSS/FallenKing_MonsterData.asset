@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FallenKing_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uD0C0\uB77D\uD55C \uC655"
-  maxHp: 8000
+  maxHp: 10000
   attackDamage: 150
   moveSpeed: 5
   detectionRange: 13

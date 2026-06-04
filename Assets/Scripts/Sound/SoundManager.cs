@@ -61,6 +61,7 @@ public class SoundManager : MonoBehaviour
         Town,
         Desert,
         Forest,
+        OrcBase,
         Tomb,
         Boss
     }
@@ -283,6 +284,7 @@ public class SoundManager : MonoBehaviour
             BGMType.Town      => _soundData.bgmTown,
             BGMType.Desert    => _soundData.bgmDesert,
             BGMType.Forest    => _soundData.bgmForest,
+            BGMType.OrcBase=> _soundData.bgmOrcOutpost,
             BGMType.Tomb      => _soundData.bgmTomb,
             BGMType.Boss      => _soundData.bgmBoss,
             _                 => null

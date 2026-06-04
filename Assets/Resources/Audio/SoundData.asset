@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundData
   bgmMainTitle: {fileID: 8300000, guid: 5c63717d169d255469975c9c7806ccc1, type: 3}
   bgmTown: {fileID: 8300000, guid: 8180fcf486be24064aa44010f2bc9674, type: 3}
-  bgmDesert: {fileID: 0}
-  bgmForest: {fileID: 0}
-  bgmTomb: {fileID: 0}
-  bgmBoss: {fileID: 0}
+  bgmDesert: {fileID: 8300000, guid: 9aeec8183dee347f890468b2abf8fa9f, type: 3}
+  bgmForest: {fileID: 8300000, guid: 137423c45882d4e05a100cc73e7755ae, type: 3}
+  bgmOrcOutpost: {fileID: 8300000, guid: da1a78764cc3d4eb48f1f4356bcc40da, type: 3}
+  bgmTomb: {fileID: 8300000, guid: eb8da84559a3e49dca774e562d515526, type: 3}
+  bgmBoss: {fileID: 8300000, guid: d39171ec42e9a4facb48a1fdceed4e99, type: 3}
   buttonClick: {fileID: 8300000, guid: 5178cd83bcb582f4685155d7a049e2dc, type: 3}
   chestOpen: {fileID: 8300000, guid: 17cd2bcf67f7b4fc1928356ac433e374, type: 3}
   waypointActivate: {fileID: 0}
