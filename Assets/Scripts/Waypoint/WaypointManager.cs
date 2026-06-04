@@ -78,6 +78,7 @@ public class WaypointManager : MonoBehaviour
         if (added)
         {
             waypoint.SetPortalActive(true);
+            SoundManager.Instance?.PlaySFX(SoundManager.SFXType.WaypointActivate);
             Debug.Log($"웨이포인트 해금: {waypointId}");
         }
 
