@@ -193,6 +193,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
             return;
         }
 
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.PlayerHit);
         _animator.SetTrigger("isHit");
         Debug.Log(
             $"{name} took damage. Damage: {damage}, CurrentHealth: {_currentHealth}/{_maxHealth}"
@@ -270,6 +271,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
         IncreaseMaxHealth(5f);
         RestoreFullHealth();
 
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.LevelUp);
         LevelChanged?.Invoke(_level);
         Debug.Log($"레벨업! 현재 레벨: {_level}, 현재 공격력: {_attackPower}");
         // 나중에 레벨업 이펙트 UI 추가
@@ -283,6 +285,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
         _currentHealth = 0f;
         _currentExp = 0;
 
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.PlayerDeath);
         Debug.Log($"{name} died.");
         _animator.SetTrigger("Dead");
 

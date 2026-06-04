@@ -13,6 +13,14 @@ public class OptionMenuUi : MonoBehaviour
     [SerializeField]
     private Button titleButton;
 
+    [Header("볼륨 슬라이더")]
+    [SerializeField]
+    private Slider masterVolumeSlider;
+    [SerializeField]
+    private Slider bgmVolumeSlider;
+    [SerializeField]
+    private Slider sfxVolumeSlider;
+
 
     private void Awake()
     {
@@ -21,6 +29,34 @@ public class OptionMenuUi : MonoBehaviour
         resumeButton.onClick.AddListener(CloseMenu);
         quitButton.onClick.AddListener(QuitGame);
         titleButton.onClick.AddListener(OnToTitle);
+
+        InitVolumeSliders();
+    }
+
+    private void InitVolumeSliders()
+    {
+        if (SoundManager.Instance == null)
+        {
+            return;
+        }
+
+        if (masterVolumeSlider != null)
+        {
+            masterVolumeSlider.value = SoundManager.Instance.GetMasterVolume();
+            masterVolumeSlider.onValueChanged.AddListener(SoundManager.Instance.SetMasterVolume);
+        }
+
+        if (bgmVolumeSlider != null)
+        {
+            bgmVolumeSlider.value = SoundManager.Instance.GetBGMVolume();
+            bgmVolumeSlider.onValueChanged.AddListener(SoundManager.Instance.SetBGMVolume);
+        }
+
+        if (sfxVolumeSlider != null)
+        {
+            sfxVolumeSlider.value = SoundManager.Instance.GetSFXVolume();
+            sfxVolumeSlider.onValueChanged.AddListener(SoundManager.Instance.SetSFXVolume);
+        }
     }
 
     private void Update()

@@ -189,6 +189,9 @@ public class PlayerAttack : MonoBehaviour
             $"Player attack started. ComboStep: {_comboStep}, AttackStage: {GetAttackStageName()}, AttackPower: {GetAttackPower()}, ExpectedDamage: {CalculateDamage(_comboStep)}"
         );
 
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.SwordSwing);
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.PlayerAttackVoice);
+
         if (_animator != null)
         {
             _animator.CrossFadeInFixedTime(AttackStateHashes[_comboStep - 1], 0.05f);
