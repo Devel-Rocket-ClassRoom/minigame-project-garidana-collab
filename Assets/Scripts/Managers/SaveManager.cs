@@ -532,7 +532,6 @@ public class SaveManager : MonoBehaviour
         data.waypoint.lastActivatedWaypointId = waypointManager.LastActivatedWaypointId;
         data.waypoint.unlockedWaypointIds = CaptureWaypointIds(waypointManager);
         data.tutorial.townTutorialCompleted = CaptureTownTutorialCompleted();
-        data.tutorial.chestTutorialCompleted = CaptureChestTutorialCompleted();
         data.merchants = CaptureMerchants();
         data.openedChestIds = CaptureOpenedChestIds();
         return data;
@@ -644,19 +643,7 @@ public class SaveManager : MonoBehaviour
         return Instance != null && Instance.IsTownTutorialCompleted;
     }
 
-    private static bool CaptureChestTutorialCompleted()
-    {
-        ChestTutorialTrigger[] triggers = FindObjectsByType<ChestTutorialTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < triggers.Length; i++)
-        {
-            if (triggers[i] != null && triggers[i].IsCompleted)
-            {
-                return true;
-            }
-        }
 
-        return Instance != null && Instance.IsChestTutorialCompleted;
-    }
 
     private static void RestoreInventory(PlayerInventory inventory, Dictionary<string, ItemData> itemRegistry, string[] inventoryItemIds)
     {
@@ -794,14 +781,6 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        ChestTutorialTrigger[] chestTriggers = FindObjectsByType<ChestTutorialTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < chestTriggers.Length; i++)
-        {
-            if (chestTriggers[i] != null)
-            {
-                chestTriggers[i].RestoreCompletedState(chestTutorialCompleted);
-            }
-        }
     }
 
     private static void ApplyMerchantState(Dictionary<string, ItemData> itemRegistry)
