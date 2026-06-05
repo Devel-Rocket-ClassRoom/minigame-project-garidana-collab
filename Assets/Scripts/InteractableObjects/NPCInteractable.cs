@@ -35,6 +35,7 @@ public class NPCInteractable : MonoBehaviour, IInteractable
 
         PlayerStats playerStats = interactor.GetComponent<PlayerStats>();
         PlayerHealing playerHealing = interactor.GetComponent<PlayerHealing>();
+        PlayerRewardFloatingText playerFloatingText = interactor.GetComponent<PlayerRewardFloatingText>();
 
         if (playerStats == null || playerHealing == null)
         {
@@ -45,12 +46,14 @@ public class NPCInteractable : MonoBehaviour, IInteractable
 
         if (!playerStats.SpendGold(refillCost))
         {
+            playerFloatingText?.ShowNotice("골드 부족", new Color(1f, 0.35f, 0.2f));
             Debug.Log ($"골드가 부족합니다. 필요 골드 {refillCost}, 현재 골드: {playerStats.Gold}");
             return;
         }
 
         playerHealing.RefillHealItems();
         playerStats.RestoreFullHealth();
+        playerFloatingText?.ShowNotice("체력 회복 충전", new Color(0.2f, 1f, 0.45f));
         Debug.Log($"회복 물약을 모두 충전했습니다. 사용 골드: {refillCost}");
     }
 

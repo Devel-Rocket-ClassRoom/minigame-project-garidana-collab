@@ -103,6 +103,11 @@ public class PlayerRewardFloatingText : MonoBehaviour
         SpawnFloatingText($"-{amount} HP", Color.red, Vector3.right * 0.25f);
     }
 
+    public void ShowNotice(string value, Color color)
+    {
+        SpawnFloatingText(value, color, Vector3.up * 0.2f);
+    }
+
     private void SpawnFloatingText(string value, Color color, Vector3 offset)
     {
         if (floatingTextPrefab == null)

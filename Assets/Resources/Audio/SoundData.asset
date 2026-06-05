@@ -24,8 +24,11 @@ MonoBehaviour:
   waypointActivate: {fileID: 0}
   goldSpend: {fileID: 8300000, guid: da2afefea6bfb814b979c52d20b461af, type: 3}
   noGold: {fileID: 8300000, guid: 079eb089989b12846b9db25a38d5d244, type: 3}
-  playerAttackVoice: {fileID: 0}
-  swordSwing: {fileID: 8300000, guid: 621437b2fb8e7ef4fbecb600728f63e8, type: 3}
+  playerAttackVoices: []
+  swordSwings:
+  - {fileID: 8300000, guid: 621437b2fb8e7ef4fbecb600728f63e8, type: 3}
+  - {fileID: 8300000, guid: 50fc5a6b30f389041b05b1d7c2d6010a, type: 3}
+  - {fileID: 8300000, guid: 74cee802039e1634dbe60aad7a358c12, type: 3}
   playerHit: {fileID: 8300000, guid: e9d8f2664d9270a4d9510c8ce3d011f2, type: 3}
   playerDeath: {fileID: 0}
   dash: {fileID: 8300000, guid: 74cee802039e1634dbe60aad7a358c12, type: 3}
