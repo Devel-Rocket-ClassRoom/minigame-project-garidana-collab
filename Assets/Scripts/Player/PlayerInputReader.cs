@@ -9,6 +9,7 @@ public class PlayerInputReader : MonoBehaviour
     private PlayerInput _playerInput;
 
     public Vector2 MoveInput { get; private set; }
+    public float CameraZoomInput { get; private set; }
     public bool AttackRequested { get; private set; }
     public bool DashRequested { get; private set; }
     public bool HealRequested {get; private set; }
@@ -54,9 +55,19 @@ public class PlayerInputReader : MonoBehaviour
         }
     }
 
+    public void OnCameraZoomInAndOut(InputValue value)
+    {
+        CameraZoomInput = value.Get<Vector2>().y;
+    }
+
     public void UseDashInput()
     {
         DashRequested = false;
+    }
+
+    public void UseCameraZoomInput()
+    {
+        CameraZoomInput = 0f;
     }
 
     public void UseHealInput()

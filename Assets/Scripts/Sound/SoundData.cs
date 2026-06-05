@@ -22,7 +22,7 @@ public class SoundData : ScriptableObject
     [Header("Player")]
     public AudioClip[] playerAttackVoices;
     public AudioClip[] swordSwings;
-    public AudioClip playerHit;
+    public AudioClip[] playerHits;
     public AudioClip playerDeath;
     public AudioClip[] dashes;
     public AudioClip levelUp;

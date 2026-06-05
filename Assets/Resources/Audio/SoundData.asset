@@ -32,7 +32,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 621437b2fb8e7ef4fbecb600728f63e8, type: 3}
   - {fileID: 8300000, guid: 50fc5a6b30f389041b05b1d7c2d6010a, type: 3}
   - {fileID: 8300000, guid: 74cee802039e1634dbe60aad7a358c12, type: 3}
-  playerHit: {fileID: 8300000, guid: e9d8f2664d9270a4d9510c8ce3d011f2, type: 3}
+  playerHits:
+  - {fileID: 8300000, guid: afcebb82f6d3e174aa15e1f48d49ca97, type: 3}
+  - {fileID: 8300000, guid: bf18a9a35a67c174a90c7327f1b7ffa9, type: 3}
+  - {fileID: 8300000, guid: 97c633a475666f04a8e0789af6e52447, type: 3}
+  - {fileID: 8300000, guid: 2c31301e07220c644920a5a6eed7144a, type: 3}
   playerDeath: {fileID: 0}
   dashes:
   - {fileID: 8300000, guid: 7049bd55acc6f6046a01b188702a4f9d, type: 3}

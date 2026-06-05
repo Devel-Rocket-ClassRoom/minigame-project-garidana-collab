@@ -11,6 +11,7 @@ public class QuestProgressionUi : MonoBehaviour
 
     private CanvasGroup canvasGroup;
     private bool subscribed;
+    private QuestData displayedQuest;
 
     private void Awake()
     {
@@ -27,11 +28,13 @@ public class QuestProgressionUi : MonoBehaviour
     private void OnEnable()
     {
         TrySubscribe();
+        SyncCurrentQuestProgress();
     }
 
     private void Start()
     {
         TrySubscribe();
+        SyncCurrentQuestProgress();
     }
 
     private void OnDisable()
@@ -60,6 +63,23 @@ public class QuestProgressionUi : MonoBehaviour
         subscribed = true;
     }
 
+    private void SyncCurrentQuestProgress()
+    {
+        if (QuestManager.Instance == null)
+        {
+            return;
+        }
+
+        QuestData currentQuest = QuestManager.Instance.CurrentQuest;
+        if (currentQuest == null)
+        {
+            Hide();
+            return;
+        }
+
+        UpdateProgress(currentQuest, QuestManager.Instance.CurrentAmount, currentQuest.RequiredAmount);
+    }
+
     private void HandleQuestAccepted(QuestData quest)
     {
         UpdateProgress(quest, 0, quest.RequiredAmount);
@@ -72,7 +92,10 @@ public class QuestProgressionUi : MonoBehaviour
 
     private void HandleQuestCompleted(QuestData quest)
     {
-        Hide();
+        if (quest == displayedQuest)
+        {
+            Hide();
+        }
     }
 
     private void UpdateProgress(QuestData quest, int currentAmount, int requiredAmount)
@@ -83,6 +106,7 @@ public class QuestProgressionUi : MonoBehaviour
             return;
         }
 
+        displayedQuest = quest;
         Show();
         SetText(titleText, quest.QuestTitle);
         SetText(progressText, $"{currentAmount} / {requiredAmount}");
@@ -95,6 +119,7 @@ public class QuestProgressionUi : MonoBehaviour
 
     private void Hide()
     {
+        displayedQuest = null;
         canvasGroup.alpha = 0f;
     }
 
