@@ -107,7 +107,7 @@ public class InventoryUi : MonoBehaviour
             return;
         }
 
-        if (!_isOpen && (GameOverUi.IsAnyOpen() || ShopUi.BlocksGlobalShortcuts || OptionMenuUi.IsAnyOpen() || QuestUi.IsAnyOpen()))
+        if (!_isOpen && (GameOverUi.IsAnyOpen() || ShopUi.BlocksGlobalShortcuts || OptionMenuUi.IsAnyOpen() || QuestUi.IsAnyOpen() || TownTutorialUi.IsAnyOpen()))
         {
             return;
         }

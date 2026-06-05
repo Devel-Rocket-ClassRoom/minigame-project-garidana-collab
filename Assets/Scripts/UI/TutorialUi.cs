@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class TutorialUi : MonoBehaviour
 {
+    private static int suppressCount;
+
     [SerializeField]
     private GameObject root;
 
@@ -9,6 +11,22 @@ public class TutorialUi : MonoBehaviour
     private string hideAfterQuestId = "first";
 
     private bool subscribed;
+
+    public static bool IsSuppressed => suppressCount > 0;
+
+    public static void SetSuppressed(bool suppressed)
+    {
+        suppressCount = Mathf.Max(0, suppressCount + (suppressed ? 1 : -1));
+
+        TutorialUi[] tutorialUis = FindObjectsByType<TutorialUi>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < tutorialUis.Length; i++)
+        {
+            if (tutorialUis[i] != null)
+            {
+                tutorialUis[i].RefreshVisibility();
+            }
+        }
+    }
 
     private void Awake()
     {
@@ -51,8 +69,15 @@ public class TutorialUi : MonoBehaviour
 
     private void RefreshVisibility()
     {
+        if (IsSuppressed)
+        {
+            Hide();
+            return;
+        }
+
         if (QuestManager.Instance == null)
         {
+            Show();
             return;
         }
 
