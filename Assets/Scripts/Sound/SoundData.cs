@@ -24,9 +24,9 @@ public class SoundData : ScriptableObject
     public AudioClip[] swordSwings;
     public AudioClip playerHit;
     public AudioClip playerDeath;
-    public AudioClip dash;
+    public AudioClip[] dashes;
     public AudioClip levelUp;
-    public AudioClip footstep;
+    public AudioClip[] footsteps;
 
     [Header("Monster")]
     public AudioClip monsterHit;

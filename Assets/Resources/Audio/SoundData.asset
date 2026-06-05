@@ -24,15 +24,25 @@ MonoBehaviour:
   waypointActivate: {fileID: 0}
   goldSpend: {fileID: 8300000, guid: da2afefea6bfb814b979c52d20b461af, type: 3}
   noGold: {fileID: 8300000, guid: 079eb089989b12846b9db25a38d5d244, type: 3}
-  playerAttackVoices: []
+  playerAttackVoices:
+  - {fileID: 8300000, guid: 470d889c25408494e9773c6dd5474701, type: 3}
+  - {fileID: 8300000, guid: 2ea1a824a90d0ee4e860342fb02d5fc7, type: 3}
+  - {fileID: 8300000, guid: 0cfdb69e49fd9a845a7030bc2b00fb03, type: 3}
   swordSwings:
   - {fileID: 8300000, guid: 621437b2fb8e7ef4fbecb600728f63e8, type: 3}
   - {fileID: 8300000, guid: 50fc5a6b30f389041b05b1d7c2d6010a, type: 3}
   - {fileID: 8300000, guid: 74cee802039e1634dbe60aad7a358c12, type: 3}
   playerHit: {fileID: 8300000, guid: e9d8f2664d9270a4d9510c8ce3d011f2, type: 3}
   playerDeath: {fileID: 0}
-  dash: {fileID: 8300000, guid: 74cee802039e1634dbe60aad7a358c12, type: 3}
+  dashes:
+  - {fileID: 8300000, guid: 7049bd55acc6f6046a01b188702a4f9d, type: 3}
+  - {fileID: 8300000, guid: 4bbc2c00c0c93a3498034f8724243aac, type: 3}
+  - {fileID: 8300000, guid: 8dcbc27f40f7af54f83f3fab9ee53ab9, type: 3}
   levelUp: {fileID: 8300000, guid: fa9d581eb204a4c239bf9e57117a72d6, type: 3}
-  footstep: {fileID: 8300000, guid: e332f413b209149aa80f1180ad0f3887, type: 3}
+  footsteps:
+  - {fileID: 8300000, guid: 857e13957d17a074781d84f20553eea0, type: 3}
+  - {fileID: 8300000, guid: 81f63607ae7227a4bb5e2acbbe967145, type: 3}
+  - {fileID: 8300000, guid: 8dba3910bb7e7c942b965a1850ec68f3, type: 3}
+  - {fileID: 8300000, guid: 591a811fc84aee34d894c7e35caeffba, type: 3}
   monsterHit: {fileID: 0}
   monsterDeath: {fileID: 0}

@@ -326,9 +326,9 @@ public class SoundManager : MonoBehaviour
             SFXType.SwordSwing       => GetRandomClip(_soundData.swordSwings),
             SFXType.PlayerHit        => _soundData.playerHit,
             SFXType.PlayerDeath      => _soundData.playerDeath,
-            SFXType.Dash             => _soundData.dash,
+            SFXType.Dash             => GetRandomClip(_soundData.dashes),
             SFXType.LevelUp          => _soundData.levelUp,
-            SFXType.Footstep         => _soundData.footstep,
+            SFXType.Footstep         => GetRandomClip(_soundData.footsteps),
             SFXType.MonsterHit       => _soundData.monsterHit,
             SFXType.MonsterDeath     => _soundData.monsterDeath,
             _                        => null

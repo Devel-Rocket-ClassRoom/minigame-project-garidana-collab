@@ -219,6 +219,21 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsDashing => _isDashing;
 
+    public void PlayFootstepSound()
+    {
+        if (_playerStats != null && _playerStats.IsDead)
+        {
+            return;
+        }
+
+        if (_isDashing || _playerDirection.sqrMagnitude < 0.01f)
+        {
+            return;
+        }
+
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.Footstep);
+    }
+
 #if UNITY_EDITOR
     public void SetDebugMovementOverride(bool enabled, float moveSpeed, float dashDistance)
     {
