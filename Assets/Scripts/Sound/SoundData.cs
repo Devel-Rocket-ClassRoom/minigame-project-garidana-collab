@@ -20,8 +20,8 @@ public class SoundData : ScriptableObject
     public AudioClip noGold;
 
     [Header("Player")]
-    public AudioClip playerAttackVoice;
-    public AudioClip swordSwing;
+    public AudioClip[] playerAttackVoices;
+    public AudioClip[] swordSwings;
     public AudioClip playerHit;
     public AudioClip playerDeath;
     public AudioClip dash;
