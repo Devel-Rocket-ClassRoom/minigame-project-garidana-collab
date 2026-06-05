@@ -322,8 +322,8 @@ public class SoundManager : MonoBehaviour
             SFXType.WaypointActivate => _soundData.waypointActivate,
             SFXType.GoldSpend        => _soundData.goldSpend,
             SFXType.NoGold           => _soundData.noGold,
-            SFXType.PlayerAttackVoice=> _soundData.playerAttackVoice,
-            SFXType.SwordSwing       => _soundData.swordSwing,
+            SFXType.PlayerAttackVoice=> GetRandomClip(_soundData.playerAttackVoices),
+            SFXType.SwordSwing       => GetRandomClip(_soundData.swordSwings),
             SFXType.PlayerHit        => _soundData.playerHit,
             SFXType.PlayerDeath      => _soundData.playerDeath,
             SFXType.Dash             => _soundData.dash,
@@ -382,5 +382,15 @@ public class SoundManager : MonoBehaviour
         SetMasterVolume(GetMasterVolume());
         SetBGMVolume(GetBGMVolume());
         SetSFXVolume(GetSFXVolume());
+    }
+
+    private AudioClip GetRandomClip(AudioClip[] clips)
+    {
+        if (clips == null || clips.Length == 0)
+        {
+            return null;
+        }
+
+        return clips[UnityEngine.Random.Range(0, clips.Length)];
     }
 }

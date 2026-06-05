@@ -16,6 +16,7 @@ public class SaveData
     public EquipmentSaveData equipment = new EquipmentSaveData();
     public QuestSaveData quest = new QuestSaveData();
     public WaypointSaveData waypoint = new WaypointSaveData();
+    public TutorialSaveData tutorial = new TutorialSaveData();
     public MerchantSaveData[] merchants = Array.Empty<MerchantSaveData>();
     public string[] openedChestIds = Array.Empty<string>();
 }
@@ -53,6 +54,12 @@ public class WaypointSaveData
 {
     public string lastActivatedWaypointId;
     public string[] unlockedWaypointIds = Array.Empty<string>();
+}
+
+[Serializable]
+public class TutorialSaveData
+{
+    public bool townTutorialCompleted;
 }
 
 [Serializable]
@@ -182,6 +189,10 @@ public class SaveManager : MonoBehaviour
         return !string.IsNullOrWhiteSpace(_savePath) && File.Exists(_savePath);
     }
 
+    public bool IsTownTutorialCompleted => _saveData != null
+        && _saveData.tutorial != null
+        && _saveData.tutorial.townTutorialCompleted;
+
     public void DeleteSaveFile()
     {
         if (!HasSaveData())
@@ -242,6 +253,7 @@ public class SaveManager : MonoBehaviour
 
         ApplyMerchantState(itemRegistry);
         ApplyChestState();
+        ApplyTutorialState();
         waypointManager.RestoreState(_saveData.waypoint.unlockedWaypointIds, _saveData.waypoint.lastActivatedWaypointId);
 
         equipmentManager.ClearAllEquippedItems();
@@ -514,6 +526,7 @@ public class SaveManager : MonoBehaviour
         data.quest.completedQuestIds = questManager.GetCompletedQuestIds();
         data.waypoint.lastActivatedWaypointId = waypointManager.LastActivatedWaypointId;
         data.waypoint.unlockedWaypointIds = CaptureWaypointIds(waypointManager);
+        data.tutorial.townTutorialCompleted = CaptureTownTutorialCompleted();
         data.merchants = CaptureMerchants();
         data.openedChestIds = CaptureOpenedChestIds();
         return data;
@@ -609,6 +622,20 @@ public class SaveManager : MonoBehaviour
         }
 
         return openedChestIds.ToArray();
+    }
+
+    private static bool CaptureTownTutorialCompleted()
+    {
+        TownTutorialTrigger[] triggers = FindObjectsByType<TownTutorialTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < triggers.Length; i++)
+        {
+            if (triggers[i] != null && triggers[i].IsCompleted)
+            {
+                return true;
+            }
+        }
+
+        return Instance != null && Instance.IsTownTutorialCompleted;
     }
 
     private static void RestoreInventory(PlayerInventory inventory, Dictionary<string, ItemData> itemRegistry, string[] inventoryItemIds)
@@ -729,6 +756,19 @@ public class SaveManager : MonoBehaviour
             if (chest != null)
             {
                 chest.RestoreOpenedState(openedChestIds.Contains(chest.ChestId));
+            }
+        }
+    }
+
+    private static void ApplyTutorialState()
+    {
+        bool townTutorialCompleted = Instance != null && Instance.IsTownTutorialCompleted;
+        TownTutorialTrigger[] triggers = FindObjectsByType<TownTutorialTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < triggers.Length; i++)
+        {
+            if (triggers[i] != null)
+            {
+                triggers[i].RestoreCompletedState(townTutorialCompleted);
             }
         }
     }
