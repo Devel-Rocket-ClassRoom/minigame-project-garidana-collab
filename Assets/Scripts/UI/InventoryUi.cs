@@ -117,9 +117,16 @@ public class InventoryUi : MonoBehaviour
 
     private void SetPanelActive(bool active)
     {
+        bool stateChanged = _isOpen != active;
         _isOpen = active;
         if (_panelRoot != null)
             _panelRoot.SetActive(active);
+
+        if (stateChanged)
+        {
+            SoundManager.Instance?.PlaySFX(
+                active ? SoundManager.SFXType.InventoryOpen : SoundManager.SFXType.InventoryClose);
+        }
 
         if (!active)
         {
@@ -306,6 +313,13 @@ public class InventoryUi : MonoBehaviour
     {
         if (data == null || _equipment == null) return;
         _equipment.EquipItem(data);
+        SoundManager.SFXType equipSound = data.equipmentPart switch
+        {
+            EquipmentPart.Sword => SoundManager.SFXType.SwordEquip,
+            EquipmentPart.Shield => SoundManager.SFXType.ShieldEquip,
+            _ => SoundManager.SFXType.ArmorEquip
+        };
+        SoundManager.Instance?.PlaySFX(equipSound);
         // EquipmentChanged 이벤트 → RefreshSlots 자동 호출
     }
 

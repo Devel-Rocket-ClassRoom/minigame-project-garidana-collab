@@ -116,6 +116,7 @@ public class QuestUi : MonoBehaviour
 
     public void Open(NPCQuestGiver questGiver, QuestData quest, Transform interactor, float interactionRange)
     {
+        bool wasOpen = IsOpen();
         currentQuestGiver = questGiver;
         currentQuest = quest;
         currentInteractor = interactor;
@@ -126,11 +127,17 @@ public class QuestUi : MonoBehaviour
             root.SetActive(true);
         }
 
+        if (!wasOpen && IsOpen())
+        {
+            SoundManager.Instance?.PlaySFX(SoundManager.SFXType.QuestUiOpen);
+        }
+
         Refresh();
     }
 
     public void Close()
     {
+        bool wasOpen = IsOpen();
         currentQuestGiver = null;
         currentQuest = null;
         currentInteractor = null;
@@ -139,6 +146,11 @@ public class QuestUi : MonoBehaviour
         if (root != null)
         {
             root.SetActive(false);
+        }
+
+        if (wasOpen)
+        {
+            SoundManager.Instance?.PlaySFX(SoundManager.SFXType.QuestUiClose);
         }
     }
 

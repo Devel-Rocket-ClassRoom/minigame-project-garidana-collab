@@ -95,6 +95,7 @@ public class QuestItemCollectEffect : MonoBehaviour
         }
 
         QuestManager.Instance?.ReportItemCollected(itemData.itemId);
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.ItemCollect);
 
         Destroy(gameObject);
     }

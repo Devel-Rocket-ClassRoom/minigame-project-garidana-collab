@@ -11,6 +11,9 @@ public class NPCInteractable : MonoBehaviour, IInteractable
     [SerializeField]
     private int _refillCostIncreasePer10Levels = 100;
 
+    [SerializeField]
+    private float _refillNoticeFontSize = 3.5f;
+
     private int _currentRefillCost;
 
     public string InteractionPrompt => $"{_currentRefillCost}골드로 체력 회복 충전";
@@ -46,14 +49,17 @@ public class NPCInteractable : MonoBehaviour, IInteractable
 
         if (!playerStats.SpendGold(refillCost))
         {
+            SoundManager.Instance?.PlaySFX(SoundManager.SFXType.NoGold);
             playerFloatingText?.ShowNotice("골드 부족", new Color(1f, 0.35f, 0.2f));
             Debug.Log ($"골드가 부족합니다. 필요 골드 {refillCost}, 현재 골드: {playerStats.Gold}");
             return;
         }
 
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.GoldSpend);
         playerHealing.RefillHealItems();
         playerStats.RestoreFullHealth();
-        playerFloatingText?.ShowNotice("체력 회복 충전", new Color(0.2f, 1f, 0.45f));
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.HealRefill);
+        playerFloatingText?.ShowNotice("체력 회복 충전", new Color(0.2f, 1f, 0.45f), _refillNoticeFontSize);
         Debug.Log($"회복 물약을 모두 충전했습니다. 사용 골드: {refillCost}");
     }
 

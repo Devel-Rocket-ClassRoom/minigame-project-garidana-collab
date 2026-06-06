@@ -108,6 +108,7 @@ public class PlayerHealing : MonoBehaviour
         
         _healItemCount--;
         _lastUseTime = Time.time;
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.Heal);
         PotionHealed?.Invoke(Mathf.RoundToInt(healAmount));
         return true;
     }

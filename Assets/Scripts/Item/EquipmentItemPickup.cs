@@ -46,6 +46,7 @@ public class EquipmentItemPickup : MonoBehaviour
         if (added)
         {
             Debug.Log($"[Pickup] {_itemData.displayName} 획득!");
+            SoundManager.Instance?.PlaySFX(SoundManager.SFXType.ItemCollect);
             Destroy(gameObject);
         }
     }

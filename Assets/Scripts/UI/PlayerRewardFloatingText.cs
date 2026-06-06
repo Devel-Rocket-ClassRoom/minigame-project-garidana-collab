@@ -103,12 +103,12 @@ public class PlayerRewardFloatingText : MonoBehaviour
         SpawnFloatingText($"-{amount} HP", Color.red, Vector3.right * 0.25f);
     }
 
-    public void ShowNotice(string value, Color color)
+    public void ShowNotice(string value, Color color, float fontSize = -1f)
     {
-        SpawnFloatingText(value, color, Vector3.up * 0.2f);
+        SpawnFloatingText(value, color, Vector3.up * 0.2f, fontSize);
     }
 
-    private void SpawnFloatingText(string value, Color color, Vector3 offset)
+    private void SpawnFloatingText(string value, Color color, Vector3 offset, float fontSize = -1f)
     {
         if (floatingTextPrefab == null)
         {
@@ -125,7 +125,7 @@ public class PlayerRewardFloatingText : MonoBehaviour
             Quaternion.identity
         );
 
-        effect.Initialize(value, color);
+        effect.Initialize(value, color, fontSize);
     }
 
     private void SpawnEffect(ParticleSystem effectPrefab)

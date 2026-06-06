@@ -19129,14 +19129,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
       propertyPath: '_rewardItems.Array.data[0]'
       value: 
       objectReference: {fileID: 11400000, guid: b2bfa6e86ee3a8145b6db77bcf54f078, type: 2}
@@ -25656,14 +25648,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
       propertyPath: '_rewardItems.Array.data[0]'
       value: 
       objectReference: {fileID: 11400000, guid: 7519352cd8c2ae3499996b100dbb5439, type: 2}
@@ -26979,14 +26963,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1284279662}
     m_Modifications:
-    - target: {fileID: 3974971874912714233, guid: 53a32c6788c13564292d4b12a0be1897, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 3974971874912714233, guid: 53a32c6788c13564292d4b12a0be1897, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 3974971874912714233, guid: 53a32c6788c13564292d4b12a0be1897, type: 3}
       propertyPath: _rewardItems.Array.size
       value: 1
@@ -28308,8 +28284,6 @@ MonoBehaviour:
   body: {fileID: 831400988}
   openAngle: {x: -90, y: 0, z: 0}
   openDuration: 0.5
-  _nearbySoundRadius: 7
-  _nearbySoundInterval: 1.5
   _rewardItems:
   - {fileID: 11400000, guid: 6ab80323da58244718a4f4de44345c31, type: 2}
   _spawnOffset: {x: 0, y: 0.5, z: 0}
@@ -36236,14 +36210,6 @@ PrefabInstance:
     - target: {fileID: 149054270056710619, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
       propertyPath: '_rewardItems.Array.data[0]'
@@ -66586,14 +66552,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
       propertyPath: '_rewardItems.Array.data[0]'
       value: 
       objectReference: {fileID: 11400000, guid: 4fd8f670037474585808112891ce6678, type: 2}
@@ -74643,14 +74601,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527180048227672406, guid: d66fdbfb13bc7ac4fa4077082fb295fb, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -74664,14 +74614,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1284279662}
     m_Modifications:
-    - target: {fileID: 4127548722255554307, guid: e9450780dada33546983205d16252d99, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4127548722255554307, guid: e9450780dada33546983205d16252d99, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 7044544661522831056, guid: e9450780dada33546983205d16252d99, type: 3}
       propertyPath: m_Name
       value: Chest_Sword2_Chunho
@@ -74729,14 +74671,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1284279662}
     m_Modifications:
-    - target: {fileID: 4251804985920834136, guid: e7c16916a671982469d0e18ea0a02d61, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4251804985920834136, guid: e7c16916a671982469d0e18ea0a02d61, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 4251804985920834136, guid: e7c16916a671982469d0e18ea0a02d61, type: 3}
       propertyPath: '_rewardItems.Array.data[0]'
       value: 
@@ -75124,14 +75058,6 @@ PrefabInstance:
     - target: {fileID: 2475257091801685384, guid: 19b7c0e0dc0995d48b36a19c47ab6047, type: 3}
       propertyPath: m_Name
       value: Chest_Helmet6_Forest
-      objectReference: {fileID: 0}
-    - target: {fileID: 2605596338054310236, guid: 19b7c0e0dc0995d48b36a19c47ab6047, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 2605596338054310236, guid: 19b7c0e0dc0995d48b36a19c47ab6047, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2605596338054310236, guid: 19b7c0e0dc0995d48b36a19c47ab6047, type: 3}
       propertyPath: _rewardItems.Array.size
@@ -76101,14 +76027,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1284279662}
     m_Modifications:
-    - target: {fileID: 3974971874912714233, guid: 53a32c6788c13564292d4b12a0be1897, type: 3}
-      propertyPath: _nearbySoundRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 3974971874912714233, guid: 53a32c6788c13564292d4b12a0be1897, type: 3}
-      propertyPath: _nearbySoundInterval
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 8854153704171783648, guid: 53a32c6788c13564292d4b12a0be1897, type: 3}
       propertyPath: m_Name
       value: Chest_Sword4_Forest

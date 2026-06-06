@@ -21,9 +21,20 @@ MonoBehaviour:
   bgmBoss: {fileID: 8300000, guid: d39171ec42e9a4facb48a1fdceed4e99, type: 3}
   buttonClick: {fileID: 8300000, guid: 5178cd83bcb582f4685155d7a049e2dc, type: 3}
   chestOpen: {fileID: 8300000, guid: 17cd2bcf67f7b4fc1928356ac433e374, type: 3}
-  waypointActivate: {fileID: 0}
+  waypointActivate: {fileID: 8300000, guid: 40dc1da9e33a3d248b53ca23b574c013, type: 3}
   goldSpend: {fileID: 8300000, guid: da2afefea6bfb814b979c52d20b461af, type: 3}
   noGold: {fileID: 8300000, guid: 079eb089989b12846b9db25a38d5d244, type: 3}
+  inventoryOpen: {fileID: 8300000, guid: 9df5f9f557e80494da045f24b6d7cbc9, type: 3}
+  inventoryClose: {fileID: 8300000, guid: 79de256383fc3d54499e16a90fedd7e7, type: 3}
+  chestNearbyLoop: {fileID: 8300000, guid: e9d8f2664d9270a4d9510c8ce3d011f2, type: 3}
+  optionMenuOpen: {fileID: 8300000, guid: 63359e520e4f23d418257a17f3e54a82, type: 3}
+  optionMenuClose: {fileID: 8300000, guid: 2a134809872a28f41a40f03d1792516f, type: 3}
+  itemCollect: {fileID: 8300000, guid: ec303e6b30f4b447abac9e0275d061a2, type: 3}
+  questUiOpen: {fileID: 8300000, guid: 9efbb02fd66ec834592f1595796805b4, type: 3}
+  questUiClose: {fileID: 8300000, guid: 1004de8c22cc3544b9005e2a267fca16, type: 3}
+  swordEquip: {fileID: 8300000, guid: f3a6c6c8c5aa2d5439257bd9e70507a1, type: 3}
+  shieldEquip: {fileID: 8300000, guid: 84dfce45eace26d4ca338ab85f8eaeff, type: 3}
+  armorEquip: {fileID: 8300000, guid: 1493d8d125421944c9c03ba81f48d30c, type: 3}
   playerAttackVoices:
   - {fileID: 8300000, guid: 470d889c25408494e9773c6dd5474701, type: 3}
   - {fileID: 8300000, guid: 2ea1a824a90d0ee4e860342fb02d5fc7, type: 3}
@@ -37,12 +48,14 @@ MonoBehaviour:
   - {fileID: 8300000, guid: bf18a9a35a67c174a90c7327f1b7ffa9, type: 3}
   - {fileID: 8300000, guid: 97c633a475666f04a8e0789af6e52447, type: 3}
   - {fileID: 8300000, guid: 2c31301e07220c644920a5a6eed7144a, type: 3}
-  playerDeath: {fileID: 0}
+  playerDeath: {fileID: 8300000, guid: 49a66d516f66ac140a8c9dd24a9b6d54, type: 3}
   dashes:
   - {fileID: 8300000, guid: 7049bd55acc6f6046a01b188702a4f9d, type: 3}
   - {fileID: 8300000, guid: 4bbc2c00c0c93a3498034f8724243aac, type: 3}
   - {fileID: 8300000, guid: 8dcbc27f40f7af54f83f3fab9ee53ab9, type: 3}
   levelUp: {fileID: 8300000, guid: fa9d581eb204a4c239bf9e57117a72d6, type: 3}
+  heal: {fileID: 8300000, guid: f0da06d6c5495c8449d72a3abd755363, type: 3}
+  healRefill: {fileID: 8300000, guid: a5745cbdb76ad44c9b4fc9ca5b12752e, type: 3}
   footsteps:
   - {fileID: 8300000, guid: 857e13957d17a074781d84f20553eea0, type: 3}
   - {fileID: 8300000, guid: 81f63607ae7227a4bb5e2acbbe967145, type: 3}

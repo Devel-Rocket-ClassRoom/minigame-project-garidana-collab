@@ -16,7 +16,7 @@ public class FloatingTextEffect : MonoBehaviour
     private Vector3 startPosition;
     private Color startColor;
 
-    public void Initialize(string text, Color color)
+    public void Initialize(string text, Color color, float fontSize = -1f)
     {
         if (textMesh == null)
         {
@@ -25,6 +25,11 @@ public class FloatingTextEffect : MonoBehaviour
 
         textMesh.text = text;
         textMesh.color = color;
+
+        if (fontSize > 0f)
+        {
+            textMesh.fontSize = fontSize;
+        }
 
         startPosition = transform.position;
         startColor = color;

@@ -18,6 +18,17 @@ public class SoundData : ScriptableObject
     public AudioClip waypointActivate;
     public AudioClip goldSpend;
     public AudioClip noGold;
+    public AudioClip inventoryOpen;
+    public AudioClip inventoryClose;
+    public AudioClip chestNearbyLoop;
+    public AudioClip optionMenuOpen;
+    public AudioClip optionMenuClose;
+    public AudioClip itemCollect;
+    public AudioClip questUiOpen;
+    public AudioClip questUiClose;
+    public AudioClip swordEquip;
+    public AudioClip shieldEquip;
+    public AudioClip armorEquip;
 
     [Header("Player")]
     public AudioClip[] playerAttackVoices;
@@ -26,6 +37,8 @@ public class SoundData : ScriptableObject
     public AudioClip playerDeath;
     public AudioClip[] dashes;
     public AudioClip levelUp;
+    public AudioClip heal;
+    public AudioClip healRefill;
     public AudioClip[] footsteps;
 
     [Header("Monster")]

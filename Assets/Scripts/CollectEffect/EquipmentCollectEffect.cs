@@ -113,6 +113,7 @@ public class EquipmentCollectEffect : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance?.PlaySFX(SoundManager.SFXType.ItemCollect);
         }
 
         Destroy(gameObject);

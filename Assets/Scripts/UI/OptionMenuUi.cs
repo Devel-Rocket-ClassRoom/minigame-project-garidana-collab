@@ -76,6 +76,7 @@ public class OptionMenuUi : MonoBehaviour
     {
         bool nextActive = !optionPanel.activeSelf;
         optionPanel.SetActive(nextActive);
+        PlayMenuSound(nextActive);
 
         // 메뉴 열리면 게임 멈춤 기능
         if (nextActive)
@@ -90,8 +91,19 @@ public class OptionMenuUi : MonoBehaviour
 
     private void CloseMenu()
     {
+        bool wasOpen = optionPanel.activeSelf;
         optionPanel.SetActive(false);
+        if (wasOpen)
+        {
+            PlayMenuSound(false);
+        }
         PauseManager.Resume();
+    }
+
+    private static void PlayMenuSound(bool opening)
+    {
+        SoundManager.Instance?.PlaySFX(
+            opening ? SoundManager.SFXType.OptionMenuOpen : SoundManager.SFXType.OptionMenuClose);
     }
 
     private void QuitGame()

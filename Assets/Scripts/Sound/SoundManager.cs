@@ -30,8 +30,11 @@ public class SoundManager : MonoBehaviour
     private AudioSource _currentBgmSource;
     private AudioSource _nextBgmSource;
     private AudioSource _sfxSource;
+    private AudioSource _loopSfxSource;
     private Coroutine _bgmFadeCoroutine;
+    private Coroutine _loopSfxCoroutine;
     private BGMType? _currentBgmType;
+    private SFXType? _currentLoopSfxType;
 
     // Awake보다 먼저 할당되도록 static으로 보관
     private static AudioMixer _pendingMixer;
@@ -44,12 +47,25 @@ public class SoundManager : MonoBehaviour
         WaypointActivate,
         GoldSpend,
         NoGold,
+        InventoryOpen,
+        InventoryClose,
+        ChestNearbyLoop,
+        OptionMenuOpen,
+        OptionMenuClose,
+        ItemCollect,
+        QuestUiOpen,
+        QuestUiClose,
+        SwordEquip,
+        ShieldEquip,
+        ArmorEquip,
         PlayerAttackVoice,
         SwordSwing,
         PlayerHit,
         PlayerDeath,
         Dash,
         LevelUp,
+        Heal,
+        HealRefill,
         Footstep,
         MonsterHit,
         MonsterDeath
@@ -132,6 +148,9 @@ public class SoundManager : MonoBehaviour
         _sfxSource           = gameObject.AddComponent<AudioSource>();
         _sfxSource.loop      = false;
         _sfxSource.playOnAwake = false;
+        _loopSfxSource = gameObject.AddComponent<AudioSource>();
+        _loopSfxSource.loop = false;
+        _loopSfxSource.playOnAwake = false;
 
         // AudioMixer 그룹 연결
         if (_audioMixer != null)
@@ -145,7 +164,11 @@ public class SoundManager : MonoBehaviour
                 _bgmSourceB.outputAudioMixerGroup = bgmGroups[0];
             }
 
-            if (sfxGroups.Length > 0) _sfxSource.outputAudioMixerGroup = sfxGroups[0];
+            if (sfxGroups.Length > 0)
+            {
+                _sfxSource.outputAudioMixerGroup = sfxGroups[0];
+                _loopSfxSource.outputAudioMixerGroup = sfxGroups[0];
+            }
         }
     }
 
@@ -308,6 +331,58 @@ public class SoundManager : MonoBehaviour
         _sfxSource.PlayOneShot(clip);
     }
 
+    public void PlayLoopSFX(SFXType type, float interval = 3f)
+    {
+        AudioClip clip = GetSFXClip(type);
+        if (clip == null)
+        {
+            Debug.LogWarning($"[SoundManager] PlayLoopSFX 클립 없음: {type} (SoundData에 클립이 할당됐는지 확인하세요)");
+            return;
+        }
+
+        if (_currentLoopSfxType == type && _loopSfxCoroutine != null)
+        {
+            return;
+        }
+
+        StopCurrentLoopSFX();
+        _currentLoopSfxType = type;
+        _loopSfxCoroutine = StartCoroutine(RepeatSFX(clip, interval));
+    }
+
+    public void StopLoopSFX(SFXType type)
+    {
+        if (_currentLoopSfxType != type)
+        {
+            return;
+        }
+
+        StopCurrentLoopSFX();
+    }
+
+    private IEnumerator RepeatSFX(AudioClip clip, float interval)
+    {
+        float repeatDelay = Mathf.Max(clip.length, interval);
+
+        while (true)
+        {
+            _loopSfxSource.PlayOneShot(clip);
+            yield return new WaitForSecondsRealtime(repeatDelay);
+        }
+    }
+
+    private void StopCurrentLoopSFX()
+    {
+        if (_loopSfxCoroutine != null)
+        {
+            StopCoroutine(_loopSfxCoroutine);
+            _loopSfxCoroutine = null;
+        }
+
+        _loopSfxSource.Stop();
+        _currentLoopSfxType = null;
+    }
+
     private AudioClip GetSFXClip(SFXType type)
     {
         if (_soundData == null)
@@ -322,12 +397,25 @@ public class SoundManager : MonoBehaviour
             SFXType.WaypointActivate => _soundData.waypointActivate,
             SFXType.GoldSpend        => _soundData.goldSpend,
             SFXType.NoGold           => _soundData.noGold,
+            SFXType.InventoryOpen     => _soundData.inventoryOpen,
+            SFXType.InventoryClose    => _soundData.inventoryClose,
+            SFXType.ChestNearbyLoop   => _soundData.chestNearbyLoop,
+            SFXType.OptionMenuOpen    => _soundData.optionMenuOpen,
+            SFXType.OptionMenuClose   => _soundData.optionMenuClose,
+            SFXType.ItemCollect       => _soundData.itemCollect,
+            SFXType.QuestUiOpen       => _soundData.questUiOpen,
+            SFXType.QuestUiClose      => _soundData.questUiClose,
+            SFXType.SwordEquip        => _soundData.swordEquip,
+            SFXType.ShieldEquip       => _soundData.shieldEquip,
+            SFXType.ArmorEquip        => _soundData.armorEquip,
             SFXType.PlayerAttackVoice=> GetRandomClip(_soundData.playerAttackVoices),
             SFXType.SwordSwing       => GetRandomClip(_soundData.swordSwings),
             SFXType.PlayerHit        => GetRandomClip(_soundData.playerHits),
             SFXType.PlayerDeath      => _soundData.playerDeath,
             SFXType.Dash             => GetRandomClip(_soundData.dashes),
             SFXType.LevelUp          => _soundData.levelUp,
+            SFXType.Heal             => _soundData.heal,
+            SFXType.HealRefill       => _soundData.healRefill,
             SFXType.Footstep         => GetRandomClip(_soundData.footsteps),
             SFXType.MonsterHit       => _soundData.monsterHit,
             SFXType.MonsterDeath     => _soundData.monsterDeath,
