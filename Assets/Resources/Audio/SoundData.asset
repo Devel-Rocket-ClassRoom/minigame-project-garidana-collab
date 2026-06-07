@@ -22,6 +22,7 @@ MonoBehaviour:
   buttonClick: {fileID: 8300000, guid: 5178cd83bcb582f4685155d7a049e2dc, type: 3}
   chestOpen: {fileID: 8300000, guid: 17cd2bcf67f7b4fc1928356ac433e374, type: 3}
   waypointActivate: {fileID: 8300000, guid: 40dc1da9e33a3d248b53ca23b574c013, type: 3}
+  waypointUse: {fileID: 8300000, guid: 92f4d0c3cbc4ec94e8205b2a31eaf712, type: 3}
   goldSpend: {fileID: 8300000, guid: da2afefea6bfb814b979c52d20b461af, type: 3}
   noGold: {fileID: 8300000, guid: 079eb089989b12846b9db25a38d5d244, type: 3}
   inventoryOpen: {fileID: 8300000, guid: 9df5f9f557e80494da045f24b6d7cbc9, type: 3}

@@ -1006,6 +1006,7 @@ GameObject:
   m_Component:
   - component: {fileID: 729862319}
   - component: {fileID: 729862320}
+  - component: {fileID: 729862321}
   m_Layer: 5
   m_Name: VideoPlayer
   m_TagString: Untagged
@@ -1062,12 +1063,24 @@ VideoPlayer:
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_SkipOnDrop: 1
   m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
+--- !u!114 &729862321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 729862318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c69e8d3e591c646bd588076b878c08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TitleVideoController
 --- !u!1 &769623662
 GameObject:
   m_ObjectHideFlags: 0
@@ -2048,7 +2061,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'v 0.3.5
+  m_text: 'v 0.3.6
 
 '
   m_isRightToLeft: 0

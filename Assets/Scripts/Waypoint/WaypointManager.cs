@@ -239,6 +239,7 @@ public class WaypointManager : MonoBehaviour
 
         playerStats.TeleportTo(spawnPoint.position);
         SetLastActivatedWaypoint(destinationWaypointId);
+        SoundManager.Instance?.PlaySFX(SoundManager.SFXType.WaypointUse);
         Debug.Log($"웨이포인트 텔레포트: {destinationWaypointId}");
         return true;
     }

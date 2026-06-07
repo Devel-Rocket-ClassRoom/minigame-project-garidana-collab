@@ -16,6 +16,7 @@ public class SoundData : ScriptableObject
     public AudioClip buttonClick;
     public AudioClip chestOpen;
     public AudioClip waypointActivate;
+    public AudioClip waypointUse;
     public AudioClip goldSpend;
     public AudioClip noGold;
     public AudioClip inventoryOpen;
