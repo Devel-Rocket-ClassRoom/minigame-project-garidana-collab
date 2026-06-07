@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orc_Chieftain_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uC624\uD06C \uC871\uC7A5"
-  maxHp: 1500
+  maxHp: 2500
   attackDamage: 140
   moveSpeed: 6
   detectionRange: 13

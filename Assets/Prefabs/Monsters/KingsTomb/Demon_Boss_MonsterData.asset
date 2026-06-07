@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Demon_Boss_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uBD88\uC54C (Bul' Al)"
-  maxHp: 800
+  maxHp: 3500
   attackDamage: 250
   moveSpeed: 5
   detectionRange: 8
@@ -21,6 +21,6 @@ MonoBehaviour:
   attackCooldown: 2
   goldMin: 300
   goldMax: 400
-  expReward: 250
+  expReward: 450
   questTargetId: 
   questDrops: []

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DeathMage_MonsterData
   m_EditorClassIdentifier: Assembly-CSharp::MonsterData
   monsterName: "\uB370\uC2A4 \uBA54\uC774\uC9C0"
-  maxHp: 400
+  maxHp: 600
   attackDamage: 100
   moveSpeed: 4
   detectionRange: 8
