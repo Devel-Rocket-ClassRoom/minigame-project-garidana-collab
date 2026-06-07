@@ -113,6 +113,15 @@ public class SaveManager : MonoBehaviour
     private const int AesKeySizeBytes = 32;
     private const int HmacKeySizeBytes = 32;
     private const string SaveEncryptionSecret = "ProjectOrigin_SaveEncryption_v1_9F4C3A44C1E54F32A7E0D6D97B708A22";
+
+    // PBKDF2 키 유도(12만회 반복, 수백 ms)는 비용이 크므로 1회만 수행하고 캐싱한다.
+    // 비밀번호가 고정값이라 솔트 재사용은 안전하며, AES-CBC 보안은 매 저장마다 새로 생성하는 IV가 보장한다.
+    private static readonly object KeyCacheLock = new object();
+    private static byte[] _passwordBytes;
+    private static byte[] _cachedSalt;
+    private static int _cachedIterations;
+    private static byte[] _cachedEncryptionKey;
+    private static byte[] _cachedHmacKey;
 #if UNITY_EDITOR
     private static readonly bool LoadSaveInEditor = true;
 #endif
@@ -147,7 +156,9 @@ public class SaveManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         _savePath = Path.Combine(Application.persistentDataPath, SaveFileName);
+        CachePasswordBytes();
         LoadFromDisk();
+        WarmupKeysInBackground();
     }
 
     private void OnEnable()
@@ -319,10 +330,9 @@ public class SaveManager : MonoBehaviour
 
     private static string EncryptSaveJson(string json)
     {
-        byte[] salt = GenerateRandomBytes(SaltSizeBytes);
+        GetOrCreateCachedKeys(out byte[] salt, out int keyIterations, out byte[] encryptionKey, out byte[] hmacKey);
         byte[] iv;
         byte[] cipherText;
-        DeriveKeys(salt, KeyDerivationIterations, out byte[] encryptionKey, out byte[] hmacKey);
 
         using (Aes aes = Aes.Create())
         {
@@ -341,14 +351,14 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        byte[] authenticatedData = BuildAuthenticatedData(EncryptedSaveVersion, KeyDerivationIterations, salt, iv, cipherText);
+        byte[] authenticatedData = BuildAuthenticatedData(EncryptedSaveVersion, keyIterations, salt, iv, cipherText);
         byte[] hmac = ComputeHmac(hmacKey, authenticatedData);
 
         EncryptedSavePayload payload = new EncryptedSavePayload
         {
             format = EncryptedSaveFormat,
             version = EncryptedSaveVersion,
-            iterations = KeyDerivationIterations,
+            iterations = keyIterations,
             salt = Convert.ToBase64String(salt),
             iv = Convert.ToBase64String(iv),
             ciphertext = Convert.ToBase64String(cipherText),
@@ -389,7 +399,7 @@ public class SaveManager : MonoBehaviour
             byte[] cipherText = Convert.FromBase64String(payload.ciphertext);
             byte[] expectedHmac = Convert.FromBase64String(payload.hmac);
 
-            DeriveKeys(salt, payload.iterations, out byte[] encryptionKey, out byte[] hmacKey);
+            GetKeysForSalt(salt, payload.iterations, out byte[] encryptionKey, out byte[] hmacKey);
             byte[] authenticatedData = BuildAuthenticatedData(payload.version, payload.iterations, salt, iv, cipherText);
             byte[] actualHmac = ComputeHmac(hmacKey, authenticatedData);
             if (!FixedTimeEquals(expectedHmac, actualHmac))
@@ -445,9 +455,104 @@ public class SaveManager : MonoBehaviour
         return bytes;
     }
 
+    /// <summary>
+    /// Application.* API는 메인 스레드 전용이므로 비밀번호 바이트를 미리 캡처해 둔다.
+    /// Awake에서 호출되어 이후 백그라운드 스레드에서도 키 유도가 가능하다.
+    /// </summary>
+    private static void CachePasswordBytes()
+    {
+        if (_passwordBytes == null)
+        {
+            _passwordBytes = Encoding.UTF8.GetBytes($"{Application.companyName}|{Application.productName}|{SaveEncryptionSecret}");
+        }
+    }
+
+    /// <summary>
+    /// 세이브 파일이 없어 로드 시점에 키가 캐싱되지 않은 경우,
+    /// 첫 저장에서 렉이 걸리지 않도록 백그라운드에서 미리 키를 유도한다.
+    /// </summary>
+    private static void WarmupKeysInBackground()
+    {
+        lock (KeyCacheLock)
+        {
+            if (_cachedEncryptionKey != null)
+            {
+                return;
+            }
+        }
+
+        System.Threading.Tasks.Task.Run(() =>
+        {
+            try
+            {
+                GetOrCreateCachedKeys(out _, out _, out _, out _);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Save] 암호화 키 사전 준비 실패: {e.Message}");
+            }
+        });
+    }
+
+    /// <summary>
+    /// 캐싱된 키를 반환하고, 없으면 새 솔트로 1회 유도 후 캐싱한다. (저장 경로에서 사용)
+    /// </summary>
+    private static void GetOrCreateCachedKeys(out byte[] salt, out int iterations, out byte[] encryptionKey, out byte[] hmacKey)
+    {
+        lock (KeyCacheLock)
+        {
+            if (_cachedEncryptionKey == null)
+            {
+                byte[] newSalt = GenerateRandomBytes(SaltSizeBytes);
+                DeriveKeys(newSalt, KeyDerivationIterations, out byte[] newEncryptionKey, out byte[] newHmacKey);
+                _cachedSalt = newSalt;
+                _cachedIterations = KeyDerivationIterations;
+                _cachedEncryptionKey = newEncryptionKey;
+                _cachedHmacKey = newHmacKey;
+            }
+
+            salt = _cachedSalt;
+            iterations = _cachedIterations;
+            encryptionKey = _cachedEncryptionKey;
+            hmacKey = _cachedHmacKey;
+        }
+    }
+
+    /// <summary>
+    /// 주어진 솔트에 대한 키를 반환한다. 캐시와 일치하면 재사용하고,
+    /// 아니면 유도 후 캐시를 갱신해 이후 저장에서 재유도를 피한다. (로드 경로에서 사용)
+    /// </summary>
+    private static void GetKeysForSalt(byte[] salt, int iterations, out byte[] encryptionKey, out byte[] hmacKey)
+    {
+        lock (KeyCacheLock)
+        {
+            if (_cachedEncryptionKey != null
+                && _cachedIterations == iterations
+                && _cachedSalt != null
+                && FixedTimeEquals(_cachedSalt, salt))
+            {
+                encryptionKey = _cachedEncryptionKey;
+                hmacKey = _cachedHmacKey;
+                return;
+            }
+
+            DeriveKeys(salt, iterations, out encryptionKey, out hmacKey);
+            _cachedSalt = (byte[])salt.Clone();
+            _cachedIterations = iterations;
+            _cachedEncryptionKey = encryptionKey;
+            _cachedHmacKey = hmacKey;
+        }
+    }
+
     private static void DeriveKeys(byte[] salt, int iterations, out byte[] encryptionKey, out byte[] hmacKey)
     {
-        byte[] password = Encoding.UTF8.GetBytes($"{Application.companyName}|{Application.productName}|{SaveEncryptionSecret}");
+        byte[] password = _passwordBytes;
+        if (password == null)
+        {
+            CachePasswordBytes();
+            password = _passwordBytes;
+        }
+
         using (Rfc2898DeriveBytes deriveBytes = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA256))
         {
             encryptionKey = deriveBytes.GetBytes(AesKeySizeBytes);
