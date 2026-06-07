@@ -126,7 +126,7 @@ public class QuestManager : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    public bool CompleteCurrentQuestForDebug()
+    public bool MarkCurrentQuestReadyForDebug()
     {
         if (currentQuest == null)
         {
@@ -140,7 +140,7 @@ public class QuestManager : MonoBehaviour
             QuestReadyToComplete?.Invoke(currentQuest);
         }
 
-        return CompleteQuest(currentQuest);
+        return true;
     }
 #endif
 

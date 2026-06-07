@@ -57,12 +57,12 @@ public class PlayerLevelDebugInput : MonoBehaviour
 
         if (Input.GetKeyDown(_completeQuestKey))
         {
-            bool completed = QuestManager.Instance != null
-                && QuestManager.Instance.CompleteCurrentQuestForDebug();
+            bool readyToComplete = QuestManager.Instance != null
+                && QuestManager.Instance.MarkCurrentQuestReadyForDebug();
 
-            Debug.Log(completed
-                ? "Current quest completed by debug input."
-                : "No current quest to complete.");
+            Debug.Log(readyToComplete
+                ? "Current quest objectives completed by debug input. Talk to the NPC to complete the quest."
+                : "No current quest objectives to complete.");
         }
     }
 
