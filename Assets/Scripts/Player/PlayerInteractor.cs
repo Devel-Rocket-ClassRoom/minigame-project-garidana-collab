@@ -256,7 +256,8 @@ public class PlayerInteractor : MonoBehaviour
             || ShopUi.BlocksGlobalShortcuts
             || OptionMenuUi.IsAnyOpen()
             || QuestUi.IsAnyOpen()
-            || TownTutorialUi.IsAnyOpen();
+            || TownTutorialUi.IsAnyOpen()
+            || EndGameUi.IsAnyOpen();
     }
 
     private int GetSelectionIndex(Keyboard keyboard)

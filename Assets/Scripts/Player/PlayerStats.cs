@@ -355,6 +355,11 @@ public class PlayerStats : MonoBehaviour, IDamageable
     }
 #endif
 
+    public void InstantKill()
+    {
+        Die();
+    }
+
     private void MoveToPosition(Vector3 position)
     {
         transform.position = position;

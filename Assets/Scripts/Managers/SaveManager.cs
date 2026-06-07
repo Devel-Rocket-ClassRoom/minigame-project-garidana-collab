@@ -127,6 +127,7 @@ public class SaveManager : MonoBehaviour
 #endif
 
     public static SaveManager Instance { get; private set; }
+    public bool IsApplyingSave => _isApplyingSave;
 
     private SaveData _saveData;
     private string _savePath;

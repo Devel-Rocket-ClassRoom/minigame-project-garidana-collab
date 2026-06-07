@@ -5,18 +5,15 @@ using TMPro;
 
 public class GameOverUi : MonoBehaviour
 {
-    [SerializeField] 
-    private PlayerStats playerStats;
-    [SerializeField]
-    private GameObject gameOverPanel;
-    [SerializeField]
-    private Button titleButton;
-    [SerializeField]
-    private float showDelay = 2f;
-    [SerializeField]
-    private float respawnDelay = 2f;
-    [SerializeField]
-    private TextMeshProUGUI respawnCountDownText;
+    [SerializeField] private PlayerStats playerStats;
+    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject gameOverText;
+    [SerializeField] private GameObject gameOverWarningText;
+    [SerializeField] private Button titleButton;
+    [SerializeField] private float respawnDelay = 2f;
+    [SerializeField] private TextMeshProUGUI respawnCountDownText;
+
+    public static bool IsSkyDeath { get; set; }
 
     private bool _isShown;
     private Coroutine _respawnRoutine;
@@ -25,29 +22,30 @@ public class GameOverUi : MonoBehaviour
     {
         gameOverPanel.SetActive(false);
         titleButton.interactable = false;
-
         titleButton.onClick.AddListener(RespawnPlayer);
     }
 
     private void OnEnable()
     {
         if (playerStats != null)
-        {
             playerStats.Died += HandlePlayerDied;
-        }
     }
 
     private void OnDisable()
     {
         if (playerStats != null)
-        {
             playerStats.Died -= HandlePlayerDied;
-        }
     }
 
     private void HandlePlayerDied()
     {
         if (_isShown) return;
+
+        bool skyDeath = IsSkyDeath;
+        IsSkyDeath = false;
+
+        if (gameOverText != null) gameOverText.SetActive(!skyDeath);
+        if (gameOverWarningText != null) gameOverWarningText.SetActive(skyDeath);
 
         _isShown = true;
         _respawnRoutine = StartCoroutine(ShowAndEnableRespawnAfterDelay());
@@ -59,11 +57,9 @@ public class GameOverUi : MonoBehaviour
         titleButton.interactable = false;
 
         float remaining = respawnDelay;
-
         while (remaining > 0f)
         {
-            int seconds = Mathf.CeilToInt(remaining);
-            respawnCountDownText.text = $"{seconds}";
+            respawnCountDownText.text = $"{Mathf.CeilToInt(remaining)}";
             remaining -= Time.unscaledDeltaTime;
             yield return null;
         }
@@ -75,10 +71,7 @@ public class GameOverUi : MonoBehaviour
 
     private void RespawnPlayer()
     {
-        if (playerStats == null)
-        {
-            return;
-        }
+        if (playerStats == null) return;
 
         Transform spawnPoint = WaypointManager.Instance != null
             ? WaypointManager.Instance.GetRespawnPoint()
@@ -108,11 +101,8 @@ public class GameOverUi : MonoBehaviour
             if (gameOverUis[i] != null
                 && gameOverUis[i].gameOverPanel != null
                 && gameOverUis[i].gameOverPanel.activeSelf)
-            {
                 return true;
-            }
         }
-
         return false;
     }
 }
