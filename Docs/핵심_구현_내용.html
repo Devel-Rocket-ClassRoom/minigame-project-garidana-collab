@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>김경일의 모험 : Origin — 핵심 구현 내용</title>
+<style>
+  :root {
+    --bg: #0e0e14;
+    --bg2: #16161f;
+    --bg3: #1e1e2a;
+    --border: #2a2a3a;
+    --accent: #7c6af7;
+    --accent2: #4fc3f7;
+    --accent3: #81c784;
+    --accent4: #ffb74d;
+    --accent5: #f48fb1;
+    --accent6: #ce93d8;
+    --text: #e0e0f0;
+    --text2: #9898b8;
+    --text3: #5c5c7a;
+    --code-bg: #0a0a12;
+    --code-border: #2a2a40;
+    --tag-bg: #1a1a28;
+    --radius: 12px;
+    --radius-sm: 7px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* ─── 헤더 ─── */
+  header {
+    background: linear-gradient(135deg, #12121c 0%, #1a1230 50%, #12121c 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 0 40px;
+    text-align: center;
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(124,106,247,0.15);
+    border: 1px solid rgba(124,106,247,0.4);
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 99px;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #fff;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    margin-top: 12px;
+    color: var(--text2);
+    font-size: 14px;
+  }
+  header p strong { color: var(--text); }
+
+  /* ─── 목차 ─── */
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 28px 24px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+  }
+  .toc a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 99px;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .toc a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(124,106,247,0.08);
+  }
+  .toc a .num {
+    background: var(--accent);
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ─── 레이아웃 ─── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+
+  /* ─── 섹션 ─── */
+  section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .section-title-group h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .section-title-group p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 3px;
+  }
+
+  .section-body {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* ─── 색상 구분 ─── */
+  .c1 { background: linear-gradient(135deg, #7c6af7, #a78bfa); }
+  .c2 { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+  .c3 { background: linear-gradient(135deg, #10b981, #34d399); }
+  .c4 { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+  .c5 { background: linear-gradient(135deg, #ec4899, #f472b6); }
+  .c6 { background: linear-gradient(135deg, #8b5cf6, #c084fc); }
+
+  /* ─── 서브섹션 ─── */
+  .sub-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sub-section h3::before {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .s2 h3::before { background: #f59e0b; }
+  .s3 h3::before { background: #10b981; }
+  .s4 h3::before { background: #06b6d4; }
+  .s5 h3::before { background: #ec4899; }
+  .s6 h3::before { background: #8b5cf6; }
+
+  .sub-section p {
+    color: var(--text2);
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .sub-section p:last-child { margin-bottom: 0; }
+
+  /* ─── 코드 블록 ─── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    font-size: 13px;
+  }
+  .code-label {
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--code-border);
+    padding: 8px 16px;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.5px;
+    font-family: 'Consolas', 'Fira Code', monospace;
+  }
+  pre {
+    padding: 16px;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+  code {
+    font-family: 'Consolas', 'Fira Code', 'D2Coding', monospace;
+    color: #c9d1d9;
+  }
+
+  /* 신택스 하이라이트 */
+  .kw { color: #ff79c6; }          /* keyword */
+  .ty { color: #8be9fd; }          /* type */
+  .fn { color: #50fa7b; }          /* function */
+  .str { color: #f1fa8c; }         /* string */
+  .num { color: #bd93f9; }         /* number */
+  .cm { color: #6272a4; font-style: italic; } /* comment */
+  .op { color: #ff79c6; }          /* operator */
+  .prop { color: #ffb86c; }        /* property */
+  .var { color: #f8f8f2; }         /* variable */
+
+  /* ─── 상태 플로우 ─── */
+  .state-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+  .state-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+  }
+  .state-item.active { border-color: var(--accent); color: var(--accent); background: rgba(124,106,247,0.1); }
+  .state-arrow { color: var(--text3); font-size: 16px; }
+
+  /* ─── 그리드 ─── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* ─── 데이터 테이블 ─── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .data-table th {
+    background: var(--bg3);
+    color: var(--text2);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text2);
+    vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table .hl { color: var(--text); font-weight: 600; }
+  .data-table .tag {
+    display: inline-block;
+    background: rgba(124,106,247,0.15);
+    color: var(--accent);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .data-table .tag.green { background: rgba(16,185,129,0.15); color: #34d399; }
+  .data-table .tag.orange { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .data-table .tag.red { background: rgba(239,68,68,0.15); color: #f87171; }
+  .data-table .tag.blue { background: rgba(6,182,212,0.15); color: #22d3ee; }
+
+  /* ─── 인포 박스 ─── */
+  .info-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.75;
+  }
+  .info-box .icon { font-size: 18px; flex-shrink: 0; padding-top: 1px; }
+
+  /* ─── 파이프라인 ─── */
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .pipeline-step {
+    flex: 1;
+    min-width: 140px;
+    padding: 14px 16px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .pipeline-step:last-child { border-right: none; }
+  .pipeline-step .ps-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .pipeline-step .ps-fn {
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    color: #50fa7b;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .pipeline-step .ps-desc {
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* ─── 푸터 ─── */
+  footer {
+    text-align: center;
+    padding: 32px;
+    color: var(--text3);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Unity 6.3 · 1인 3주 · 액션 RPG</div>
+  <h1>김경일의 모험 <span>: Origin</span></h1>
+  <p><strong>핵심 구현 내용</strong> — 퀘스트 · 공격강화 · 세이브/로드 · 웨이포인트 · 인벤토리/장비 · 라이팅/사운드</p>
+</header>
+
+<nav class="toc">
+  <a href="#quest"><span class="num">1</span>퀘스트 시스템</a>
+  <a href="#attack"><span class="num">2</span>공격 강화 시스템</a>
+  <a href="#save"><span class="num">3</span>세이브 / 로드</a>
+  <a href="#waypoint"><span class="num">4</span>웨이포인트 시스템</a>
+  <a href="#inventory"><span class="num">5</span>인벤토리 &amp; 장비</a>
+  <a href="#lighting"><span class="num">6</span>라이팅 &amp; 사운드</a>
+</nav>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════
+       ① 퀘스트 시스템
+  ══════════════════════════════════ -->
+  <section id="quest">
+    <div class="section-header">
+      <div class="section-num c1">①</div>
+      <div class="section-title-group">
+        <h2>퀘스트 시스템</h2>
+        <p>ScriptableObject Linked-List 체인 · 목표 타입 3종 · 싱글톤 상태 관리</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="sub-section">
+        <h3>ScriptableObject Linked-List 구조</h3>
+        <p>
+          <code>QuestData</code>는 <code>ScriptableObject</code>로 만들어져 Unity 에디터에서 에셋 파일로 관리됩니다.
+          <code>PrerequisiteQuest</code>와 <code>NextQuest</code> 필드로 퀘스트 에셋끼리 직접 참조하는
+          <strong>Linked-List 구조</strong>를 형성합니다. 문자열 ID 매핑이 필요 없고,
+          인스펙터에서 에셋을 드래그하면 체인이 완성됩니다.
+        </p>
+        <div class="code-block">
+          <div class="code-label">QuestData.cs — ScriptableObject 에셋 정의</div>
+<pre><code><span class="kw">[CreateAssetMenu(fileName = </span><span class="str">"QuestData"</span><span class="kw">, menuName = </span><span class="str">"Scriptable Objects/QuestData"</span><span class="kw">)]</span>
+<span class="kw">public class</span> <span class="ty">QuestData</span> : <span class="ty">ScriptableObject</span>
+{
+    <span class="cm">// 목표 정의</span>
+    [<span class="ty">SerializeField</span>] <span class="kw">private</span> <span class="ty">QuestObjectiveType</span> <span class="prop">objectiveType</span>; <span class="cm">// KillMonster / CollectItem / Interact</span>
+    [<span class="ty">SerializeField</span>] <span class="kw">private</span> <span class="ty">string</span> <span class="prop">targetId</span>;
+    [<span class="ty">SerializeField</span>] <span class="kw">private</span> <span class="ty">int</span> <span class="prop">requiredAmount</span> = <span class="num">1</span>;
+
+    <span class="cm">// ★ Linked-List 체인 — 에셋 직접 참조</span>
+    [<span class="ty">SerializeField</span>] <span class="kw">private</span> <span class="ty">QuestData</span> <span class="prop">prerequisiteQuest</span>;  <span class="cm">// 선행 퀘스트</span>
+    [<span class="ty">SerializeField</span>] <span class="kw">private</span> <span class="ty">QuestData</span> <span class="prop">nextQuest</span>;           <span class="cm">// 다음 퀘스트</span>
+
+    <span class="cm">// 보상</span>
+    [<span class="ty">SerializeField</span>] <span class="kw">private</span> <span class="ty">QuestReward</span> <span class="prop">reward</span>;          <span class="cm">// Gold · EXP · Level</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>상태 전환 (5단계)</h3>
+        <div class="state-flow">
+          <div class="state-item">LOCKED<br><small>선행 미완료</small></div>
+          <span class="state-arrow">→</span>
+          <div class="state-item active">AVAILABLE<br><small>수락 가능</small></div>
+          <span class="state-arrow">→</span>
+          <div class="state-item">IN PROGRESS<br><small>진행 중</small></div>
+          <span class="state-arrow">→</span>
+          <div class="state-item">READY TO COMPLETE<br><small>목표 달성</small></div>
+          <span class="state-arrow">→</span>
+          <div class="state-item">COMPLETED<br><small>완료 → 해금</small></div>
+        </div>
+        <br>
+        <div class="code-block">
+          <div class="code-label">QuestManager.cs — GetQuestState()</div>
+<pre><code><span class="kw">public</span> <span class="ty">QuestState</span> <span class="fn">GetQuestState</span>(<span class="ty">QuestData</span> quest)
+{
+    <span class="kw">if</span> (<span class="fn">IsCompleted</span>(quest))               <span class="kw">return</span> <span class="ty">QuestState</span>.Completed;
+    <span class="kw">if</span> (currentQuest == quest)
+        <span class="kw">return</span> <span class="fn">IsCurrentQuestComplete</span>() ? <span class="ty">QuestState</span>.ReadyToComplete
+                                         : <span class="ty">QuestState</span>.InProgress;
+    <span class="cm">// 선행 미완료이거나 다른 퀘스트 진행 중 → Locked</span>
+    <span class="kw">if</span> (!<span class="fn">IsUnlocked</span>(quest) || currentQuest != <span class="kw">null</span>)
+        <span class="kw">return</span> <span class="ty">QuestState</span>.Locked;
+    <span class="kw">return</span> <span class="ty">QuestState</span>.Available;
+}
+
+<span class="kw">private bool</span> <span class="fn">IsUnlocked</span>(<span class="ty">QuestData</span> quest)
+{
+    <span class="ty">QuestData</span> prerequisite = quest.PrerequisiteQuest;
+    <span class="cm">// 선행이 없거나 완료됐으면 해금</span>
+    <span class="kw">return</span> prerequisite == <span class="kw">null</span> || <span class="fn">IsCompleted</span>(prerequisite);
+}</code></pre>
+        </div>
+        <p style="margin-top:12px;"><code>currentQuest != null</code> 조건이 <strong>동시에 하나의 퀘스트만 진행</strong>되도록 보장합니다.</p>
+      </div>
+
+      <div class="sub-section">
+        <h3>목표 타입 3종 — 진행 보고 메커니즘</h3>
+        <div class="code-block">
+          <div class="code-label">QuestManager.cs — ReportProgress()</div>
+<pre><code><span class="cm">// 각 시스템에서 타입별로 호출</span>
+<span class="kw">public void</span> <span class="fn">ReportKill</span>(<span class="ty">string</span> monsterId)      { <span class="fn">ReportProgress</span>(<span class="ty">QuestObjectiveType</span>.KillMonster, monsterId, <span class="num">1</span>); }
+<span class="kw">public void</span> <span class="fn">ReportItemCollected</span>(<span class="ty">string</span> itemId) { <span class="fn">ReportProgress</span>(<span class="ty">QuestObjectiveType</span>.CollectItem, itemId, amount); }
+<span class="kw">public void</span> <span class="fn">ReportInteraction</span>(<span class="ty">string</span> targetId) { <span class="fn">ReportProgress</span>(<span class="ty">QuestObjectiveType</span>.Interact, targetId, <span class="num">1</span>); }
+
+<span class="kw">private void</span> <span class="fn">ReportProgress</span>(<span class="ty">QuestObjectiveType</span> type, <span class="ty">string</span> targetId, <span class="ty">int</span> amount)
+{
+    <span class="cm">// 현재 퀘스트 목표 타입과 TargetId 모두 일치할 때만 카운트</span>
+    <span class="kw">if</span> (!<span class="fn">IsCurrentQuestTarget</span>(type, targetId) || amount &lt;= <span class="num">0</span>) <span class="kw">return</span>;
+    <span class="kw">if</span> (<span class="fn">IsCurrentQuestComplete</span>()) <span class="kw">return</span>;
+
+    currentAmount = <span class="ty">Mathf</span>.<span class="fn">Min</span>(currentAmount + amount, currentQuest.RequiredAmount);
+    <span class="prop">QuestProgressChanged</span>?.Invoke(currentQuest, currentAmount, currentQuest.RequiredAmount);
+
+    <span class="kw">if</span> (<span class="fn">IsCurrentQuestComplete</span>())
+        <span class="prop">QuestReadyToComplete</span>?.Invoke(currentQuest);   <span class="cm">// UI에 "완료" 버튼 표시</span>
+}</code></pre>
+        </div>
+        <p style="margin-top:12px;">
+          이벤트(<code>QuestAccepted</code>, <code>QuestProgressChanged</code>, <code>QuestReadyToComplete</code>, <code>QuestCompleted</code>)로
+          UI와 완전히 디커플링됩니다. 아이템 드롭도 <code>IsCurrentQuestTarget()</code>으로 현재 목표일 때만 드롭되도록 제어합니다.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       ② 공격 강화 시스템
+  ══════════════════════════════════ -->
+  <section id="attack">
+    <div class="section-header">
+      <div class="section-num c2">②</div>
+      <div class="section-title-group">
+        <h2>플레이어 공격 강화 시스템</h2>
+        <p>레벨업 이벤트 구독 · 스테이지 자동 선택 · 콤보별 이펙트 포즈</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="sub-section s2">
+        <h3>스테이지 테이블</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>이름</th><th>해금 레벨</th><th>데미지 배율</th><th>히트 범위</th><th>이펙트 색</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="hl">기본 검기</td><td>Lv.1</td><td>×1.0</td><td>1.1</td><td><span class="tag">흰색</span></td></tr>
+            <tr><td class="hl">힘이 실린 검기</td><td>Lv.10</td><td>×1.2</td><td>1.25</td><td><span class="tag blue">파란색</span></td></tr>
+            <tr><td class="hl">마력이 깃든 검기</td><td>Lv.20</td><td>×1.45</td><td>1.4</td><td><span class="tag">보라색</span></td></tr>
+            <tr><td class="hl">어둠에 잠식된 검기</td><td>Lv.30</td><td>×1.75</td><td>1.6</td><td><span class="tag orange">황금색</span></td></tr>
+            <tr><td class="hl">패기를 두른 검기</td><td>Lv.40</td><td>×2.1</td><td>1.8</td><td><span class="tag red">붉은색</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub-section s2">
+        <h3>이벤트 구독 + 스테이지 선택 알고리즘</h3>
+        <div class="code-block">
+          <div class="code-label">PlayerAttackUpgrade.cs</div>
+<pre><code><span class="cm">// 레벨업 이벤트 구독 (OnEnable / OnDisable로 생명주기 관리)</span>
+<span class="kw">private void</span> <span class="fn">OnEnable</span>()
+{
+    _playerStats.<span class="prop">LevelChanged</span> += <span class="fn">RefreshStage</span>;  <span class="cm">// PlayerStats에서 레벨 오를 때마다 호출됨</span>
+    <span class="fn">RefreshStage</span>(_playerStats.Level);
+}
+<span class="kw">private void</span> <span class="fn">OnDisable</span>()
+{
+    _playerStats.<span class="prop">LevelChanged</span> -= <span class="fn">RefreshStage</span>;  <span class="cm">// 메모리 누수 방지</span>
+}
+
+<span class="cm">// ★ 핵심 로직: 배열 순서가 오름차순이므로
+//   조건 만족하는 마지막 항목 = 현재 레벨에 맞는 최고 스테이지</span>
+<span class="kw">public void</span> <span class="fn">RefreshStage</span>(<span class="ty">int</span> level)
+{
+    <span class="ty">AttackStageData</span> selectedStage = <span class="kw">null</span>;
+    <span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; _attackStages.Length; i++)
+    {
+        <span class="ty">AttackStageData</span> stage = _attackStages[i];
+        <span class="kw">if</span> (stage != <span class="kw">null</span> &amp;&amp; level &gt;= stage.UnlockLevel)
+            selectedStage = stage;  <span class="cm">// 계속 덮어써서 마지막 것(최고)을 선택</span>
+    }
+    _currentStage = selectedStage;
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section s2">
+        <h3>콤보별 이펙트 포즈 — 위치·회전 정보 내장</h3>
+        <div class="code-block">
+          <div class="code-label">PlayerAttackUpgrade.cs — PlayAttackEffect()</div>
+<pre><code><span class="cm">// 각 콤보 타수마다 다른 포즈(위치·회전) 적용</span>
+<span class="cm">// 1타: (0.15, 0.6, 0.1) / 회전(20°,180°,180°) — 옆에서 내려치기</span>
+<span class="cm">// 2타: (-0.05, 0.5, 0.1) / 회전(130°, 10°, 45°) — 역방향 사선</span>
+<span class="cm">// 3타: (0, 1.0, 0.1) / 회전(150°, 0°, 90°) — 위에서 강타</span>
+
+<span class="ty">ComboSlashEffectPose</span> pose = _currentStage.<span class="fn">GetComboEffectPose</span>(comboStep);
+
+<span class="cm">// 플레이어 로컬 좌표 → 월드 변환</span>
+<span class="ty">Vector3</span> position = spawnPoint.<span class="fn">TransformPoint</span>(pose.LocalOffset);
+<span class="ty">Quaternion</span> rotation = spawnPoint.rotation * <span class="ty">Quaternion</span>.<span class="fn">Euler</span>(pose.LocalEulerAngles);
+
+<span class="ty">ParticleSystem</span> effect = <span class="fn">Instantiate</span>(_currentStage.AttackEffectPrefab, position, rotation);
+
+<span class="cm">// 스테이지별 색상·크기 적용</span>
+<span class="ty">ParticleSystem</span>.<span class="ty">MainModule</span> main = effect.main;
+main.startColor = _currentStage.EffectColor;
+effect.transform.localScale *= _currentStage.EffectScaleMultiplier * pose.ScaleMultiplier;
+effect.<span class="fn">Play</span>();</code></pre>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       ③ 세이브 / 로드 시스템
+  ══════════════════════════════════ -->
+  <section id="save">
+    <div class="section-header">
+      <div class="section-num c3">③</div>
+      <div class="section-title-group">
+        <h2>세이브 / 로드 시스템</h2>
+        <p>AES-256-CBC 암호화 · HMAC-SHA256 변조 감지 · PBKDF2 키 유도 · 백그라운드 워밍업</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="sub-section s3">
+        <h3>저장 파이프라인</h3>
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="ps-num">Step 1</div>
+            <div class="ps-fn">CaptureCurrentState()</div>
+            <div class="ps-desc">씬 전체 탐색, 모든 상태 수집</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="ps-num">Step 2</div>
+            <div class="ps-fn">JsonUtility.ToJson()</div>
+            <div class="ps-desc">SaveData → JSON 직렬화</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="ps-num">Step 3</div>
+            <div class="ps-fn">EncryptSaveJson()</div>
+            <div class="ps-desc">AES 암호화 + HMAC 서명</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="ps-num">Step 4</div>
+            <div class="ps-fn">File.WriteAllText()</div>
+            <div class="ps-desc">디스크에 Base64 JSON 저장</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section s3">
+        <h3>암호화 구조: PBKDF2 → AES-256-CBC → HMAC-SHA256</h3>
+        <div class="code-block">
+          <div class="code-label">SaveManager.cs — DeriveKeys() + EncryptSaveJson()</div>
+<pre><code><span class="cm">// ① PBKDF2: Salt에서 암호화 키 + HMAC 키를 동시에 유도 (12만 회 반복)</span>
+<span class="kw">using</span> (<span class="ty">Rfc2898DeriveBytes</span> deriveBytes = <span class="kw">new</span> <span class="ty">Rfc2898DeriveBytes</span>(
+    password, salt, <span class="num">120000</span>, <span class="ty">HashAlgorithmName</span>.SHA256))
+{
+    encryptionKey = deriveBytes.<span class="fn">GetBytes</span>(<span class="num">32</span>);  <span class="cm">// AES-256 키</span>
+    hmacKey       = deriveBytes.<span class="fn">GetBytes</span>(<span class="num">32</span>);  <span class="cm">// HMAC 키</span>
+}
+
+<span class="cm">// ② AES-256-CBC: 매 저장마다 새 IV 생성 → 재사용 공격 차단</span>
+aes.Mode = <span class="ty">CipherMode</span>.CBC;
+aes.Padding = <span class="ty">PaddingMode</span>.PKCS7;
+aes.<span class="fn">GenerateIV</span>();   <span class="cm">// 랜덤 16바이트, 매번 새로 생성</span>
+
+<span class="cm">// ③ HMAC-SHA256: format+version+salt+iv+cipherText 전체 서명</span>
+<span class="cm">//    로드 시 서명 불일치 → 변조 파일로 판단하고 거부</span>
+<span class="ty">byte</span>[] authenticatedData = <span class="fn">BuildAuthenticatedData</span>(version, iterations, salt, iv, cipherText);
+<span class="ty">byte</span>[] hmac = <span class="fn">ComputeHmac</span>(hmacKey, authenticatedData);
+
+<span class="cm">// ④ 타이밍 어택 방지: 고정 시간 비교</span>
+<span class="kw">private static bool</span> <span class="fn">FixedTimeEquals</span>(<span class="ty">byte</span>[] left, <span class="ty">byte</span>[] right)
+{
+    <span class="ty">int</span> difference = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; left.Length; i++)
+        difference |= left[i] ^ right[i];  <span class="cm">// 일찍 return하지 않아 시간이 일정함</span>
+    <span class="kw">return</span> difference == <span class="num">0</span>;
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section s3">
+        <h3>성능 최적화: 키 캐싱 + 백그라운드 워밍업</h3>
+        <div class="info-box" style="margin-bottom:14px;">
+          <span class="icon">⚡</span>
+          <span>PBKDF2 12만 회 반복은 수백 ms가 소요됩니다. 첫 저장 시 프리징을 방지하기 위해 Awake에서 백그라운드 스레드로 미리 키를 유도하고 캐싱합니다. 이후 저장은 캐시를 재사용해 즉시 완료됩니다.</span>
+        </div>
+        <div class="code-block">
+          <div class="code-label">SaveManager.cs — WarmupKeysInBackground()</div>
+<pre><code><span class="kw">private void</span> <span class="fn">Awake</span>()
+{
+    _savePath = <span class="ty">Path</span>.<span class="fn">Combine</span>(<span class="ty">Application</span>.persistentDataPath, SaveFileName);
+    <span class="fn">CachePasswordBytes</span>();
+    <span class="fn">LoadFromDisk</span>();         <span class="cm">// 로드 시 키 유도 및 캐싱</span>
+    <span class="fn">WarmupKeysInBackground</span>(); <span class="cm">// 세이브 없는 첫 실행 시 백그라운드 미리 준비</span>
+}
+
+<span class="kw">private static void</span> <span class="fn">WarmupKeysInBackground</span>()
+{
+    <span class="kw">lock</span> (KeyCacheLock) { <span class="kw">if</span> (_cachedEncryptionKey != <span class="kw">null</span>) <span class="kw">return</span>; }
+    <span class="ty">Task</span>.<span class="fn">Run</span>(() => <span class="fn">GetOrCreateCachedKeys</span>(<span class="kw">out</span> _, <span class="kw">out</span> _, <span class="kw">out</span> _, <span class="kw">out</span> _));
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section s3">
+        <h3>저장 항목 목록</h3>
+        <table class="data-table">
+          <thead><tr><th>분류</th><th>저장 내용</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag green">플레이어</span></td><td>레벨 · EXP · 골드 · 현재 HP · 힐 아이템 수</td></tr>
+            <tr><td><span class="tag">인벤토리</span></td><td>소지 아이템 ID 목록</td></tr>
+            <tr><td><span class="tag">장비</span></td><td>5부위(검·방패·투구·갑옷·다리) 장착 아이템 ID</td></tr>
+            <tr><td><span class="tag orange">퀘스트</span></td><td>현재 퀘스트 ID · 진행량 · 완료된 퀘스트 ID 목록</td></tr>
+            <tr><td><span class="tag blue">웨이포인트</span></td><td>마지막 활성화 ID · 해금된 웨이포인트 ID 목록</td></tr>
+            <tr><td><span class="tag red">상점·상자</span></td><td>상점별 남은 재고 · 열린 상자 ID 목록</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       ④ 웨이포인트 시스템
+  ══════════════════════════════════ -->
+  <section id="waypoint">
+    <div class="section-header">
+      <div class="section-num c4">④</div>
+      <div class="section-title-group">
+        <h2>웨이포인트 시스템</h2>
+        <p>Town/Region 타입 분기 · 세이브 자동 연동 · 사망 리스폰 연결</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="sub-section s4">
+        <h3>컴포넌트 구조</h3>
+        <div class="grid-2">
+          <div class="info-box"><span class="icon">📦</span><div><strong>WaypointNode</strong><br>WaypointId, WaypointType (Town/Region), SpawnPoint 참조. 데이터 보유.</div></div>
+          <div class="info-box"><span class="icon">🖱</span><div><strong>WaypointInteractable</strong><br>F키 입력 감지 → WaypointManager.UnlockWaypoint() 또는 TeleportPlayerTo() 호출.</div></div>
+          <div class="info-box"><span class="icon">🗺</span><div><strong>WaypointManager</strong><br>싱글톤. Dictionary&lt;id, node&gt; 맵, HashSet 언락 목록 관리. 모든 웨이포인트 로직 중앙 집중.</div></div>
+          <div class="info-box"><span class="icon">💾</span><div><strong>SaveManager 연동</strong><br>웨이포인트 활성화/텔레포트 시 자동 세이브. 리스폰 시 마지막 활성화 포인트 반환.</div></div>
+        </div>
+      </div>
+
+      <div class="sub-section s4">
+        <h3>타입별 동작 분기</h3>
+        <div class="code-block">
+          <div class="code-label">WaypointManager.cs — GetTravelDestinations()</div>
+<pre><code><span class="kw">public</span> <span class="ty">List</span>&lt;<span class="ty">WaypointNode</span>&gt; <span class="fn">GetTravelDestinations</span>(<span class="ty">string</span> fromWaypointId)
+{
+    <span class="cm">// Town에서 출발 → Region 목록 반환 (선택 메뉴 UI 표시)</span>
+    <span class="cm">// Region에서 출발 → Town 반환 (즉시 텔레포트)</span>
+    <span class="ty">WaypointType</span> targetType = fromWaypoint.WaypointType == <span class="ty">WaypointType</span>.Town
+        ? <span class="ty">WaypointType</span>.Region
+        : <span class="ty">WaypointType</span>.Town;
+
+    <span class="kw">foreach</span> (<span class="ty">WaypointNode</span> waypoint <span class="kw">in</span> _waypoints)
+    {
+        <span class="kw">if</span> (waypoint.WaypointType == targetType &amp;&amp; <span class="fn">IsUnlocked</span>(waypoint.WaypointId))
+            destinations.<span class="fn">Add</span>(waypoint);   <span class="cm">// 해금된 것만 목적지로</span>
+    }
+    <span class="kw">return</span> destinations;
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section s4">
+        <h3>세이브 자동 연동 + 리스폰</h3>
+        <div class="code-block">
+          <div class="code-label">WaypointManager.cs — SetLastActivatedWaypoint() + GetRespawnPoint()</div>
+<pre><code><span class="cm">// 활성화·텔레포트 시 항상 이 메서드를 거쳐 자동 저장</span>
+<span class="kw">public void</span> <span class="fn">SetLastActivatedWaypoint</span>(<span class="ty">string</span> waypointId)
+{
+    _lastActivatedWaypointId = waypointId;
+    <span class="ty">SaveManager</span>.Instance?.<span class="fn">SaveGame</span>();   <span class="cm">// ★ 자동 세이브 트리거</span>
+}
+
+<span class="cm">// 사망 후 리스폰: 마지막 활성화 포인트 → 없으면 기본 스폰 지점</span>
+<span class="kw">public</span> <span class="ty">Transform</span> <span class="fn">GetRespawnPoint</span>()
+{
+    <span class="ty">Transform</span> lastActivated = <span class="fn">GetLastActivatedSpawnPoint</span>();
+    <span class="kw">return</span> lastActivated != <span class="kw">null</span> ? lastActivated : _defaultRespawnPoint;
+}</code></pre>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       ⑤ 인벤토리 & 장비 시스템
+  ══════════════════════════════════ -->
+  <section id="inventory">
+    <div class="section-header">
+      <div class="section-num c5">⑤</div>
+      <div class="section-title-group">
+        <h2>인벤토리 &amp; 장비 / 아이템 툴팁</h2>
+        <p>이벤트 기반 UI 분리 · 3D 마운트 활성화 · 런타임 툴팁 동적 생성 · 화면 경계 처리</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="sub-section s5">
+        <h3>인벤토리 — 이벤트 기반 설계</h3>
+        <div class="code-block">
+          <div class="code-label">PlayerInventory.cs</div>
+<pre><code><span class="cm">// UI는 이 이벤트만 구독 → 데이터·UI 완전 분리</span>
+<span class="kw">public event</span> <span class="ty">Action</span> <span class="prop">InventoryChanged</span>;
+
+<span class="kw">public bool</span> <span class="fn">AddItem</span>(<span class="ty">ItemData</span> data)
+{
+    <span class="kw">if</span> (data == <span class="kw">null</span> || IsFull) <span class="kw">return false</span>;
+    _items.<span class="fn">Add</span>(data);
+    <span class="prop">InventoryChanged</span>?.Invoke();   <span class="cm">// UI가 구독 → 자동 갱신</span>
+    <span class="kw">return true</span>;
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section s5">
+        <h3>장비 3D 마운트 메커니즘</h3>
+        <p>
+          3D 모델은 씬에 미리 배치된 채 비활성 상태입니다. 장착 시 해당 이름의 오브젝트를 찾아
+          <code>SetActive(true)</code>하는 방식이라 마운트 포인트의 본 애니메이션을 자연스럽게 따라갑니다.
+        </p>
+        <div class="code-block">
+          <div class="code-label">EquipmentManager.cs — SwapEquip() + SetModelActive()</div>
+<pre><code><span class="kw">private void</span> <span class="fn">SwapEquip</span>(<span class="kw">ref</span> <span class="ty">ItemData</span> slot, <span class="ty">ItemData</span> newItem, <span class="ty">Transform</span> mountParent)
+{
+    <span class="kw">if</span> (slot != <span class="kw">null</span>) {
+        <span class="fn">RemoveStats</span>(slot);                              <span class="cm">// 이전 장비 스탯 제거</span>
+        <span class="fn">SetModelActive</span>(slot.equipObjectName, mountParent, <span class="kw">false</span>); <span class="cm">// 모델 숨기기</span>
+    }
+    slot = newItem;
+    <span class="fn">ApplyStats</span>(slot);                                    <span class="cm">// 새 장비 스탯 적용</span>
+    <span class="fn">SetModelActive</span>(slot.equipObjectName, mountParent, <span class="kw">true</span>);  <span class="cm">// 모델 보이기</span>
+    <span class="prop">EquipmentChanged</span>?.Invoke();
+}
+
+<span class="kw">private void</span> <span class="fn">SetModelActive</span>(<span class="ty">string</span> equipName, <span class="ty">Transform</span> mountParent, <span class="ty">bool</span> active)
+{
+    <span class="cm">// mountParent 직접 → 재귀 탐색 → 전체 재귀 순서로 폴백</span>
+    <span class="ty">Transform</span> target = mountParent.<span class="fn">Find</span>(equipName)
+                    ?? <span class="fn">FindChildRecursive</span>(mountParent, equipName)
+                    ?? <span class="fn">FindChildRecursive</span>(transform, equipName);
+    target.gameObject.<span class="fn">SetActive</span>(active);
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section s5">
+        <h3>아이템 툴팁 — 런타임 동적 생성 + 화면 경계 처리</h3>
+        <div class="code-block">
+          <div class="code-label">ItemTooltipUi.cs — CreateRuntimeInstance() + UpdatePosition()</div>
+<pre><code><span class="cm">// 씬에 미리 배치할 필요 없음 — 처음 호출 시 자동 생성</span>
+<span class="kw">private static</span> <span class="ty">ItemTooltipUi</span> <span class="fn">CreateRuntimeInstance</span>()
+{
+    <span class="ty">Canvas</span> canvas = <span class="fn">FindSuitableCanvas</span>();  <span class="cm">// 씬에서 활성 캔버스 탐색</span>
+    <span class="ty">GameObject</span> root = <span class="kw">new</span> <span class="ty">GameObject</span>(<span class="str">"ItemTooltipUi"</span>,
+        <span class="kw">typeof</span>(<span class="ty">RectTransform</span>), <span class="kw">typeof</span>(<span class="ty">ItemTooltipUi</span>));
+    rect.anchorMin = <span class="ty">Vector2</span>.zero;
+    rect.anchorMax = <span class="ty">Vector2</span>.one;     <span class="cm">// 캔버스 전체를 stretch로 덮음</span>
+    rect.<span class="fn">SetAsLastSibling</span>();           <span class="cm">// 항상 최상단 렌더링</span>
+    <span class="cm">// BuildTooltip(): TMP텍스트, 배경, VerticalLayoutGroup 코드로 생성</span>
+}
+
+<span class="cm">// 화면 경계 처리: 오른쪽·위쪽에 걸리면 반대 방향으로 반전</span>
+<span class="kw">private void</span> <span class="fn">UpdatePosition</span>(<span class="ty">Vector2</span> screenPosition)
+{
+    <span class="ty">float</span> desiredX = localPoint.x + TooltipOffsetX;
+    <span class="ty">float</span> desiredY = localPoint.y + TooltipOffsetY;
+
+    <span class="kw">if</span> (desiredX + width &gt; rightBound)
+        desiredX = localPoint.x - TooltipOffsetX - width;   <span class="cm">// 왼쪽으로 반전</span>
+    <span class="kw">if</span> (desiredY + height &gt; topBound)
+        desiredY = localPoint.y - TooltipOffsetY - height;  <span class="cm">// 아래로 반전</span>
+
+    <span class="cm">// 그래도 벗어나면 ScreenPadding으로 클램프</span>
+    desiredX = <span class="ty">Mathf</span>.<span class="fn">Clamp</span>(desiredX, leftBound, rightBound - width);
+    desiredY = <span class="ty">Mathf</span>.<span class="fn">Clamp</span>(desiredY, bottomBound, topBound - height);
+}</code></pre>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       ⑥ 라이팅 & 사운드 전환
+  ══════════════════════════════════ -->
+  <section id="lighting">
+    <div class="section-header">
+      <div class="section-num c6">⑥</div>
+      <div class="section-title-group">
+        <h2>구역별 라이팅 &amp; 사운드 전환</h2>
+        <p>우선순위 기반 ActiveZones · SmoothStep 블렌딩 · A/B 듀얼 버퍼 크로스페이드</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="sub-section s6">
+        <h3>공통 패턴: 우선순위 기반 ActiveZones 리스트</h3>
+        <p>
+          라이팅(<code>LightingZoneTrigger</code>)과 사운드(<code>BgmZoneTrigger</code>) 모두 동일한 패턴을 사용합니다.
+          트리거 진입·이탈 시마다 전체 ActiveZones 리스트를 재평가해 <code>priority</code>가 가장 높은 존을 적용합니다.
+          구역이 겹쳐도 항상 올바른 존이 우선 적용됩니다.
+        </p>
+        <div class="code-block">
+          <div class="code-label">LightingZoneTrigger.cs — 진입/이탈 + 우선순위 평가</div>
+<pre><code><span class="kw">private static readonly</span> <span class="ty">List</span>&lt;<span class="ty">LightingZoneTrigger</span>&gt; ActiveZones = <span class="kw">new</span>();
+
+<span class="kw">private void</span> <span class="fn">OnTriggerEnter</span>(<span class="ty">Collider</span> other)
+{
+    <span class="kw">if</span> (!other.<span class="fn">CompareTag</span>(<span class="str">"Player"</span>)) <span class="kw">return</span>;
+    <span class="kw">if</span> (!ActiveZones.<span class="fn">Contains</span>(<span class="kw">this</span>)) ActiveZones.<span class="fn">Add</span>(<span class="kw">this</span>);  <span class="cm">// 진입한 존 추가</span>
+    <span class="fn">ApplyHighestPriorityZone</span>();
+}
+<span class="kw">private void</span> <span class="fn">OnTriggerExit</span>(<span class="ty">Collider</span> other)
+{
+    ActiveZones.<span class="fn">Remove</span>(<span class="kw">this</span>);    <span class="cm">// 나간 존 제거</span>
+    <span class="fn">ApplyHighestPriorityZone</span>();  <span class="cm">// 재평가</span>
+}
+
+<span class="kw">private static void</span> <span class="fn">ApplyHighestPriorityZone</span>()
+{
+    <span class="ty">LightingZoneTrigger</span> bestZone = <span class="kw">null</span>;
+    <span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; ActiveZones.Count; i++)
+        <span class="kw">if</span> (bestZone == <span class="kw">null</span> || ActiveZones[i].priority &gt; bestZone.priority)
+            bestZone = ActiveZones[i];  <span class="cm">// priority 최고값 선택</span>
+
+    <span class="ty">LightingZoneController</span>.Instance?.<span class="fn">BlendTo</span>(bestZone.profile, bestZone.zoneVolume, bestZone.fadeDuration);
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section s6">
+        <h3>라이팅 블렌딩 코루틴 — SmoothStep 이징</h3>
+        <div class="code-block">
+          <div class="code-label">LightingZoneController.cs — BlendRoutine()</div>
+<pre><code><span class="kw">private</span> <span class="ty">IEnumerator</span> <span class="fn">BlendRoutine</span>(<span class="ty">LightingZoneProfile</span> profile, <span class="ty">Volume</span> targetVolume, <span class="ty">float</span> duration)
+{
+    <span class="cm">// 시작값 스냅샷</span>
+    <span class="ty">Color</span> startLightColor   = directionalLight.color;
+    <span class="ty">float</span> startLightIntensity = directionalLight.intensity;
+    <span class="ty">Color</span> startAmbient      = <span class="ty">RenderSettings</span>.ambientLight;
+    <span class="ty">Color</span> startFogColor     = <span class="ty">RenderSettings</span>.fogColor;
+
+    <span class="ty">float</span> elapsed = <span class="num">0f</span>;
+    <span class="kw">while</span> (elapsed &lt; duration)
+    {
+        elapsed += <span class="ty">Time</span>.deltaTime;
+        <span class="cm">// SmoothStep → 선형이 아닌 ease-in/out 이징 적용</span>
+        <span class="ty">float</span> t = <span class="ty">Mathf</span>.<span class="fn">SmoothStep</span>(<span class="num">0f</span>, <span class="num">1f</span>, <span class="ty">Mathf</span>.<span class="fn">Clamp01</span>(elapsed / duration));
+
+        directionalLight.color     = <span class="ty">Color</span>.<span class="fn">Lerp</span>(startLightColor, profile.directionalColor, t);
+        directionalLight.intensity = <span class="ty">Mathf</span>.<span class="fn">Lerp</span>(startLightIntensity, profile.directionalIntensity, t);
+        <span class="ty">RenderSettings</span>.ambientLight = <span class="ty">Color</span>.<span class="fn">Lerp</span>(startAmbient, profile.ambientColor, t);
+        <span class="ty">RenderSettings</span>.fogDensity   = <span class="ty">Mathf</span>.<span class="fn">Lerp</span>(startFogDensity, targetFogDensity, t);
+
+        <span class="cm">// 포스트프로세싱 Volume 교차 페이드: 이전 → 0, 새 것 → 1</span>
+        <span class="kw">if</span> (previousVolume != <span class="kw">null</span>) previousVolume.weight = <span class="ty">Mathf</span>.<span class="fn">Lerp</span>(startPrevWeight, <span class="num">0f</span>, t);
+        <span class="kw">if</span> (targetVolume != <span class="kw">null</span>)   targetVolume.weight   = <span class="ty">Mathf</span>.<span class="fn">Lerp</span>(startTargetWeight, <span class="num">1f</span>, t);
+
+        <span class="kw">yield return null</span>;
+    }
+}</code></pre>
+        </div>
+        <p style="margin-top:12px;">
+          새 블렌드 요청이 오면 현재 코루틴을 <code>StopCoroutine</code>으로 즉시 중단하고
+          현재 값에서 다시 시작합니다. 구역을 빠르게 이동해도 팝핑 없이 부드럽게 전환됩니다.
+        </p>
+      </div>
+
+      <div class="sub-section s6">
+        <h3>BGM 크로스페이드 — A/B 듀얼 버퍼</h3>
+        <div class="code-block">
+          <div class="code-label">SoundManager.cs — FadeToBGM()</div>
+<pre><code><span class="cm">// AudioSource A, B 두 개를 번갈아 사용해 끊김 없는 크로스페이드 구현</span>
+<span class="kw">private</span> <span class="ty">IEnumerator</span> <span class="fn">FadeToBGM</span>(<span class="ty">BGMType</span> type, <span class="ty">AudioClip</span> clip, <span class="ty">float</span> fadeDuration)
+{
+    <span class="ty">AudioSource</span> fromSource = _currentBgmSource;  <span class="cm">// 현재 재생 중</span>
+    <span class="ty">AudioSource</span> toSource   = _nextBgmSource;     <span class="cm">// 대기 중 (빈 소스)</span>
+
+    toSource.clip = clip;
+    toSource.volume = <span class="num">0f</span>;
+    toSource.<span class="fn">Play</span>();   <span class="cm">// 새 BGM 무음으로 시작</span>
+
+    <span class="kw">while</span> (elapsed &lt; fadeDuration)
+    {
+        fromSource.volume = <span class="ty">Mathf</span>.<span class="fn">Lerp</span>(fromStartVolume, <span class="num">0f</span>, t);  <span class="cm">// 기존 fade out</span>
+        toSource.volume   = <span class="ty">Mathf</span>.<span class="fn">Lerp</span>(<span class="num">0f</span>, <span class="num">1f</span>, t);              <span class="cm">// 새 것 fade in</span>
+        <span class="kw">yield return null</span>;
+    }
+    <span class="fn">StopBgmSource</span>(fromSource);
+    <span class="fn">SwapBgmSources</span>(type);   <span class="cm">// A↔B 역할 교체 (다음 전환 준비)</span>
+}
+
+<span class="cm">// 볼륨은 AudioMixer를 통해 dB로 제어 → 마스터/BGM/SFX 독립 조절</span>
+<span class="kw">private void</span> <span class="fn">SetMixerVolume</span>(<span class="ty">string</span> paramName, <span class="ty">float</span> value)
+{
+    <span class="cm">// 0 이하 방지 후 선형 → dB 변환: 20 * log10(value)</span>
+    <span class="ty">float</span> db = <span class="ty">Mathf</span>.<span class="fn">Log10</span>(<span class="ty">Mathf</span>.<span class="fn">Max</span>(value, <span class="num">0.0001f</span>)) * <span class="num">20f</span>;
+    _audioMixer.<span class="fn">SetFloat</span>(paramName, db);
+}</code></pre>
+        </div>
+        <p style="margin-top:12px;">
+          <code>Time.unscaledDeltaTime</code>을 사용하므로 <code>timeScale = 0</code>(일시 정지) 상태에서도
+          BGM 페이드가 자연스럽게 진행됩니다. 볼륨 설정은 <code>PlayerPrefs</code>에 저장됩니다.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<footer>
+  김경일의 모험 : Origin &nbsp;·&nbsp; Unity 6.3 &nbsp;·&nbsp; 1인 3주 개발 &nbsp;·&nbsp; 2026
+</footer>
+
+</body>
+</html>

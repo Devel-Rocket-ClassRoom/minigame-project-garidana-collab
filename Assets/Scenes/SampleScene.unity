@@ -374,7 +374,7 @@ GameObject:
   - component: {fileID: 9712092}
   - component: {fileID: 9712093}
   m_Layer: 0
-  m_Name: BGM_Zone_Forest
+  m_Name: Light_Zone_Forest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18140,7 +18140,7 @@ GameObject:
   - component: {fileID: 590643894}
   - component: {fileID: 590643895}
   m_Layer: 0
-  m_Name: BGM_Zone_OrcBase
+  m_Name: Light_Zone_OrcBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32710,7 +32710,7 @@ GameObject:
   - component: {fileID: 1052827118}
   - component: {fileID: 1052827119}
   m_Layer: 0
-  m_Name: BGM_Zone_Tomb
+  m_Name: Light_Zone_Tomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33628,7 +33628,7 @@ GameObject:
   - component: {fileID: 1078518232}
   - component: {fileID: 1078518233}
   m_Layer: 0
-  m_Name: BGM_Zone_Desert
+  m_Name: Light_Zone_Desert
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64986,7 +64986,7 @@ GameObject:
   - component: {fileID: 2027897781}
   - component: {fileID: 2027897782}
   m_Layer: 0
-  m_Name: BGM_Zone_Town
+  m_Name: Light_Zone_Town
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -17,4 +17,4 @@ MonoBehaviour:
   ambientColor: {r: 0.18039216, g: 0.2509804, b: 0.2509804, a: 1}
   fogEnabled: 1
   fogColor: {r: 0.12156863, g: 0.21960784, b: 0.2, a: 1}
-  fogDensity: 0.035
+  fogDensity: 0
