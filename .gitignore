@@ -166,3 +166,20 @@ Assets/Imported_mini/
 # 클로드 관련
 /.claude/settings.local.json
 /.claude/CLAUDE.local.md
+
+# Firebase
+Assets/Resources/FirebaseConfig.asset
+Assets/Resources/FirebaseConfig.asset.meta
+Assets/Editor Default Resources/
+Assets/Editor Default Resources.meta
+Assets/ExternalDependencyManager/
+Assets/ExternalDependencyManager.meta
+Assets/Firebase/
+Assets/Firebase.meta
+Assets/Plugins/
+Assets/Plugins.meta
+Assets/google-services.json
+Assets/google-services.json.meta
+Assets/GoogleService-Info.plist
+Assets/StreamingAssets/google-services-desktop.json
+

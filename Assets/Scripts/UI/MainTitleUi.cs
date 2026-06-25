@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,26 +9,71 @@ public class MainTitleUi : MonoBehaviour
     [SerializeField] private Button _quitButton;
     [SerializeField] private Button _donationButton;
     [SerializeField] private Button _deleteSaveButton;
+    [SerializeField] private Button _logoutButton;
+    [SerializeField] private TextMeshProUGUI _currentUserId;
+    [SerializeField] private GameObject _loginPanel;
+    [SerializeField] private GameObject _mainTitlePanel;
 
-
-
-    private void Start()
+    private async UniTaskVoid Start()
     {
         SoundManager.Instance?.PlayBGM(SoundManager.BGMType.MainTitle);
 
-        _startButton.onClick.AddListener(OnStartGame);
-        _quitButton.onClick.AddListener(OnQuit);
-        _donationButton.onClick.AddListener(OnClickSiteButton);
-        if (_deleteSaveButton != null)
+        if (_startButton != null)
         {
-            _deleteSaveButton.onClick.AddListener(OnDeleteSave);
+            _startButton.onClick.AddListener(() => OnStartGame().Forget());
         }
 
-        RefreshDeleteSaveButton();
+        if (_quitButton != null)
+        {
+            _quitButton.onClick.AddListener(OnQuit);
+        }
+
+        if (_donationButton != null)
+        {
+            _donationButton.onClick.AddListener(OnClickSiteButton);
+        }
+
+        if (_deleteSaveButton != null)
+        {
+            _deleteSaveButton.onClick.AddListener(() => OnDeleteSave().Forget());
+        }
+
+        if (_logoutButton != null)
+        {
+            _logoutButton.onClick.AddListener(OnLogout);
+        }
+
+        await UniTask.WaitUntil(() => AuthManager.Instance != null && AuthManager.Instance.IsInitialized);
+        AuthManager.Instance.LoginStatusChanged += HandleLoginStatusChanged;
+        await RefreshAuthUiAsync();
     }
 
-    private void OnStartGame()
+    private void OnDestroy()
     {
+        if (AuthManager.Instance != null)
+        {
+            AuthManager.Instance.LoginStatusChanged -= HandleLoginStatusChanged;
+        }
+    }
+
+    private void HandleLoginStatusChanged(bool isLoggedIn)
+    {
+        RefreshAuthUiAsync().Forget();
+    }
+
+    private async UniTask OnStartGame()
+    {
+        if (AuthManager.Instance == null || !AuthManager.Instance.IsLoggedIn)
+        {
+            await RefreshAuthUiAsync();
+            return;
+        }
+
+        if (SaveManager.Instance != null)
+        {
+            await SaveManager.Instance.LoadCloudSaveAsync();
+        }
+
         SceneLoader.Instance.LoadScene(SceneLoader.GameScene.Game);
     }
 
@@ -43,14 +90,46 @@ public class MainTitleUi : MonoBehaviour
 #endif
     }
 
-    private void OnDeleteSave()
+    private async UniTask OnDeleteSave()
     {
         if (SaveManager.Instance == null)
         {
             return;
         }
 
-        SaveManager.Instance.DeleteSaveFile();
+        await SaveManager.Instance.DeleteCloudSaveAsync();
+        RefreshDeleteSaveButton();
+    }
+
+    private void OnLogout()
+    {
+        AuthManager.Instance?.SignOut();
+    }
+
+    private async UniTask RefreshAuthUiAsync()
+    {
+        bool isLoggedIn = AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn;
+
+        if (isLoggedIn && SaveManager.Instance != null)
+        {
+            await SaveManager.Instance.LoadCloudSaveAsync();
+        }
+
+        if (_loginPanel != null)
+        {
+            _loginPanel.SetActive(!isLoggedIn);
+        }
+
+        if (_mainTitlePanel != null)
+        {
+            _mainTitlePanel.SetActive(isLoggedIn);
+        }
+
+        if (_currentUserId != null)
+        {
+            _currentUserId.text = isLoggedIn ? AuthManager.Instance.Email : string.Empty;
+        }
+
         RefreshDeleteSaveButton();
     }
 
@@ -61,7 +140,11 @@ public class MainTitleUi : MonoBehaviour
             return;
         }
 
-        _deleteSaveButton.interactable = SaveManager.Instance != null && SaveManager.Instance.HasSaveData();
+        _deleteSaveButton.interactable = AuthManager.Instance != null
+            && AuthManager.Instance.IsLoggedIn
+            && SaveManager.Instance != null
+            && SaveManager.Instance.HasSaveData();
     }
-
 }
+
+

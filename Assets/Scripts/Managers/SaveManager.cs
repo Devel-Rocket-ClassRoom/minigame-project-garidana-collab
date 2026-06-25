@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
+using Cysharp.Threading.Tasks;
+using Firebase.Database;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -71,15 +70,11 @@ public class MerchantSaveData
 }
 
 [Serializable]
-public class EncryptedSavePayload
+public class CloudSavePayload
 {
-    public string format;
-    public int version;
-    public int iterations;
-    public string salt;
-    public string iv;
-    public string ciphertext;
-    public string hmac;
+    public int schemaVersion = 1;
+    public long updatedAt;
+    public SaveData data = new SaveData();
 }
 
 public static class PersistenceIdUtility
@@ -105,33 +100,17 @@ public static class PersistenceIdUtility
 
 public class SaveManager : MonoBehaviour
 {
-    private const string SaveFileName = "savegame.json";
-    private const string EncryptedSaveFormat = "ProjectOriginEncryptedSave";
-    private const int EncryptedSaveVersion = 1;
-    private const int KeyDerivationIterations = 120000;
-    private const int SaltSizeBytes = 16;
-    private const int AesKeySizeBytes = 32;
-    private const int HmacKeySizeBytes = 32;
-    private const string SaveEncryptionSecret = "ProjectOrigin_SaveEncryption_v1_9F4C3A44C1E54F32A7E0D6D97B708A22";
+    private const string SaveRootPath = "users";
+    private const string SaveNodePath = "save";
 
-    // PBKDF2 키 유도(12만회 반복, 수백 ms)는 비용이 크므로 1회만 수행하고 캐싱한다.
-    // 비밀번호가 고정값이라 솔트 재사용은 안전하며, AES-CBC 보안은 매 저장마다 새로 생성하는 IV가 보장한다.
-    private static readonly object KeyCacheLock = new object();
-    private static byte[] _passwordBytes;
-    private static byte[] _cachedSalt;
-    private static int _cachedIterations;
-    private static byte[] _cachedEncryptionKey;
-    private static byte[] _cachedHmacKey;
-#if UNITY_EDITOR
-    private static readonly bool LoadSaveInEditor = true;
-#endif
 
     public static SaveManager Instance { get; private set; }
     public bool IsApplyingSave => _isApplyingSave;
 
     private SaveData _saveData;
-    private string _savePath;
+    private bool _hasCloudSave;
     private bool _isApplyingSave;
+    private bool _isCloudBusy;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
@@ -156,10 +135,8 @@ public class SaveManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        _savePath = Path.Combine(Application.persistentDataPath, SaveFileName);
-        CachePasswordBytes();
-        LoadFromDisk();
-        WarmupKeysInBackground();
+        _saveData = null;
+        _hasCloudSave = false;
     }
 
     private void OnEnable()
@@ -174,32 +151,146 @@ public class SaveManager : MonoBehaviour
 
     public void SaveGame()
     {
-        if (_isApplyingSave)
+        SaveGameAsync().Forget();
+    }
+
+    public async UniTask<bool> SaveGameAsync()
+    {
+        if (_isApplyingSave || _isCloudBusy)
         {
-            return;
+            return false;
         }
 
         SaveData captured = CaptureCurrentState();
         if (captured == null)
         {
-            return;
+            Debug.LogWarning("[Save] 현재 씬 상태를 캡처하지 못했습니다.");
+            return false;
         }
 
-        _saveData = captured;
-        string directory = Path.GetDirectoryName(_savePath);
-        if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+        if (!CanUseCloudSave(out string error))
         {
-            Directory.CreateDirectory(directory);
+            Debug.LogWarning($"[Save] Firebase 저장 불가: {error}");
+            return false;
         }
 
-        string json = JsonUtility.ToJson(_saveData, true);
-        File.WriteAllText(_savePath, EncryptSaveJson(json));
-        Debug.Log($"[Save] 저장 완료: {_savePath}");
+        _isCloudBusy = true;
+
+        try
+        {
+            CloudSavePayload payload = new CloudSavePayload
+            {
+                schemaVersion = 1,
+                updatedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                data = captured
+            };
+
+            string json = JsonUtility.ToJson(payload);
+            await GetSaveReference().SetRawJsonValueAsync(json);
+            _saveData = captured;
+            _hasCloudSave = true;
+            Debug.Log("[Save] Firebase 저장 완료");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[Save] Firebase 저장 실패: {ex.Message}");
+            return false;
+        }
+        finally
+        {
+            _isCloudBusy = false;
+        }
     }
 
+    public async UniTask<bool> LoadCloudSaveAsync()
+    {
+        if (!CanUseCloudSave(out string error))
+        {
+            Debug.LogWarning($"[Save] Firebase 로드 불가: {error}");
+            _saveData = null;
+            _hasCloudSave = false;
+            return false;
+        }
+
+        try
+        {
+            DataSnapshot snapshot = await GetSaveReference().GetValueAsync();
+            if (!snapshot.Exists)
+            {
+                if (await TryImportLegacyLocalSaveAsync())
+                {
+                    return true;
+                }
+
+                _saveData = null;
+                _hasCloudSave = false;
+                Debug.Log("[Save] Firebase 세이브 없음");
+                return false;
+            }
+
+            string json = snapshot.GetRawJsonValue();
+            CloudSavePayload payload = JsonUtility.FromJson<CloudSavePayload>(json);
+            _saveData = payload != null ? payload.data : null;
+            _hasCloudSave = _saveData != null;
+            Debug.Log(_hasCloudSave ? "[Save] Firebase 세이브 로드 완료" : "[Save] Firebase 세이브 데이터가 비어 있습니다.");
+            return _hasCloudSave;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[Save] Firebase 로드 실패: {ex.Message}");
+            _saveData = null;
+            _hasCloudSave = false;
+            return false;
+        }
+    }
+
+    private async UniTask<bool> TryImportLegacyLocalSaveAsync()
+    {
+        string importedPrefsKey = LegacyLocalSaveImporter.GetImportedPrefsKey(AuthManager.Instance.UserId);
+        if (PlayerPrefs.GetInt(importedPrefsKey, 0) == 1)
+        {
+            return false;
+        }
+
+        if (!LegacyLocalSaveImporter.HasLegacyLocalSave())
+        {
+            return false;
+        }
+
+        if (!LegacyLocalSaveImporter.TryLoadLegacySave(out SaveData legacySaveData, out string importError))
+        {
+            Debug.LogWarning($"[Save] 기존 로컬 세이브 가져오기 실패: {importError}");
+            return false;
+        }
+
+        try
+        {
+            CloudSavePayload payload = new CloudSavePayload
+            {
+                schemaVersion = 1,
+                updatedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                data = legacySaveData
+            };
+
+            string json = JsonUtility.ToJson(payload);
+            await GetSaveReference().SetRawJsonValueAsync(json);
+            _saveData = legacySaveData;
+            _hasCloudSave = true;
+            PlayerPrefs.SetInt(importedPrefsKey, 1);
+            PlayerPrefs.Save();
+            Debug.Log("[Save] 기존 로컬 세이브를 Firebase로 가져왔습니다.");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[Save] 기존 로컬 세이브 Firebase 업로드 실패: {ex.Message}");
+            return false;
+        }
+    }
     public bool HasSaveData()
     {
-        return !string.IsNullOrWhiteSpace(_savePath) && File.Exists(_savePath);
+        return _hasCloudSave;
     }
 
     public bool IsTownTutorialCompleted => _saveData != null
@@ -212,27 +303,61 @@ public class SaveManager : MonoBehaviour
 
     public void DeleteSaveFile()
     {
-        if (!HasSaveData())
-        {
-            _saveData = null;
-            return;
-        }
-
-        File.Delete(_savePath);
-        _saveData = null;
-        Debug.Log($"[Save] 세이브 파일 삭제: {_savePath}");
+        DeleteCloudSaveAsync().Forget();
     }
 
+    public async UniTask<bool> DeleteCloudSaveAsync()
+    {
+        if (!CanUseCloudSave(out string error))
+        {
+            Debug.LogWarning($"[Save] Firebase 삭제 불가: {error}");
+            _saveData = null;
+            _hasCloudSave = false;
+            return false;
+        }
+
+        try
+        {
+            await GetSaveReference().RemoveValueAsync();
+            _saveData = null;
+            _hasCloudSave = false;
+            Debug.Log("[Save] Firebase 세이브 삭제 완료");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[Save] Firebase 세이브 삭제 실패: {ex.Message}");
+            return false;
+        }
+    }
+
+    private bool CanUseCloudSave(out string error)
+    {
+        if (FirebaseInitializer.Instance == null || !FirebaseInitializer.Instance.IsReady)
+        {
+            error = "Firebase 초기화가 완료되지 않았습니다.";
+            return false;
+        }
+
+        if (AuthManager.Instance == null || !AuthManager.Instance.IsLoggedIn)
+        {
+            error = "로그인이 필요합니다.";
+            return false;
+        }
+
+        error = null;
+        return true;
+    }
+
+    private DatabaseReference GetSaveReference()
+    {
+        return FirebaseInitializer.Instance.Database.RootReference
+            .Child(SaveRootPath)
+            .Child(AuthManager.Instance.UserId)
+            .Child(SaveNodePath);
+    }
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-#if UNITY_EDITOR
-        if (!LoadSaveInEditor)
-        {
-            Debug.Log("[Save] 에디터 설정으로 세이브 로드를 건너뜁니다.");
-            return;
-        }
-#endif
-
         if (_saveData == null || scene.name != "SampleScene")
         {
             return;
@@ -294,320 +419,6 @@ public class SaveManager : MonoBehaviour
 
         _isApplyingSave = false;
         Debug.Log("[Save] 로드 완료");
-    }
-
-    private void LoadFromDisk()
-    {
-        if (!File.Exists(_savePath))
-        {
-            _saveData = null;
-            return;
-        }
-
-        string saveText = File.ReadAllText(_savePath);
-        if (string.IsNullOrWhiteSpace(saveText))
-        {
-            _saveData = null;
-            return;
-        }
-
-        string json;
-        if (TryDecryptSaveJson(saveText, out json))
-        {
-            _saveData = string.IsNullOrWhiteSpace(json) ? null : JsonUtility.FromJson<SaveData>(json);
-            return;
-        }
-
-        if (IsEncryptedSavePayload(saveText))
-        {
-            _saveData = null;
-            Debug.LogWarning("[Save] 암호화된 세이브 파일을 복호화하지 못했습니다. 파일이 손상되었거나 변조되었을 수 있습니다.");
-            return;
-        }
-
-        _saveData = JsonUtility.FromJson<SaveData>(saveText);
-        Debug.Log("[Save] 기존 평문 세이브 파일을 로드했습니다. 다음 저장 시 암호화 형식으로 마이그레이션됩니다.");
-    }
-
-    private static string EncryptSaveJson(string json)
-    {
-        GetOrCreateCachedKeys(out byte[] salt, out int keyIterations, out byte[] encryptionKey, out byte[] hmacKey);
-        byte[] iv;
-        byte[] cipherText;
-
-        using (Aes aes = Aes.Create())
-        {
-            aes.KeySize = AesKeySizeBytes * 8;
-            aes.BlockSize = 128;
-            aes.Mode = CipherMode.CBC;
-            aes.Padding = PaddingMode.PKCS7;
-            aes.Key = encryptionKey;
-            aes.GenerateIV();
-            iv = aes.IV;
-
-            using (ICryptoTransform encryptor = aes.CreateEncryptor())
-            {
-                byte[] plainText = Encoding.UTF8.GetBytes(json);
-                cipherText = encryptor.TransformFinalBlock(plainText, 0, plainText.Length);
-            }
-        }
-
-        byte[] authenticatedData = BuildAuthenticatedData(EncryptedSaveVersion, keyIterations, salt, iv, cipherText);
-        byte[] hmac = ComputeHmac(hmacKey, authenticatedData);
-
-        EncryptedSavePayload payload = new EncryptedSavePayload
-        {
-            format = EncryptedSaveFormat,
-            version = EncryptedSaveVersion,
-            iterations = keyIterations,
-            salt = Convert.ToBase64String(salt),
-            iv = Convert.ToBase64String(iv),
-            ciphertext = Convert.ToBase64String(cipherText),
-            hmac = Convert.ToBase64String(hmac)
-        };
-
-        return JsonUtility.ToJson(payload);
-    }
-
-    private static bool TryDecryptSaveJson(string saveText, out string json)
-    {
-        json = null;
-
-        EncryptedSavePayload payload;
-        try
-        {
-            payload = JsonUtility.FromJson<EncryptedSavePayload>(saveText);
-        }
-        catch
-        {
-            return false;
-        }
-
-        if (payload == null || payload.format != EncryptedSaveFormat)
-        {
-            return false;
-        }
-
-        if (payload.version != EncryptedSaveVersion || payload.iterations <= 0)
-        {
-            return false;
-        }
-
-        try
-        {
-            byte[] salt = Convert.FromBase64String(payload.salt);
-            byte[] iv = Convert.FromBase64String(payload.iv);
-            byte[] cipherText = Convert.FromBase64String(payload.ciphertext);
-            byte[] expectedHmac = Convert.FromBase64String(payload.hmac);
-
-            GetKeysForSalt(salt, payload.iterations, out byte[] encryptionKey, out byte[] hmacKey);
-            byte[] authenticatedData = BuildAuthenticatedData(payload.version, payload.iterations, salt, iv, cipherText);
-            byte[] actualHmac = ComputeHmac(hmacKey, authenticatedData);
-            if (!FixedTimeEquals(expectedHmac, actualHmac))
-            {
-                return false;
-            }
-
-            using (Aes aes = Aes.Create())
-            {
-                aes.KeySize = AesKeySizeBytes * 8;
-                aes.BlockSize = 128;
-                aes.Mode = CipherMode.CBC;
-                aes.Padding = PaddingMode.PKCS7;
-                aes.Key = encryptionKey;
-                aes.IV = iv;
-
-                using (ICryptoTransform decryptor = aes.CreateDecryptor())
-                {
-                    byte[] plainText = decryptor.TransformFinalBlock(cipherText, 0, cipherText.Length);
-                    json = Encoding.UTF8.GetString(plainText);
-                    return true;
-                }
-            }
-        }
-        catch
-        {
-            json = null;
-            return false;
-        }
-    }
-
-    private static bool IsEncryptedSavePayload(string saveText)
-    {
-        try
-        {
-            EncryptedSavePayload payload = JsonUtility.FromJson<EncryptedSavePayload>(saveText);
-            return payload != null && payload.format == EncryptedSaveFormat;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    private static byte[] GenerateRandomBytes(int length)
-    {
-        byte[] bytes = new byte[length];
-        using (RandomNumberGenerator generator = RandomNumberGenerator.Create())
-        {
-            generator.GetBytes(bytes);
-        }
-
-        return bytes;
-    }
-
-    /// <summary>
-    /// Application.* API는 메인 스레드 전용이므로 비밀번호 바이트를 미리 캡처해 둔다.
-    /// Awake에서 호출되어 이후 백그라운드 스레드에서도 키 유도가 가능하다.
-    /// </summary>
-    private static void CachePasswordBytes()
-    {
-        if (_passwordBytes == null)
-        {
-            _passwordBytes = Encoding.UTF8.GetBytes($"{Application.companyName}|{Application.productName}|{SaveEncryptionSecret}");
-        }
-    }
-
-    /// <summary>
-    /// 세이브 파일이 없어 로드 시점에 키가 캐싱되지 않은 경우,
-    /// 첫 저장에서 렉이 걸리지 않도록 백그라운드에서 미리 키를 유도한다.
-    /// </summary>
-    private static void WarmupKeysInBackground()
-    {
-        lock (KeyCacheLock)
-        {
-            if (_cachedEncryptionKey != null)
-            {
-                return;
-            }
-        }
-
-        System.Threading.Tasks.Task.Run(() =>
-        {
-            try
-            {
-                GetOrCreateCachedKeys(out _, out _, out _, out _);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[Save] 암호화 키 사전 준비 실패: {e.Message}");
-            }
-        });
-    }
-
-    /// <summary>
-    /// 캐싱된 키를 반환하고, 없으면 새 솔트로 1회 유도 후 캐싱한다. (저장 경로에서 사용)
-    /// </summary>
-    private static void GetOrCreateCachedKeys(out byte[] salt, out int iterations, out byte[] encryptionKey, out byte[] hmacKey)
-    {
-        lock (KeyCacheLock)
-        {
-            if (_cachedEncryptionKey == null)
-            {
-                byte[] newSalt = GenerateRandomBytes(SaltSizeBytes);
-                DeriveKeys(newSalt, KeyDerivationIterations, out byte[] newEncryptionKey, out byte[] newHmacKey);
-                _cachedSalt = newSalt;
-                _cachedIterations = KeyDerivationIterations;
-                _cachedEncryptionKey = newEncryptionKey;
-                _cachedHmacKey = newHmacKey;
-            }
-
-            salt = _cachedSalt;
-            iterations = _cachedIterations;
-            encryptionKey = _cachedEncryptionKey;
-            hmacKey = _cachedHmacKey;
-        }
-    }
-
-    /// <summary>
-    /// 주어진 솔트에 대한 키를 반환한다. 캐시와 일치하면 재사용하고,
-    /// 아니면 유도 후 캐시를 갱신해 이후 저장에서 재유도를 피한다. (로드 경로에서 사용)
-    /// </summary>
-    private static void GetKeysForSalt(byte[] salt, int iterations, out byte[] encryptionKey, out byte[] hmacKey)
-    {
-        lock (KeyCacheLock)
-        {
-            if (_cachedEncryptionKey != null
-                && _cachedIterations == iterations
-                && _cachedSalt != null
-                && FixedTimeEquals(_cachedSalt, salt))
-            {
-                encryptionKey = _cachedEncryptionKey;
-                hmacKey = _cachedHmacKey;
-                return;
-            }
-
-            DeriveKeys(salt, iterations, out encryptionKey, out hmacKey);
-            _cachedSalt = (byte[])salt.Clone();
-            _cachedIterations = iterations;
-            _cachedEncryptionKey = encryptionKey;
-            _cachedHmacKey = hmacKey;
-        }
-    }
-
-    private static void DeriveKeys(byte[] salt, int iterations, out byte[] encryptionKey, out byte[] hmacKey)
-    {
-        byte[] password = _passwordBytes;
-        if (password == null)
-        {
-            CachePasswordBytes();
-            password = _passwordBytes;
-        }
-
-        using (Rfc2898DeriveBytes deriveBytes = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA256))
-        {
-            encryptionKey = deriveBytes.GetBytes(AesKeySizeBytes);
-            hmacKey = deriveBytes.GetBytes(HmacKeySizeBytes);
-        }
-    }
-
-    private static byte[] ComputeHmac(byte[] hmacKey, byte[] authenticatedData)
-    {
-        using (HMACSHA256 hmac = new HMACSHA256(hmacKey))
-        {
-            return hmac.ComputeHash(authenticatedData);
-        }
-    }
-
-    private static byte[] BuildAuthenticatedData(int version, int iterations, byte[] salt, byte[] iv, byte[] cipherText)
-    {
-        using (MemoryStream stream = new MemoryStream())
-        using (BinaryWriter writer = new BinaryWriter(stream))
-        {
-            writer.Write(EncryptedSaveFormat);
-            writer.Write(version);
-            writer.Write(iterations);
-            WriteBytesWithLength(writer, salt);
-            WriteBytesWithLength(writer, iv);
-            WriteBytesWithLength(writer, cipherText);
-            writer.Flush();
-            return stream.ToArray();
-        }
-    }
-
-    private static void WriteBytesWithLength(BinaryWriter writer, byte[] bytes)
-    {
-        writer.Write(bytes != null ? bytes.Length : 0);
-        if (bytes != null && bytes.Length > 0)
-        {
-            writer.Write(bytes);
-        }
-    }
-
-    private static bool FixedTimeEquals(byte[] left, byte[] right)
-    {
-        if (left == null || right == null || left.Length != right.Length)
-        {
-            return false;
-        }
-
-        int difference = 0;
-        for (int i = 0; i < left.Length; i++)
-        {
-            difference |= left[i] ^ right[i];
-        }
-
-        return difference == 0;
     }
 
     private SaveData CaptureCurrentState()
@@ -1025,3 +836,10 @@ public class SaveManager : MonoBehaviour
         }
     }
 }
+
+
+
+
+
+
+
